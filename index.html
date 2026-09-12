@@ -2,609 +2,1102 @@
 <html lang="fr">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>VintedBoost</title>
+<meta charset="UTF-8">
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f7f5ff;
-            color: #171717;
-        }
+<title>VintedBoost</title>
 
-        header {
-            height: 72px;
-            background: white;
-            border-bottom: 1px solid #eeeeee;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 7%;
-        }
+<style>
 
-        .logo {
-            font-size: 23px;
-            font-weight: 800;
-        }
+* {
+    box-sizing: border-box;
+}
 
-        .logo span {
-            color: #7c3aed;
-        }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f7f5ff;
+    color: #171717;
+}
 
-        .login {
-            padding: 10px 18px;
-            border: 1px solid #dddddd;
-            border-radius: 10px;
-            background: white;
-            cursor: pointer;
-        }
+header {
+    height: 72px;
+    background: white;
+    border-bottom: 1px solid #eee;
 
-        .hero {
-            text-align: center;
-            padding: 65px 20px 35px;
-        }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-        .badge {
-            display: inline-block;
-            background: #ede9fe;
-            color: #6d28d9;
-            padding: 8px 14px;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 14px;
-        }
+    padding: 0 7%;
+}
 
-        h1 {
-            font-size: 48px;
-            margin: 18px 0 12px;
-            line-height: 1.05;
-        }
+.logo {
+    font-size: 23px;
+    font-weight: 800;
+}
 
-        .hero p {
-            color: #666666;
-            font-size: 18px;
-            max-width: 600px;
-            margin: auto;
-            line-height: 1.5;
-        }
+.logo span {
+    color: #7c3aed;
+}
 
-        .container {
-            max-width: 720px;
-            margin: 20px auto 80px;
-            padding: 0 20px;
-        }
+.hero {
+    text-align: center;
+    padding: 55px 20px 30px;
+}
 
-        .card {
-            background: white;
-            border: 1px solid #e7e3ef;
-            border-radius: 22px;
-            padding: 30px;
-            box-shadow: 0 15px 40px rgba(60, 30, 100, 0.08);
-        }
+.badge {
+    display: inline-block;
 
-        .card h2 {
-            margin-top: 0;
-            font-size: 25px;
-        }
+    background: #ede9fe;
+    color: #6d28d9;
 
-        .subtitle {
-            color: #777777;
-            margin-bottom: 25px;
-        }
+    padding: 8px 14px;
+    border-radius: 30px;
 
-        .photo {
-            border: 2px dashed #d8c8f5;
-            background: #faf8ff;
-            padding: 25px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 22px;
-            cursor: pointer;
-        }
+    font-weight: bold;
+    font-size: 14px;
+}
 
-        .photo-icon {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
+h1 {
+    font-size: 46px;
+    margin: 18px 0 12px;
+}
 
-        .photo strong {
-            display: block;
-            margin-bottom: 6px;
-        }
+.hero p {
+    max-width: 620px;
+    margin: auto;
 
-        .photo span {
-            color: #888888;
-            font-size: 14px;
-        }
+    color: #666;
+    font-size: 18px;
+    line-height: 1.5;
+}
 
-        label {
-            display: block;
-            margin: 17px 0 7px;
-            font-weight: 700;
-            font-size: 14px;
-        }
+.container {
+    max-width: 760px;
 
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid #dddddd;
-            border-radius: 11px;
-            font-size: 15px;
-            outline: none;
-            background: white;
-        }
+    margin: 20px auto 70px;
 
-        input:focus,
-        select:focus,
-        textarea:focus {
-            border-color: #8b5cf6;
-        }
+    padding: 0 20px;
+}
 
-        .generate {
-            width: 100%;
-            margin-top: 25px;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            background: #7c3aed;
-            color: white;
-            font-size: 17px;
-            font-weight: 700;
-            cursor: pointer;
-        }
+.card {
+    background: white;
 
-        .generate:hover {
-            background: #6d28d9;
-        }
+    border:
+        1px solid #e8e3f0;
 
-        .generate:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+    border-radius: 22px;
 
-        #resultat {
-            display: none;
-            margin-top: 25px;
-            padding: 22px;
-            border-radius: 15px;
-            background: #f5f3ff;
-            border: 1px solid #ddd1fa;
-        }
+    padding: 30px;
 
-        .result-title {
-            font-size: 19px;
-            font-weight: 800;
-            margin-bottom: 18px;
-        }
+    box-shadow:
+        0 15px 40px
+        rgba(60, 30, 100, 0.08);
+}
 
-        .result-block {
-            background: white;
-            padding: 15px;
-            border-radius: 11px;
-            border: 1px solid #eeeeee;
-            line-height: 1.6;
-        }
+.subtitle {
+    color: #777;
+    margin-bottom: 25px;
+}
 
-        .copy {
-            margin-top: 15px;
-            padding: 12px;
-            width: 100%;
-            border: 1px solid #7c3aed;
-            color: #7c3aed;
-            background: white;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+.photo-zone {
+    border:
+        2px dashed #cbb6f5;
 
-        .error {
-            color: #b91c1c;
-            font-weight: bold;
-        }
+    background: #faf8ff;
 
-        .features {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            margin-bottom: 40px;
-            color: #666666;
-            font-size: 14px;
-        }
+    border-radius: 15px;
 
-        footer {
-            text-align: center;
-            padding: 30px;
-            color: #999999;
-            font-size: 13px;
-        }
+    padding: 25px;
 
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 36px;
-            }
+    text-align: center;
 
-            header {
-                padding: 0 20px;
-            }
+    cursor: pointer;
 
-            .login {
-                display: none;
-            }
+    transition: 0.2s;
+}
 
-            .card {
-                padding: 22px;
-            }
+.photo-zone:hover {
+    background: #f5f0ff;
+}
 
-            .features {
-                flex-direction: column;
-                align-items: center;
-                gap: 8px;
-            }
-        }
-    </style>
+.photo-zone strong {
+    display: block;
+
+    margin-top: 8px;
+}
+
+.photo-zone span {
+    display: block;
+
+    color: #888;
+
+    margin-top: 6px;
+
+    font-size: 13px;
+}
+
+#preview {
+    display: none;
+
+    width: 100%;
+    max-height: 350px;
+
+    object-fit: contain;
+
+    margin-top: 15px;
+
+    border-radius: 12px;
+}
+
+.analyse {
+    width: 100%;
+
+    margin-top: 12px;
+
+    padding: 13px;
+
+    border: 1px solid #7c3aed;
+
+    border-radius: 10px;
+
+    background: white;
+
+    color: #7c3aed;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    display: none;
+}
+
+.analyse:hover {
+    background: #f5f0ff;
+}
+
+label {
+    display: block;
+
+    margin:
+        18px 0 7px;
+
+    font-weight: bold;
+
+    font-size: 14px;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+
+    padding: 14px;
+
+    border:
+        1px solid #ddd;
+
+    border-radius: 11px;
+
+    font-size: 15px;
+
+    outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #7c3aed;
+}
+
+.row {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 15px;
+}
+
+.generate {
+    width: 100%;
+
+    margin-top: 25px;
+
+    padding: 16px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: #7c3aed;
+
+    color: white;
+
+    font-size: 17px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.generate:hover {
+    background: #6d28d9;
+}
+
+.generate:disabled,
+.analyse:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#photoMessage {
+    margin-top: 12px;
+
+    text-align: center;
+
+    font-size: 14px;
+}
+
+.success {
+    color: #15803d;
+}
+
+.error {
+    color: #b91c1c;
+}
+
+#resultat {
+    display: none;
+
+    margin-top: 25px;
+}
+
+.result-card {
+    background: #f5f3ff;
+
+    border:
+        1px solid #ddd1fa;
+
+    border-radius: 15px;
+
+    padding: 20px;
+}
+
+.result-title {
+    font-size: 20px;
+
+    font-weight: bold;
+
+    margin-bottom: 15px;
+}
+
+.result-text {
+    background: white;
+
+    border:
+        1px solid #eee;
+
+    padding: 18px;
+
+    border-radius: 12px;
+
+    white-space: pre-line;
+
+    line-height: 1.6;
+}
+
+.buttons {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 12px;
+
+    margin-top: 15px;
+}
+
+.copy,
+.regenerate {
+    padding: 13px;
+
+    border-radius: 10px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.copy {
+    background: white;
+
+    color: #7c3aed;
+
+    border:
+        1px solid #7c3aed;
+}
+
+.regenerate {
+    background: #7c3aed;
+
+    color: white;
+
+    border: none;
+}
+
+footer {
+    padding: 30px;
+
+    text-align: center;
+
+    color: #999;
+
+    font-size: 13px;
+}
+
+@media(max-width: 600px) {
+
+    h1 {
+        font-size: 35px;
+    }
+
+    .row,
+    .buttons {
+        grid-template-columns:
+            1fr;
+    }
+
+    .card {
+        padding: 21px;
+    }
+
+}
+
+</style>
+
 </head>
 
 <body>
 
-    <header>
-        <div class="logo">
-            ⚡ Vinted<span>Boost</span>
-        </div>
 
-        <button class="login">
-            Se connecter
-        </button>
-    </header>
+<header>
 
+<div class="logo">
+⚡ Vinted<span>Boost</span>
+</div>
 
-    <section class="hero">
+</header>
 
-        <div class="badge">
-            ✨ Ton assistant Vinted
-        </div>
 
-        <h1>
-            Vends mieux.<br>
-            Vends plus vite.
-        </h1>
+<section class="hero">
 
-        <p>
-            Génère une annonce Vinted attractive grâce à l'intelligence
-            artificielle en quelques secondes.
-        </p>
+<div class="badge">
+✨ Assistant vente avec IA
+</div>
 
-    </section>
+<h1>
+Ta photo devient<br>
+une annonce prête à vendre
+</h1>
 
+<p>
+Ajoute une photo de ton article.
+L'intelligence artificielle peut l'analyser
+puis générer ton annonce automatiquement.
+</p>
 
-    <main class="container">
+</section>
 
-        <div class="card">
 
-            <h2>✨ Créer mon annonce</h2>
+<main class="container">
 
-            <div class="subtitle">
-                Donne-nous quelques informations sur ton article.
-            </div>
+<div class="card">
 
+<h2>
+📦 Créer mon annonce
+</h2>
 
-            <div
-                class="photo"
-                onclick="document.getElementById('photo').click()"
-            >
+<div class="subtitle">
+Ajoute une photo ou remplis les informations manuellement.
+</div>
 
-                <div class="photo-icon">
-                    📸
-                </div>
 
-                <strong>
-                    Ajouter une photo
-                </strong>
+<!-- PHOTO -->
 
-                <span>
-                    Analyse photo bientôt disponible
-                </span>
+<div
+    class="photo-zone"
+    onclick="document.getElementById('photo').click()"
+>
 
-                <input
-                    id="photo"
-                    type="file"
-                    accept="image/*"
-                    style="display:none;"
-                >
+<div style="font-size:36px">
+📸
+</div>
 
-            </div>
+<strong>
+Ajouter une photo
+</strong>
 
+<span>
+JPEG, PNG ou WebP
+</span>
 
-            <label for="article">
-                Quel est ton article ?
-            </label>
+<input
+    id="photo"
+    type="file"
+    accept="image/jpeg,image/png,image/webp"
+    style="display:none"
+    onchange="photoSelectionnee()"
+>
 
-            <input
-                id="article"
-                type="text"
-                placeholder="Ex : Nike Tech Fleece"
-            >
+<img
+    id="preview"
+    alt="Aperçu de l'article"
+>
 
+</div>
 
-            <label for="taille">
-                Taille
-            </label>
 
-            <input
-                id="taille"
-                type="text"
-                placeholder="Ex : M"
-            >
+<button
+    id="analyseButton"
+    class="analyse"
+    onclick="analyserPhoto()"
+>
+🤖 Analyser automatiquement la photo
+</button>
 
 
-            <label for="couleur">
-                Couleur
-            </label>
+<div id="photoMessage"></div>
 
-            <input
-                id="couleur"
-                type="text"
-                placeholder="Ex : Noir"
-            >
 
+<!-- FORMULAIRE -->
 
-            <label for="etat">
-                État
-            </label>
+<label for="article">
+Article / marque
+</label>
 
-            <select id="etat">
+<input
+    id="article"
+    type="text"
+    placeholder="Ex : Nike Tech Fleece"
+>
 
-                <option>Neuf avec étiquette</option>
 
-                <option>Neuf sans étiquette</option>
+<div class="row">
 
-                <option selected>Très bon état</option>
+<div>
 
-                <option>Bon état</option>
+<label for="taille">
+Taille
+</label>
 
-                <option>État satisfaisant</option>
+<input
+    id="taille"
+    type="text"
+    placeholder="Ex : M"
+>
 
-            </select>
+</div>
 
 
-            <label for="prix">
-                Prix souhaité (€)
-            </label>
+<div>
 
-            <input
-                id="prix"
-                type="number"
-                min="1"
-                placeholder="Ex : 50"
-            >
+<label for="couleur">
+Couleur
+</label>
 
+<input
+    id="couleur"
+    type="text"
+    placeholder="Ex : Noir"
+>
 
-            <label for="details">
-                Informations supplémentaires
-            </label>
+</div>
 
-            <textarea
-                id="details"
-                rows="4"
-                placeholder="Ex : porté 3 fois, aucune tache, acheté 120 €..."
-            ></textarea>
+</div>
 
 
-            <button
-                id="generateButton"
-                class="generate"
-                onclick="genererAnnonce()"
-            >
-                🚀 Générer mon annonce avec l'IA
-            </button>
+<label for="etat">
+État
+</label>
 
+<select id="etat">
 
-            <div id="resultat"></div>
+<option>
+Neuf avec étiquette
+</option>
 
-        </div>
+<option>
+Neuf sans étiquette
+</option>
 
-    </main>
+<option selected>
+Très bon état
+</option>
 
+<option>
+Bon état
+</option>
 
-    <div class="features">
+<option>
+État satisfaisant
+</option>
 
-        <div>⚡ Rapide</div>
+</select>
 
-        <div>🤖 Généré par IA</div>
 
-        <div>📱 Compatible mobile</div>
+<label for="prix">
+Prix souhaité (€)
+</label>
 
-    </div>
+<input
+    id="prix"
+    type="number"
+    min="1"
+    placeholder="Ex : 50"
+>
 
 
-    <footer>
-        © 2026 VintedBoost
-    </footer>
+<label for="details">
+Détails supplémentaires
+</label>
 
+<textarea
+    id="details"
+    rows="4"
+    placeholder="Ex : porté quelques fois, aucun défaut..."
+></textarea>
 
-    <script>
 
-        async function genererAnnonce() {
+<button
+    id="generateButton"
+    class="generate"
+    onclick="genererAnnonce()"
+>
+🚀 Générer mon annonce
+</button>
 
-            const article =
-                document.getElementById("article").value.trim();
 
-            const taille =
-                document.getElementById("taille").value.trim();
+<div id="resultat"></div>
 
-            const couleur =
-                document.getElementById("couleur").value.trim();
+</div>
 
-            const etat =
-                document.getElementById("etat").value;
+</main>
 
-            const prix =
-                document.getElementById("prix").value;
 
-            const details =
-                document.getElementById("details").value.trim();
+<footer>
+© 2026 VintedBoost
+</footer>
 
-            const resultat =
-                document.getElementById("resultat");
 
-            const bouton =
-                document.getElementById("generateButton");
+<script>
 
+let imageBase64 = null;
 
-            if (!article || !taille || !couleur || !prix) {
 
-                alert(
-                    "Remplis l'article, la taille, la couleur et le prix."
-                );
+// =======================
+// PHOTO SELECTIONNEE
+// =======================
 
-                return;
-            }
+function photoSelectionnee() {
 
+    const input =
+        document.getElementById("photo");
 
-            resultat.style.display = "block";
+    const fichier =
+        input.files[0];
 
-            resultat.innerHTML = `
-                <div class="result-title">
-                    ⏳ L'IA prépare ton annonce...
-                </div>
-            `;
+    if (!fichier) {
+        return;
+    }
 
-            bouton.disabled = true;
 
-            bouton.innerText = "⏳ Génération en cours...";
+    if (fichier.size > 5 * 1024 * 1024) {
 
+        alert(
+            "La photo est trop lourde. Choisis une image de moins de 5 Mo."
+        );
 
-            try {
+        input.value = "";
 
-                const response = await fetch("/generate", {
+        return;
+    }
 
-                    method: "POST",
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload = function(event) {
+
+        imageBase64 =
+            event.target.result;
+
+
+        const preview =
+            document.getElementById("preview");
+
+        preview.src =
+            imageBase64;
+
+        preview.style.display =
+            "block";
+
+
+        document.getElementById(
+            "analyseButton"
+        ).style.display =
+            "block";
+
+
+        document.getElementById(
+            "photoMessage"
+        ).innerHTML =
+            "";
+
+    };
+
+
+    reader.readAsDataURL(
+        fichier
+    );
+
+}
+
+
+// =======================
+// ANALYSE PHOTO
+// =======================
+
+async function analyserPhoto() {
+
+    if (!imageBase64) {
+
+        alert(
+            "Ajoute d'abord une photo."
+        );
+
+        return;
+    }
+
+
+    const bouton =
+        document.getElementById(
+            "analyseButton"
+        );
+
+
+    const message =
+        document.getElementById(
+            "photoMessage"
+        );
+
+
+    bouton.disabled =
+        true;
+
+
+    bouton.innerText =
+        "⏳ Analyse en cours...";
+
+
+    message.innerHTML =
+        "🤖 L'IA regarde ton article...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/analyze-photo",
+                {
+
+                    method:
+                        "POST",
 
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type":
+                            "application/json"
                     },
 
-                    body: JSON.stringify({
-
-                        article: article,
-
-                        taille: taille,
-
-                        couleur: couleur,
-
-                        etat: etat,
-
-                        prix: prix,
-
-                        details: details
-
-                    })
-
-                });
-
-
-                const data = await response.json();
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        data.error || "Erreur du serveur"
-                    );
+                    body:
+                        JSON.stringify({
+                            image:
+                                imageBase64
+                        })
 
                 }
+            );
 
 
-                resultat.innerHTML = `
+        const data =
+            await response.json();
 
-                    <div class="result-title">
-                        🎉 Ton annonce IA est prête !
-                    </div>
 
-                    <div class="result-block">
+        if (!response.ok) {
 
-                        <div
-                            id="annonceGeneree"
-                            style="white-space: pre-line;"
-                        >${data.result}</div>
+            throw new Error(
+                data.error ||
+                "Erreur d'analyse."
+            );
 
-                    </div>
+        }
+
+
+        if (data.article) {
+
+            document.getElementById(
+                "article"
+            ).value =
+                data.article;
+
+        }
+
+
+        if (data.couleur) {
+
+            document.getElementById(
+                "couleur"
+            ).value =
+                data.couleur;
+
+        }
+
+
+        if (data.etat) {
+
+            const select =
+                document.getElementById(
+                    "etat"
+                );
+
+            const valeurs =
+                Array.from(
+                    select.options
+                ).map(
+                    option =>
+                        option.value
+                );
+
+
+            if (
+                valeurs.includes(
+                    data.etat
+                )
+            ) {
+
+                select.value =
+                    data.etat;
+
+            }
+
+        }
+
+
+        if (data.details) {
+
+            document.getElementById(
+                "details"
+            ).value =
+                data.details;
+
+        }
+
+
+        message.innerHTML =
+            '<span class="success">✅ Photo analysée ! Vérifie les informations avant de générer.</span>';
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        message.innerHTML =
+            `<span class="error">❌ ${error.message}</span>`;
+
+    }
+
+
+    bouton.disabled =
+        false;
+
+
+    bouton.innerText =
+        "🤖 Analyser de nouveau";
+
+}
+
+
+// =======================
+// GENERATION ANNONCE
+// =======================
+
+async function genererAnnonce() {
+
+    const article =
+        document.getElementById(
+            "article"
+        ).value.trim();
+
+
+    const taille =
+        document.getElementById(
+            "taille"
+        ).value.trim();
+
+
+    const couleur =
+        document.getElementById(
+            "couleur"
+        ).value.trim();
+
+
+    const etat =
+        document.getElementById(
+            "etat"
+        ).value;
+
+
+    const prix =
+        document.getElementById(
+            "prix"
+        ).value;
+
+
+    const details =
+        document.getElementById(
+            "details"
+        ).value.trim();
+
+
+    if (!article) {
+
+        alert(
+            "Indique au minimum l'article."
+        );
+
+        return;
+    }
+
+
+    const resultat =
+        document.getElementById(
+            "resultat"
+        );
+
+
+    const bouton =
+        document.getElementById(
+            "generateButton"
+        );
+
+
+    resultat.style.display =
+        "block";
+
+
+    resultat.innerHTML = `
+
+        <div class="result-card">
+
+            <div class="result-title">
+
+            ⏳ Génération en cours...
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    bouton.disabled =
+        true;
+
+
+    bouton.innerText =
+        "⏳ L'IA travaille...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/generate",
+                {
+
+                    method:
+                        "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            article,
+                            taille,
+                            couleur,
+                            etat,
+                            prix,
+                            details
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Erreur du serveur."
+            );
+
+        }
+
+
+        resultat.innerHTML = `
+
+            <div class="result-card">
+
+                <div class="result-title">
+
+                🎉 Ton annonce IA est prête !
+
+                </div>
+
+
+                <div
+                    id="annonceGeneree"
+                    class="result-text"
+                >
+
+                ${data.result}
+
+                </div>
+
+
+                <div class="buttons">
+
 
                     <button
                         class="copy"
                         onclick="copierAnnonce()"
                     >
-                        📋 Copier l'annonce
+
+                    📋 Copier l'annonce
+
                     </button>
 
-                `;
+
+                    <button
+                        class="regenerate"
+                        onclick="genererAnnonce()"
+                    >
+
+                    🔄 Regénérer
+
+                    </button>
 
 
-            } catch (error) {
+                </div>
 
-                console.error(error);
+            </div>
 
-                resultat.innerHTML = `
-
-                    <div class="error">
-                        ❌ Impossible de générer l'annonce.
-                    </div>
-
-                    <p>
-                        Vérifie que le serveur est bien lancé
-                        avec node server.js.
-                    </p>
-
-                `;
-
-            }
+        `;
 
 
-            bouton.disabled = false;
+    } catch (error) {
 
-            bouton.innerText =
-                "🚀 Générer mon annonce avec l'IA";
-
-        }
-
-
-        async function copierAnnonce() {
-
-            const annonce =
-                document.getElementById("annonceGeneree");
-
-            if (!annonce) {
-                return;
-            }
+        console.error(
+            error
+        );
 
 
-            try {
+        resultat.innerHTML = `
 
-                await navigator.clipboard.writeText(
-                    annonce.innerText
-                );
+            <div class="result-card">
 
-                alert("✅ Annonce copiée !");
+                <div class="error">
 
-            } catch (error) {
+                ❌ ${error.message}
 
-                alert(
-                    "Impossible de copier automatiquement l'annonce."
-                );
+                </div>
 
-            }
+            </div>
 
-        }
+        `;
 
-    </script>
+    }
+
+
+    bouton.disabled =
+        false;
+
+
+    bouton.innerText =
+        "🚀 Générer mon annonce";
+
+}
+
+
+// =======================
+// COPIER
+// =======================
+
+async function copierAnnonce() {
+
+    const annonce =
+        document.getElementById(
+            "annonceGeneree"
+        );
+
+
+    if (!annonce) {
+        return;
+    }
+
+
+    try {
+
+        await navigator.clipboard.writeText(
+            annonce.innerText
+        );
+
+
+        alert(
+            "✅ Annonce copiée !"
+        );
+
+
+    } catch (error) {
+
+        alert(
+            "Impossible de copier automatiquement."
+        );
+
+    }
+
+}
+
+</script>
 
 </body>
 
