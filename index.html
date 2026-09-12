@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VintedBoost</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f5ff;
+            color: #171717;
+        }
+
+        header {
+            height: 72px;
+            background: white;
+            border-bottom: 1px solid #eeeeee;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7%;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .logo span {
+            color: #7c3aed;
+        }
+
+        .login {
+            padding: 10px 18px;
+            border: 1px solid #dddddd;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 65px 20px 35px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #ede9fe;
+            color: #6d28d9;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin: 18px 0 12px;
+            line-height: 1.05;
+        }
+
+        .hero p {
+            color: #666666;
+            font-size: 18px;
+            max-width: 600px;
+            margin: auto;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 20px auto 80px;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e7e3ef;
+            border-radius: 22px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(60, 30, 100, 0.08);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 25px;
+        }
+
+        .subtitle {
+            color: #777777;
+            margin-bottom: 25px;
+        }
+
+        .photo {
+            border: 2px dashed #d8c8f5;
+            background: #faf8ff;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 22px;
+            cursor: pointer;
+        }
+
+        .photo-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .photo strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .photo span {
+            color: #888888;
+            font-size: 14px;
+        }
+
+        label {
+            display: block;
+            margin: 17px 0 7px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #dddddd;
+            border-radius: 11px;
+            font-size: 15px;
+            outline: none;
+            background: white;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #8b5cf6;
+        }
+
+        .generate {
+            width: 100%;
+            margin-top: 25px;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: #7c3aed;
+            color: white;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .generate:hover {
+            background: #6d28d9;
+        }
+
+        .generate:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #resultat {
+            display: none;
+            margin-top: 25px;
+            padding: 22px;
+            border-radius: 15px;
+            background: #f5f3ff;
+            border: 1px solid #ddd1fa;
+        }
+
+        .result-title {
+            font-size: 19px;
+            font-weight: 800;
+            margin-bottom: 18px;
+        }
+
+        .result-block {
+            background: white;
+            padding: 15px;
+            border-radius: 11px;
+            border: 1px solid #eeeeee;
+            line-height: 1.6;
+        }
+
+        .copy {
+            margin-top: 15px;
+            padding: 12px;
+            width: 100%;
+            border: 1px solid #7c3aed;
+            color: #7c3aed;
+            background: white;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .error {
+            color: #b91c1c;
+            font-weight: bold;
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 40px;
+            color: #666666;
+            font-size: 14px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #999999;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 36px;
+            }
+
+            header {
+                padding: 0 20px;
+            }
+
+            .login {
+                display: none;
+            }
+
+            .card {
+                padding: 22px;
+            }
+
+            .features {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">
+            ⚡ Vinted<span>Boost</span>
+        </div>
+
+        <button class="login">
+            Se connecter
+        </button>
+    </header>
+
+
+    <section class="hero">
+
+        <div class="badge">
+            ✨ Ton assistant Vinted
+        </div>
+
+        <h1>
+            Vends mieux.<br>
+            Vends plus vite.
+        </h1>
+
+        <p>
+            Génère une annonce Vinted attractive grâce à l'intelligence
+            artificielle en quelques secondes.
+        </p>
+
+    </section>
+
+
+    <main class="container">
+
+        <div class="card">
+
+            <h2>✨ Créer mon annonce</h2>
+
+            <div class="subtitle">
+                Donne-nous quelques informations sur ton article.
+            </div>
+
+
+            <div
+                class="photo"
+                onclick="document.getElementById('photo').click()"
+            >
+
+                <div class="photo-icon">
+                    📸
+                </div>
+
+                <strong>
+                    Ajouter une photo
+                </strong>
+
+                <span>
+                    Analyse photo bientôt disponible
+                </span>
+
+                <input
+                    id="photo"
+                    type="file"
+                    accept="image/*"
+                    style="display:none;"
+                >
+
+            </div>
+
+
+            <label for="article">
+                Quel est ton article ?
+            </label>
+
+            <input
+                id="article"
+                type="text"
+                placeholder="Ex : Nike Tech Fleece"
+            >
+
+
+            <label for="taille">
+                Taille
+            </label>
+
+            <input
+                id="taille"
+                type="text"
+                placeholder="Ex : M"
+            >
+
+
+            <label for="couleur">
+                Couleur
+            </label>
+
+            <input
+                id="couleur"
+                type="text"
+                placeholder="Ex : Noir"
+            >
+
+
+            <label for="etat">
+                État
+            </label>
+
+            <select id="etat">
+
+                <option>Neuf avec étiquette</option>
+
+                <option>Neuf sans étiquette</option>
+
+                <option selected>Très bon état</option>
+
+                <option>Bon état</option>
+
+                <option>État satisfaisant</option>
+
+            </select>
+
+
+            <label for="prix">
+                Prix souhaité (€)
+            </label>
+
+            <input
+                id="prix"
+                type="number"
+                min="1"
+                placeholder="Ex : 50"
+            >
+
+
+            <label for="details">
+                Informations supplémentaires
+            </label>
+
+            <textarea
+                id="details"
+                rows="4"
+                placeholder="Ex : porté 3 fois, aucune tache, acheté 120 €..."
+            ></textarea>
+
+
+            <button
+                id="generateButton"
+                class="generate"
+                onclick="genererAnnonce()"
+            >
+                🚀 Générer mon annonce avec l'IA
+            </button>
+
+
+            <div id="resultat"></div>
+
+        </div>
+
+    </main>
+
+
+    <div class="features">
+
+        <div>⚡ Rapide</div>
+
+        <div>🤖 Généré par IA</div>
+
+        <div>📱 Compatible mobile</div>
+
+    </div>
+
+
+    <footer>
+        © 2026 VintedBoost
+    </footer>
+
+
+    <script>
+
+        async function genererAnnonce() {
+
+            const article =
+                document.getElementById("article").value.trim();
+
+            const taille =
+                document.getElementById("taille").value.trim();
+
+            const couleur =
+                document.getElementById("couleur").value.trim();
+
+            const etat =
+                document.getElementById("etat").value;
+
+            const prix =
+                document.getElementById("prix").value;
+
+            const details =
+                document.getElementById("details").value.trim();
+
+            const resultat =
+                document.getElementById("resultat");
+
+            const bouton =
+                document.getElementById("generateButton");
+
+
+            if (!article || !taille || !couleur || !prix) {
+
+                alert(
+                    "Remplis l'article, la taille, la couleur et le prix."
+                );
+
+                return;
+            }
+
+
+            resultat.style.display = "block";
+
+            resultat.innerHTML = `
+                <div class="result-title">
+                    ⏳ L'IA prépare ton annonce...
+                </div>
+            `;
+
+            bouton.disabled = true;
+
+            bouton.innerText = "⏳ Génération en cours...";
+
+
+            try {
+
+                const response = await fetch("/generate", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        article: article,
+
+                        taille: taille,
+
+                        couleur: couleur,
+
+                        etat: etat,
+
+                        prix: prix,
+
+                        details: details
+
+                    })
+
+                });
+
+
+                const data = await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.error || "Erreur du serveur"
+                    );
+
+                }
+
+
+                resultat.innerHTML = `
+
+                    <div class="result-title">
+                        🎉 Ton annonce IA est prête !
+                    </div>
+
+                    <div class="result-block">
+
+                        <div
+                            id="annonceGeneree"
+                            style="white-space: pre-line;"
+                        >${data.result}</div>
+
+                    </div>
+
+                    <button
+                        class="copy"
+                        onclick="copierAnnonce()"
+                    >
+                        📋 Copier l'annonce
+                    </button>
+
+                `;
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                resultat.innerHTML = `
+
+                    <div class="error">
+                        ❌ Impossible de générer l'annonce.
+                    </div>
+
+                    <p>
+                        Vérifie que le serveur est bien lancé
+                        avec node server.js.
+                    </p>
+
+                `;
+
+            }
+
+
+            bouton.disabled = false;
+
+            bouton.innerText =
+                "🚀 Générer mon annonce avec l'IA";
+
+        }
+
+
+        async function copierAnnonce() {
+
+            const annonce =
+                document.getElementById("annonceGeneree");
+
+            if (!annonce) {
+                return;
+            }
+
+
+            try {
+
+                await navigator.clipboard.writeText(
+                    annonce.innerText
+                );
+
+                alert("✅ Annonce copiée !");
+
+            } catch (error) {
+
+                alert(
+                    "Impossible de copier automatiquement l'annonce."
+                );
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
