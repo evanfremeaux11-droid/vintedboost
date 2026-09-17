@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 
 <head>
@@ -10,372 +11,1520 @@
     content="width=device-width, initial-scale=1.0"
 >
 
-<title>VintedBoost</title>
+<title>VintedBoost — Générateur d'annonces IA</title>
 
 <style>
+
+:root {
+
+    --purple: #7c3aed;
+    --purple-dark: #6d28d9;
+    --purple-light: #f5f3ff;
+    --purple-border: #ddd6fe;
+
+    --background: #f8f7fc;
+    --white: #ffffff;
+
+    --text: #18181b;
+    --muted: #71717a;
+
+    --green: #15803d;
+    --red: #b91c1c;
+
+    --border: #e4e4e7;
+
+}
 
 * {
     box-sizing: border-box;
 }
 
 body {
+
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f7f5ff;
-    color: #171717;
+
+    font-family:
+        Inter,
+        Arial,
+        sans-serif;
+
+    background:
+        linear-gradient(
+            180deg,
+            #faf8ff 0%,
+            #f8f7fc 45%,
+            #ffffff 100%
+        );
+
+    color: var(--text);
+
 }
 
+
+/* ================= HEADER ================= */
+
 header {
+
     height: 72px;
-    background: white;
-    border-bottom: 1px solid #eee;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.92
+        );
+
+    backdrop-filter:
+        blur(10px);
+
+    border-bottom:
+        1px solid #eee;
 
     display: flex;
-    align-items: center;
-    justify-content: space-between;
 
-    padding: 0 7%;
+    align-items: center;
+
+    justify-content:
+        space-between;
+
+    padding:
+        0 max(
+            20px,
+            calc(
+                (100% - 1100px) / 2
+            )
+        );
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 20;
+
 }
 
 .logo {
+
     font-size: 23px;
-    font-weight: 800;
+
+    font-weight: 900;
+
 }
 
 .logo span {
-    color: #7c3aed;
+    color: var(--purple);
 }
 
-.hero {
-    text-align: center;
-    padding: 55px 20px 30px;
+.header-right {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
 }
 
 .badge {
-    display: inline-block;
 
-    background: #ede9fe;
-    color: #6d28d9;
+    padding:
+        8px 13px;
 
-    padding: 8px 14px;
-    border-radius: 30px;
+    border-radius:
+        30px;
 
-    font-weight: bold;
-    font-size: 14px;
+    background:
+        var(--purple-light);
+
+    color:
+        var(--purple);
+
+    font-size:
+        13px;
+
+    font-weight:
+        700;
+
+}
+
+
+/* ================= HERO ================= */
+
+.hero {
+
+    max-width:
+        850px;
+
+    margin:
+        auto;
+
+    padding:
+        70px 20px 40px;
+
+    text-align:
+        center;
+
+}
+
+.hero-tag {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    gap:
+        7px;
+
+    padding:
+        8px 14px;
+
+    border:
+        1px solid
+        var(--purple-border);
+
+    border-radius:
+        50px;
+
+    background:
+        var(--purple-light);
+
+    color:
+        var(--purple-dark);
+
+    font-size:
+        14px;
+
+    font-weight:
+        700;
+
 }
 
 h1 {
-    font-size: 46px;
-    margin: 18px 0 12px;
+
+    margin:
+        20px 0 15px;
+
+    font-size:
+        clamp(
+            38px,
+            6vw,
+            62px
+        );
+
+    line-height:
+        1.02;
+
+    letter-spacing:
+        -2px;
+
+}
+
+.gradient-text {
+
+    background:
+        linear-gradient(
+            90deg,
+            #7c3aed,
+            #a855f7
+        );
+
+    -webkit-background-clip:
+        text;
+
+    background-clip:
+        text;
+
+    color:
+        transparent;
+
 }
 
 .hero p {
-    max-width: 620px;
-    margin: auto;
 
-    color: #666;
-    font-size: 18px;
-    line-height: 1.5;
+    max-width:
+        650px;
+
+    margin:
+        auto;
+
+    color:
+        var(--muted);
+
+    font-size:
+        18px;
+
+    line-height:
+        1.6;
+
 }
 
+
+/* ================= STEPS ================= */
+
+.steps {
+
+    max-width:
+        850px;
+
+    margin:
+        0 auto 35px;
+
+    padding:
+        0 20px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap:
+        12px;
+
+}
+
+.step {
+
+    background:
+        white;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        15px;
+
+    padding:
+        15px;
+
+    text-align:
+        center;
+
+    color:
+        #52525b;
+
+    font-size:
+        14px;
+
+}
+
+.step strong {
+
+    display:
+        block;
+
+    color:
+        var(--text);
+
+    margin-bottom:
+        3px;
+
+}
+
+
+/* ================= MAIN ================= */
+
 .container {
-    max-width: 760px;
 
-    margin: 20px auto 70px;
+    max-width:
+        900px;
 
-    padding: 0 20px;
+    margin:
+        auto;
+
+    padding:
+        0 20px 80px;
+
 }
 
 .card {
-    background: white;
+
+    background:
+        var(--white);
 
     border:
-        1px solid #e8e3f0;
+        1px solid
+        #ebe7f1;
 
-    border-radius: 22px;
+    border-radius:
+        24px;
 
-    padding: 30px;
+    padding:
+        32px;
 
     box-shadow:
-        0 15px 40px
-        rgba(60, 30, 100, 0.08);
+        0 25px 60px
+        rgba(
+            63,
+            30,
+            100,
+            0.08
+        );
+
+}
+
+.section-title {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        15px;
+
+    margin-bottom:
+        5px;
+
+}
+
+.section-title h2 {
+
+    margin:
+        0;
+
+    font-size:
+        24px;
+
 }
 
 .subtitle {
-    color: #777;
-    margin-bottom: 25px;
+
+    margin:
+        7px 0 25px;
+
+    color:
+        var(--muted);
+
+    line-height:
+        1.5;
+
 }
 
+
+/* ================= PHOTOS ================= */
+
 .photo-zone {
+
     border:
-        2px dashed #cbb6f5;
+        2px dashed
+        #c4b5fd;
 
-    background: #faf8ff;
+    background:
+        #fbfaff;
 
-    border-radius: 15px;
+    border-radius:
+        17px;
 
-    padding: 25px;
+    padding:
+        27px;
 
-    text-align: center;
+    text-align:
+        center;
 
-    cursor: pointer;
+    cursor:
+        pointer;
 
-    transition: 0.2s;
+    transition:
+        0.2s;
+
 }
 
 .photo-zone:hover {
-    background: #f5f0ff;
+
+    border-color:
+        var(--purple);
+
+    background:
+        var(--purple-light);
+
+}
+
+.photo-icon {
+
+    font-size:
+        38px;
+
 }
 
 .photo-zone strong {
-    display: block;
 
-    margin-top: 8px;
+    display:
+        block;
+
+    margin-top:
+        8px;
+
+    font-size:
+        16px;
+
 }
 
 .photo-zone span {
-    display: block;
 
-    color: #888;
+    display:
+        block;
 
-    margin-top: 6px;
+    margin-top:
+        6px;
 
-    font-size: 13px;
+    color:
+        var(--muted);
+
+    font-size:
+        13px;
+
 }
 
-#preview {
-    display: none;
+.previews {
 
-    width: 100%;
-    max-height: 350px;
+    display:
+        grid;
 
-    object-fit: contain;
+    grid-template-columns:
+        repeat(4, 1fr);
 
-    margin-top: 15px;
+    gap:
+        10px;
 
-    border-radius: 12px;
+    margin-top:
+        15px;
+
+}
+
+.preview-item {
+
+    position:
+        relative;
+
+    aspect-ratio:
+        1 / 1;
+
+    border-radius:
+        13px;
+
+    overflow:
+        hidden;
+
+    background:
+        #f4f4f5;
+
+    border:
+        1px solid
+        var(--border);
+
+}
+
+.preview-item img {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        cover;
+
+}
+
+.remove-photo {
+
+    position:
+        absolute;
+
+    top:
+        6px;
+
+    right:
+        6px;
+
+    width:
+        28px;
+
+    height:
+        28px;
+
+    border:
+        none;
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            0.7
+        );
+
+    color:
+        white;
+
+    cursor:
+        pointer;
+
+    font-weight:
+        bold;
+
 }
 
 .analyse {
-    width: 100%;
 
-    margin-top: 12px;
+    display:
+        none;
 
-    padding: 13px;
+    width:
+        100%;
 
-    border: 1px solid #7c3aed;
+    margin-top:
+        12px;
 
-    border-radius: 10px;
+    padding:
+        14px;
 
-    background: white;
+    border:
+        1px solid
+        var(--purple);
 
-    color: #7c3aed;
+    border-radius:
+        11px;
 
-    font-weight: bold;
+    background:
+        white;
 
-    cursor: pointer;
+    color:
+        var(--purple);
 
-    display: none;
+    font-weight:
+        800;
+
+    cursor:
+        pointer;
+
 }
 
 .analyse:hover {
-    background: #f5f0ff;
+
+    background:
+        var(--purple-light);
+
+}
+
+#photoMessage {
+
+    margin-top:
+        10px;
+
+    text-align:
+        center;
+
+    font-size:
+        14px;
+
+}
+
+
+/* ================= FORM ================= */
+
+.separator {
+
+    height:
+        1px;
+
+    background:
+        #f0edf4;
+
+    margin:
+        28px 0;
+
 }
 
 label {
-    display: block;
+
+    display:
+        block;
 
     margin:
-        18px 0 7px;
+        17px 0 7px;
 
-    font-weight: bold;
+    font-size:
+        14px;
 
-    font-size: 14px;
+    font-weight:
+        700;
+
 }
 
 input,
 select,
 textarea {
-    width: 100%;
 
-    padding: 14px;
+    width:
+        100%;
+
+    padding:
+        14px;
 
     border:
-        1px solid #ddd;
+        1px solid
+        var(--border);
 
-    border-radius: 11px;
+    border-radius:
+        11px;
 
-    font-size: 15px;
+    background:
+        white;
 
-    outline: none;
+    color:
+        var(--text);
+
+    font-size:
+        15px;
+
+    outline:
+        none;
+
+    transition:
+        0.15s;
+
 }
 
 input:focus,
 select:focus,
 textarea:focus {
-    border-color: #7c3aed;
+
+    border-color:
+        var(--purple);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            124,
+            58,
+            237,
+            0.08
+        );
+
+}
+
+textarea {
+
+    resize:
+        vertical;
+
+    min-height:
+        105px;
+
 }
 
 .row {
-    display: grid;
+
+    display:
+        grid;
 
     grid-template-columns:
         1fr 1fr;
 
-    gap: 15px;
+    gap:
+        15px;
+
 }
 
+
+/* ================= PLATFORM ================= */
+
+.choice-title {
+
+    margin-top:
+        22px;
+
+    font-size:
+        14px;
+
+    font-weight:
+        800;
+
+}
+
+.choices {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap:
+        9px;
+
+    margin-top:
+        9px;
+
+}
+
+.styles {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap:
+        9px;
+
+    margin-top:
+        9px;
+
+}
+
+.choice {
+
+    position:
+        relative;
+
+}
+
+.choice input {
+
+    display:
+        none;
+
+}
+
+.choice label {
+
+    margin:
+        0;
+
+    display:
+        block;
+
+    padding:
+        13px 10px;
+
+    text-align:
+        center;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        11px;
+
+    cursor:
+        pointer;
+
+    font-weight:
+        500;
+
+    transition:
+        0.15s;
+
+}
+
+.choice input:checked + label {
+
+    border-color:
+        var(--purple);
+
+    background:
+        var(--purple-light);
+
+    color:
+        var(--purple-dark);
+
+    font-weight:
+        800;
+
+}
+
+
+/* ================= SCORE ================= */
+
+.score-box {
+
+    margin-top:
+        24px;
+
+    padding:
+        17px;
+
+    background:
+        #fafafa;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        13px;
+
+}
+
+.score-top {
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+    font-size:
+        14px;
+
+    font-weight:
+        700;
+
+}
+
+.progress {
+
+    height:
+        8px;
+
+    margin-top:
+        10px;
+
+    border-radius:
+        50px;
+
+    overflow:
+        hidden;
+
+    background:
+        #e4e4e7;
+
+}
+
+.progress-bar {
+
+    width:
+        0%;
+
+    height:
+        100%;
+
+    border-radius:
+        50px;
+
+    background:
+        var(--purple);
+
+    transition:
+        width 0.25s;
+
+}
+
+.score-help {
+
+    margin-top:
+        8px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+
+}
+
+
+/* ================= BUTTONS ================= */
+
 .generate {
-    width: 100%;
 
-    margin-top: 25px;
+    width:
+        100%;
 
-    padding: 16px;
+    margin-top:
+        24px;
 
-    border: none;
+    padding:
+        17px;
 
-    border-radius: 12px;
+    border:
+        none;
 
-    background: #7c3aed;
+    border-radius:
+        12px;
 
-    color: white;
+    background:
+        linear-gradient(
+            90deg,
+            #7c3aed,
+            #8b5cf6
+        );
 
-    font-size: 17px;
+    color:
+        white;
 
-    font-weight: bold;
+    font-size:
+        17px;
 
-    cursor: pointer;
+    font-weight:
+        800;
+
+    cursor:
+        pointer;
+
+    box-shadow:
+        0 10px 25px
+        rgba(
+            124,
+            58,
+            237,
+            0.20
+        );
+
 }
 
 .generate:hover {
-    background: #6d28d9;
+
+    transform:
+        translateY(-1px);
+
 }
 
 .generate:disabled,
 .analyse:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+
+    opacity:
+        0.55;
+
+    cursor:
+        not-allowed;
+
+    transform:
+        none;
+
 }
 
-#photoMessage {
-    margin-top: 12px;
 
-    text-align: center;
+/* ================= RESULT ================= */
 
-    font-size: 14px;
+#resultat {
+
+    display:
+        none;
+
+    margin-top:
+        28px;
+
 }
+
+.result-container {
+
+    padding:
+        22px;
+
+    background:
+        var(--purple-light);
+
+    border:
+        1px solid
+        var(--purple-border);
+
+    border-radius:
+        18px;
+
+}
+
+.result-main-title {
+
+    font-size:
+        22px;
+
+    font-weight:
+        900;
+
+}
+
+.result-subtitle {
+
+    margin-top:
+        5px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        13px;
+
+}
+
+.price-grid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap:
+        9px;
+
+    margin-top:
+        15px;
+
+}
+
+.price-card {
+
+    background:
+        white;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        12px;
+
+    padding:
+        14px;
+
+    text-align:
+        center;
+
+}
+
+.price-label {
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+
+}
+
+.price-number {
+
+    margin-top:
+        5px;
+
+    font-size:
+        21px;
+
+    font-weight:
+        900;
+
+}
+
+.result-section {
+
+    margin-top:
+        12px;
+
+    padding:
+        17px;
+
+    background:
+        white;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        13px;
+
+}
+
+.result-label {
+
+    margin-bottom:
+        9px;
+
+    font-weight:
+        800;
+
+}
+
+.result-value {
+
+    white-space:
+        pre-line;
+
+    line-height:
+        1.6;
+
+}
+
+.keywords {
+
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        7px;
+
+}
+
+.keyword {
+
+    padding:
+        7px 10px;
+
+    border-radius:
+        20px;
+
+    background:
+        var(--purple-light);
+
+    color:
+        var(--purple-dark);
+
+    font-size:
+        13px;
+
+}
+
+.small-copy {
+
+    margin-top:
+        11px;
+
+    padding:
+        8px 12px;
+
+    border:
+        1px solid
+        var(--purple);
+
+    border-radius:
+        8px;
+
+    background:
+        white;
+
+    color:
+        var(--purple);
+
+    font-weight:
+        700;
+
+    cursor:
+        pointer;
+
+}
+
+.result-actions {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap:
+        9px;
+
+    margin-top:
+        15px;
+
+}
+
+.action-button {
+
+    padding:
+        13px;
+
+    border-radius:
+        10px;
+
+    cursor:
+        pointer;
+
+    font-weight:
+        800;
+
+}
+
+.secondary {
+
+    border:
+        1px solid
+        var(--purple);
+
+    background:
+        white;
+
+    color:
+        var(--purple);
+
+}
+
+.primary {
+
+    border:
+        none;
+
+    background:
+        var(--purple);
+
+    color:
+        white;
+
+}
+
+
+/* ================= HISTORY ================= */
+
+.history {
+
+    max-width:
+        900px;
+
+    margin:
+        25px auto 80px;
+
+    padding:
+        0 20px;
+
+}
+
+.history-card {
+
+    background:
+        white;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:
+        20px;
+
+    padding:
+        25px;
+
+}
+
+.history-card h2 {
+
+    margin:
+        0 0 5px;
+
+}
+
+.history-description {
+
+    color:
+        var(--muted);
+
+    margin-bottom:
+        15px;
+
+    font-size:
+        14px;
+
+}
+
+.history-item {
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    gap:
+        15px;
+
+    padding:
+        13px 0;
+
+    border-top:
+        1px solid #eee;
+
+}
+
+.history-title {
+
+    font-weight:
+        700;
+
+}
+
+.history-meta {
+
+    margin-top:
+        4px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+
+}
+
+.history-price {
+
+    white-space:
+        nowrap;
+
+    font-weight:
+        800;
+
+    color:
+        var(--purple);
+
+}
+
+.empty-history {
+
+    padding:
+        15px 0;
+
+    color:
+        var(--muted);
+
+    font-size:
+        14px;
+
+}
+
+
+/* ================= MESSAGES ================= */
 
 .success {
-    color: #15803d;
+    color:
+        var(--green);
 }
 
 .error {
-    color: #b91c1c;
+    color:
+        var(--red);
 }
 
-#resultat {
-    display: none;
 
-    margin-top: 25px;
-}
-
-.result-card {
-    background: #f5f3ff;
-
-    border:
-        1px solid #ddd1fa;
-
-    border-radius: 15px;
-
-    padding: 20px;
-}
-
-.result-title {
-    font-size: 20px;
-
-    font-weight: bold;
-
-    margin-bottom: 15px;
-}
-
-.result-text {
-    background: white;
-
-    border:
-        1px solid #eee;
-
-    padding: 18px;
-
-    border-radius: 12px;
-
-    white-space: pre-line;
-
-    line-height: 1.6;
-}
-
-.buttons {
-    display: grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
-    gap: 12px;
-
-    margin-top: 15px;
-}
-
-.copy,
-.regenerate {
-    padding: 13px;
-
-    border-radius: 10px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-}
-
-.copy {
-    background: white;
-
-    color: #7c3aed;
-
-    border:
-        1px solid #7c3aed;
-}
-
-.regenerate {
-    background: #7c3aed;
-
-    color: white;
-
-    border: none;
-}
+/* ================= FOOTER ================= */
 
 footer {
-    padding: 30px;
 
-    text-align: center;
+    padding:
+        35px 20px;
 
-    color: #999;
+    text-align:
+        center;
 
-    font-size: 13px;
+    color:
+        #a1a1aa;
+
+    font-size:
+        13px;
+
 }
 
-@media(max-width: 600px) {
 
-    h1 {
-        font-size: 35px;
+/* ================= MOBILE ================= */
+
+@media(
+    max-width: 700px
+) {
+
+    header {
+
+        padding:
+            0 18px;
+
     }
 
-    .row,
-    .buttons {
+    .badge {
+        display:
+            none;
+    }
+
+    .hero {
+
+        padding-top:
+            45px;
+
+    }
+
+    h1 {
+
+        letter-spacing:
+            -1px;
+
+    }
+
+    .steps {
+
         grid-template-columns:
             1fr;
+
     }
 
     .card {
-        padding: 21px;
+
+        padding:
+            21px;
+
+        border-radius:
+            18px;
+
+    }
+
+    .row {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            0;
+
+    }
+
+    .previews {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+    .styles {
+
+        grid-template-columns:
+            1fr 1fr;
+
+    }
+
+    .price-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+    .result-actions {
+
+        grid-template-columns:
+            1fr;
+
     }
 
 }
@@ -383,6 +1532,7 @@ footer {
 </style>
 
 </head>
+
 
 <body>
 
@@ -393,25 +1543,55 @@ footer {
 ⚡ Vinted<span>Boost</span>
 </div>
 
+<div class="header-right">
+
+<div class="badge">
+V4 • Assistant IA
+</div>
+
+</div>
+
 </header>
 
 
 <section class="hero">
 
-<div class="badge">
-✨ Assistant vente avec IA
+<div class="hero-tag">
+✨ Générateur d'annonces avec IA
 </div>
 
 <h1>
-Ta photo devient<br>
-une annonce prête à vendre
+De tes photos à une<br>
+<span class="gradient-text">
+annonce prête à publier
+</span>
 </h1>
 
 <p>
-Ajoute une photo de ton article.
-L'intelligence artificielle peut l'analyser
-puis générer ton annonce automatiquement.
+Ajoute jusqu'à 4 photos de ton article,
+vérifie les informations détectées
+et génère une annonce adaptée à ta plateforme.
 </p>
+
+</section>
+
+
+<section class="steps">
+
+<div class="step">
+<strong>📸 1. Ajoute tes photos</strong>
+Jusqu'à 4 vues
+</div>
+
+<div class="step">
+<strong>🤖 2. Analyse IA</strong>
+L'IA préremplit l'annonce
+</div>
+
+<div class="step">
+<strong>📋 3. Copie ton annonce</strong>
+Vérifie puis publie
+</div>
 
 </section>
 
@@ -420,76 +1600,192 @@ puis générer ton annonce automatiquement.
 
 <div class="card">
 
+
+<div class="section-title">
+
 <h2>
-📦 Créer mon annonce
+Créer une annonce
 </h2>
 
-<div class="subtitle">
-Ajoute une photo ou remplis les informations manuellement.
 </div>
 
 
-<!-- PHOTO -->
+<p class="subtitle">
+Ajoute plusieurs vues du même article pour aider l'IA à mieux l'analyser.
+</p>
+
+
+<!-- PHOTOS -->
 
 <div
     class="photo-zone"
-    onclick="document.getElementById('photo').click()"
+    onclick="document.getElementById('photos').click()"
 >
 
-<div style="font-size:36px">
+<div class="photo-icon">
 📸
 </div>
 
 <strong>
-Ajouter une photo
+Ajouter jusqu'à 4 photos
 </strong>
 
 <span>
-JPEG, PNG ou WebP
+JPEG, PNG ou WebP • maximum 4 Mo par photo
 </span>
 
+
 <input
-    id="photo"
+    id="photos"
     type="file"
     accept="image/jpeg,image/png,image/webp"
+    multiple
     style="display:none"
-    onchange="photoSelectionnee()"
->
-
-<img
-    id="preview"
-    alt="Aperçu de l'article"
+    onchange="photosSelectionnees()"
 >
 
 </div>
+
+
+<div
+    id="previews"
+    class="previews"
+></div>
 
 
 <button
     id="analyseButton"
     class="analyse"
-    onclick="analyserPhoto()"
+    onclick="analyserPhotos()"
 >
-🤖 Analyser automatiquement la photo
+🤖 Analyser mes photos
 </button>
 
 
 <div id="photoMessage"></div>
 
 
-<!-- FORMULAIRE -->
+<div class="separator"></div>
+
+
+<!-- PLATEFORME -->
+
+<div class="choice-title">
+Où veux-tu vendre ?
+</div>
+
+
+<div class="choices">
+
+<div class="choice">
+
+<input
+    type="radio"
+    name="plateforme"
+    id="plateformeVinted"
+    value="vinted"
+    checked
+>
+
+<label for="plateformeVinted">
+👕 Vinted
+</label>
+
+</div>
+
+
+<div class="choice">
+
+<input
+    type="radio"
+    name="plateforme"
+    id="plateformeEbay"
+    value="ebay"
+>
+
+<label for="plateformeEbay">
+🛒 eBay
+</label>
+
+</div>
+
+</div>
+
+
+<!-- ARTICLE -->
+
+<div class="row">
+
+<div>
 
 <label for="article">
-Article / marque
+Type d'article *
 </label>
 
 <input
     id="article"
     type="text"
-    placeholder="Ex : Nike Tech Fleece"
+    maxlength="100"
+    placeholder="Ex : Sweat à capuche"
+    oninput="mettreAJourScore()"
 >
+
+</div>
+
+
+<div>
+
+<label for="marque">
+Marque
+</label>
+
+<input
+    id="marque"
+    type="text"
+    maxlength="100"
+    placeholder="Ex : Nike"
+    oninput="mettreAJourScore()"
+>
+
+</div>
+
+</div>
 
 
 <div class="row">
+
+<div>
+
+<label for="categorie">
+Catégorie
+</label>
+
+<select
+    id="categorie"
+    onchange="mettreAJourScore()"
+>
+
+<option value="">
+Choisir
+</option>
+
+<option>Veste</option>
+<option>Sweat</option>
+<option>T-shirt</option>
+<option>Pantalon</option>
+<option>Jean</option>
+<option>Chaussures</option>
+<option>Accessoire</option>
+<option>Robe</option>
+<option>Chemise</option>
+<option>Pull</option>
+<option>Short</option>
+<option>Autre</option>
+
+</select>
+
+</div>
+
 
 <div>
 
@@ -500,11 +1796,17 @@ Taille
 <input
     id="taille"
     type="text"
-    placeholder="Ex : M"
+    maxlength="50"
+    placeholder="Ex : M / 42"
+    oninput="mettreAJourScore()"
 >
 
 </div>
 
+</div>
+
+
+<div class="row">
 
 <div>
 
@@ -515,19 +1817,28 @@ Couleur
 <input
     id="couleur"
     type="text"
+    maxlength="100"
     placeholder="Ex : Noir"
+    oninput="mettreAJourScore()"
 >
 
 </div>
 
-</div>
 
+<div>
 
 <label for="etat">
 État
 </label>
 
-<select id="etat">
+<select
+    id="etat"
+    onchange="mettreAJourScore()"
+>
+
+<option value="">
+Choisir
+</option>
 
 <option>
 Neuf avec étiquette
@@ -537,7 +1848,7 @@ Neuf avec étiquette
 Neuf sans étiquette
 </option>
 
-<option selected>
+<option>
 Très bon état
 </option>
 
@@ -551,16 +1862,22 @@ Bon état
 
 </select>
 
+</div>
+
+</div>
+
 
 <label for="prix">
-Prix souhaité (€)
+Prix que tu envisages (€)
 </label>
 
 <input
     id="prix"
     type="number"
     min="1"
+    max="100000"
     placeholder="Ex : 50"
+    oninput="mettreAJourScore()"
 >
 
 
@@ -570,9 +1887,137 @@ Détails supplémentaires
 
 <textarea
     id="details"
-    rows="4"
-    placeholder="Ex : porté quelques fois, aucun défaut..."
+    maxlength="1000"
+    placeholder="Ex : porté quelques fois, coupe oversize, fermeture fonctionnelle..."
+    oninput="mettreAJourScore()"
 ></textarea>
+
+
+<label for="defauts">
+Défauts éventuels
+</label>
+
+<textarea
+    id="defauts"
+    maxlength="500"
+    placeholder="Ex : petite trace sur la manche gauche..."
+    oninput="mettreAJourScore()"
+></textarea>
+
+
+<!-- STYLE -->
+
+<div class="choice-title">
+Style de l'annonce
+</div>
+
+
+<div class="styles">
+
+
+<div class="choice">
+
+<input
+    type="radio"
+    name="style"
+    id="naturel"
+    value="naturel"
+    checked
+>
+
+<label for="naturel">
+🙂 Naturel
+</label>
+
+</div>
+
+
+<div class="choice">
+
+<input
+    type="radio"
+    name="style"
+    id="court"
+    value="court"
+>
+
+<label for="court">
+⚡ Court
+</label>
+
+</div>
+
+
+<div class="choice">
+
+<input
+    type="radio"
+    name="style"
+    id="vendeur"
+    value="vendeur"
+>
+
+<label for="vendeur">
+🔥 Vendeur
+</label>
+
+</div>
+
+
+<div class="choice">
+
+<input
+    type="radio"
+    name="style"
+    id="premium"
+    value="premium"
+>
+
+<label for="premium">
+💎 Premium
+</label>
+
+</div>
+
+
+</div>
+
+
+<!-- SCORE -->
+
+<div class="score-box">
+
+<div class="score-top">
+
+<span>
+Complétude de l'annonce
+</span>
+
+<span id="scoreText">
+0 %
+</span>
+
+</div>
+
+
+<div class="progress">
+
+<div
+    id="progressBar"
+    class="progress-bar"
+></div>
+
+</div>
+
+
+<div
+    id="scoreHelp"
+    class="score-help"
+>
+Ajoute des informations pour améliorer ton annonce.
+</div>
+
+</div>
 
 
 <button
@@ -580,110 +2025,304 @@ Détails supplémentaires
     class="generate"
     onclick="genererAnnonce()"
 >
-🚀 Générer mon annonce
+✨ Générer mon annonce
 </button>
 
 
 <div id="resultat"></div>
+
 
 </div>
 
 </main>
 
 
+<!-- HISTORIQUE -->
+
+<section class="history">
+
+<div class="history-card">
+
+<h2>
+🕘 Mes dernières annonces
+</h2>
+
+<div class="history-description">
+Conservées uniquement sur cet appareil.
+</div>
+
+<div id="historyList"></div>
+
+</div>
+
+</section>
+
+
 <footer>
-© 2026 VintedBoost
+VintedBoost • Assistant de création d'annonces
 </footer>
 
 
 <script>
 
-let imageBase64 = null;
+let photosBase64 = [];
+
+let derniereAnnonce = null;
 
 
-// =======================
-// PHOTO SELECTIONNEE
-// =======================
+// ======================================================
+// PHOTOS
+// ======================================================
 
-function photoSelectionnee() {
+function photosSelectionnees() {
 
     const input =
-        document.getElementById("photo");
-
-    const fichier =
-        input.files[0];
-
-    if (!fichier) {
-        return;
-    }
-
-
-    if (fichier.size > 5 * 1024 * 1024) {
-
-        alert(
-            "La photo est trop lourde. Choisis une image de moins de 5 Mo."
+        document.getElementById(
+            "photos"
         );
 
-        input.value = "";
+
+    const nouveauxFichiers =
+        Array.from(
+            input.files
+        );
+
+
+    if (
+        nouveauxFichiers.length === 0
+    ) {
 
         return;
+
     }
 
 
-    const reader =
-        new FileReader();
+    const placesDisponibles =
+        4 - photosBase64.length;
 
 
-    reader.onload = function(event) {
-
-        imageBase64 =
-            event.target.result;
-
-
-        const preview =
-            document.getElementById("preview");
-
-        preview.src =
-            imageBase64;
-
-        preview.style.display =
-            "block";
+    const fichiers =
+        nouveauxFichiers.slice(
+            0,
+            placesDisponibles
+        );
 
 
-        document.getElementById(
-            "analyseButton"
-        ).style.display =
-            "block";
+    if (
+        nouveauxFichiers.length >
+        placesDisponibles
+    ) {
+
+        alert(
+            "Tu peux ajouter maximum 4 photos."
+        );
+
+    }
 
 
-        document.getElementById(
-            "photoMessage"
-        ).innerHTML =
-            "";
+    fichiers.forEach(
+        fichier => {
 
-    };
+            if (
+                ![
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp"
+                ].includes(
+                    fichier.type
+                )
+            ) {
+
+                return;
+
+            }
 
 
-    reader.readAsDataURL(
-        fichier
+            if (
+                fichier.size >
+                4 * 1024 * 1024
+            ) {
+
+                alert(
+                    `${fichier.name} dépasse 4 Mo.`
+                );
+
+                return;
+
+            }
+
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                event => {
+
+                    photosBase64.push(
+                        event.target.result
+                    );
+
+
+                    afficherPhotos();
+
+                };
+
+
+            reader.readAsDataURL(
+                fichier
+            );
+
+        }
     );
+
+
+    input.value = "";
 
 }
 
 
-// =======================
-// ANALYSE PHOTO
-// =======================
+// ======================================================
+// AFFICHER PHOTOS
+// ======================================================
 
-async function analyserPhoto() {
+function afficherPhotos() {
 
-    if (!imageBase64) {
+    const previews =
+        document.getElementById(
+            "previews"
+        );
+
+
+    previews.innerHTML = "";
+
+
+    photosBase64.forEach(
+        (photo, index) => {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "preview-item";
+
+
+            const img =
+                document.createElement(
+                    "img"
+                );
+
+
+            img.src =
+                photo;
+
+
+            img.alt =
+                `Photo ${index + 1}`;
+
+
+            const bouton =
+                document.createElement(
+                    "button"
+                );
+
+
+            bouton.className =
+                "remove-photo";
+
+
+            bouton.textContent =
+                "×";
+
+
+            bouton.type =
+                "button";
+
+
+            bouton.onclick =
+                event => {
+
+                    event.stopPropagation();
+
+                    supprimerPhoto(
+                        index
+                    );
+
+                };
+
+
+            div.appendChild(
+                img
+            );
+
+
+            div.appendChild(
+                bouton
+            );
+
+
+            previews.appendChild(
+                div
+            );
+
+        }
+    );
+
+
+    document.getElementById(
+        "analyseButton"
+    ).style.display =
+        photosBase64.length
+            ? "block"
+            : "none";
+
+
+    mettreAJourScore();
+
+}
+
+
+// ======================================================
+// SUPPRIMER PHOTO
+// ======================================================
+
+function supprimerPhoto(index) {
+
+    photosBase64.splice(
+        index,
+        1
+    );
+
+
+    afficherPhotos();
+
+
+    document.getElementById(
+        "photoMessage"
+    ).innerHTML = "";
+
+}
+
+
+// ======================================================
+// ANALYSE IA
+// ======================================================
+
+async function analyserPhotos() {
+
+    if (
+        photosBase64.length === 0
+    ) {
 
         alert(
-            "Ajoute d'abord une photo."
+            "Ajoute au moins une photo."
         );
 
         return;
+
     }
 
 
@@ -703,33 +2342,35 @@ async function analyserPhoto() {
         true;
 
 
-    bouton.innerText =
+    bouton.textContent =
         "⏳ Analyse en cours...";
 
 
     message.innerHTML =
-        "🤖 L'IA regarde ton article...";
+        "🤖 L'IA analyse les différentes vues de ton article...";
 
 
     try {
 
         const response =
             await fetch(
-                "/analyze-photo",
+                "/analyze-photos",
                 {
 
                     method:
                         "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json"
+
                     },
 
                     body:
                         JSON.stringify({
-                            image:
-                                imageBase64
+                            images:
+                                photosBase64
                         })
 
                 }
@@ -744,7 +2385,7 @@ async function analyserPhoto() {
 
             throw new Error(
                 data.error ||
-                "Erreur d'analyse."
+                "Impossible d'analyser les photos."
             );
 
         }
@@ -760,6 +2401,47 @@ async function analyserPhoto() {
         }
 
 
+        if (data.marque) {
+
+            document.getElementById(
+                "marque"
+            ).value =
+                data.marque;
+
+        }
+
+
+        if (data.categorie) {
+
+            const categorie =
+                document.getElementById(
+                    "categorie"
+                );
+
+
+            const valeurs =
+                Array.from(
+                    categorie.options
+                ).map(
+                    option =>
+                        option.value
+                );
+
+
+            if (
+                valeurs.includes(
+                    data.categorie
+                )
+            ) {
+
+                categorie.value =
+                    data.categorie;
+
+            }
+
+        }
+
+
         if (data.couleur) {
 
             document.getElementById(
@@ -770,16 +2452,27 @@ async function analyserPhoto() {
         }
 
 
+        if (data.tailleVisible) {
+
+            document.getElementById(
+                "taille"
+            ).value =
+                data.tailleVisible;
+
+        }
+
+
         if (data.etat) {
 
-            const select =
+            const etat =
                 document.getElementById(
                     "etat"
                 );
 
+
             const valeurs =
                 Array.from(
-                    select.options
+                    etat.options
                 ).map(
                     option =>
                         option.value
@@ -792,7 +2485,7 @@ async function analyserPhoto() {
                 )
             ) {
 
-                select.value =
+                etat.value =
                     data.etat;
 
             }
@@ -810,8 +2503,25 @@ async function analyserPhoto() {
         }
 
 
-        message.innerHTML =
-            '<span class="success">✅ Photo analysée ! Vérifie les informations avant de générer.</span>';
+        if (data.defauts) {
+
+            document.getElementById(
+                "defauts"
+            ).value =
+                data.defauts;
+
+        }
+
+
+        message.innerHTML = `
+            <span class="success">
+            ✅ Analyse terminée.
+            Vérifie toujours les informations détectées.
+            </span>
+        `;
+
+
+        mettreAJourScore();
 
 
     } catch (error) {
@@ -821,8 +2531,11 @@ async function analyserPhoto() {
         );
 
 
-        message.innerHTML =
-            `<span class="error">❌ ${error.message}</span>`;
+        message.innerHTML = `
+            <span class="error">
+            ❌ ${echapperHTML(error.message)}
+            </span>
+        `;
 
     }
 
@@ -831,68 +2544,232 @@ async function analyserPhoto() {
         false;
 
 
-    bouton.innerText =
+    bouton.textContent =
         "🤖 Analyser de nouveau";
 
 }
 
 
-// =======================
-// GENERATION ANNONCE
-// =======================
+// ======================================================
+// SCORE DE COMPLETUDE
+// ======================================================
+
+function mettreAJourScore() {
+
+    let score = 0;
+
+
+    if (
+        photosBase64.length > 0
+    ) {
+
+        score += 15;
+
+    }
+
+
+    if (
+        valeur("article")
+    ) {
+
+        score += 20;
+
+    }
+
+
+    if (
+        valeur("marque")
+    ) {
+
+        score += 10;
+
+    }
+
+
+    if (
+        valeur("categorie")
+    ) {
+
+        score += 10;
+
+    }
+
+
+    if (
+        valeur("taille")
+    ) {
+
+        score += 10;
+
+    }
+
+
+    if (
+        valeur("couleur")
+    ) {
+
+        score += 10;
+
+    }
+
+
+    if (
+        valeur("etat")
+    ) {
+
+        score += 10;
+
+    }
+
+
+    if (
+        valeur("prix")
+    ) {
+
+        score += 5;
+
+    }
+
+
+    if (
+        valeur("details")
+    ) {
+
+        score += 10;
+
+    }
+
+
+    score =
+        Math.min(
+            score,
+            100
+        );
+
+
+    document.getElementById(
+        "scoreText"
+    ).textContent =
+        `${score} %`;
+
+
+    document.getElementById(
+        "progressBar"
+    ).style.width =
+        `${score}%`;
+
+
+    let aide =
+        "Ajoute des informations pour améliorer ton annonce.";
+
+
+    if (score >= 80) {
+
+        aide =
+            "Très bien : ton annonce contient la plupart des informations utiles.";
+
+    } else if (score >= 50) {
+
+        aide =
+            "Bonne base. Complète encore quelques informations.";
+
+    }
+
+
+    document.getElementById(
+        "scoreHelp"
+    ).textContent =
+        aide;
+
+}
+
+
+// ======================================================
+// VALEUR FORMULAIRE
+// ======================================================
+
+function valeur(id) {
+
+    const element =
+        document.getElementById(id);
+
+
+    if (!element) {
+
+        return "";
+
+    }
+
+
+    return element.value.trim();
+
+}
+
+
+// ======================================================
+// GENERATION
+// ======================================================
 
 async function genererAnnonce() {
 
     const article =
-        document.getElementById(
-            "article"
-        ).value.trim();
-
-
-    const taille =
-        document.getElementById(
-            "taille"
-        ).value.trim();
-
-
-    const couleur =
-        document.getElementById(
-            "couleur"
-        ).value.trim();
-
-
-    const etat =
-        document.getElementById(
-            "etat"
-        ).value;
-
-
-    const prix =
-        document.getElementById(
-            "prix"
-        ).value;
-
-
-    const details =
-        document.getElementById(
-            "details"
-        ).value.trim();
+        valeur("article");
 
 
     if (!article) {
 
         alert(
-            "Indique au minimum l'article."
+            "Indique au minimum le type d'article."
         );
 
+        document.getElementById(
+            "article"
+        ).focus();
+
         return;
+
     }
 
 
-    const resultat =
-        document.getElementById(
-            "resultat"
-        );
+    const formulaire = {
+
+        article,
+
+        marque:
+            valeur("marque"),
+
+        categorie:
+            valeur("categorie"),
+
+        taille:
+            valeur("taille"),
+
+        couleur:
+            valeur("couleur"),
+
+        etat:
+            valeur("etat"),
+
+        prix:
+            valeur("prix"),
+
+        details:
+            valeur("details"),
+
+        defauts:
+            valeur("defauts"),
+
+        style:
+            document.querySelector(
+                'input[name="style"]:checked'
+            ).value,
+
+        plateforme:
+            document.querySelector(
+                'input[name="plateforme"]:checked'
+            ).value
+
+    };
 
 
     const bouton =
@@ -901,22 +2778,20 @@ async function genererAnnonce() {
         );
 
 
+    const resultat =
+        document.getElementById(
+            "resultat"
+        );
+
+
     resultat.style.display =
         "block";
 
 
     resultat.innerHTML = `
-
-        <div class="result-card">
-
-            <div class="result-title">
-
-            ⏳ Génération en cours...
-
-            </div>
-
+        <div class="result-container">
+            ⏳ L'IA prépare ton annonce...
         </div>
-
     `;
 
 
@@ -924,8 +2799,8 @@ async function genererAnnonce() {
         true;
 
 
-    bouton.innerText =
-        "⏳ L'IA travaille...";
+    bouton.textContent =
+        "⏳ Génération en cours...";
 
 
     try {
@@ -939,21 +2814,16 @@ async function genererAnnonce() {
                         "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json"
+
                     },
 
                     body:
-                        JSON.stringify({
-
-                            article,
-                            taille,
-                            couleur,
-                            etat,
-                            prix,
-                            details
-
-                        })
+                        JSON.stringify(
+                            formulaire
+                        )
 
                 }
             );
@@ -967,61 +2837,34 @@ async function genererAnnonce() {
 
             throw new Error(
                 data.error ||
-                "Erreur du serveur."
+                "Erreur pendant la génération."
             );
 
         }
 
 
-        resultat.innerHTML = `
+        derniereAnnonce = {
 
-            <div class="result-card">
+            ...data,
 
-                <div class="result-title">
+            plateforme:
+                formulaire.plateforme,
 
-                🎉 Ton annonce IA est prête !
+            date:
+                new Date()
+                    .toISOString()
 
-                </div>
-
-
-                <div
-                    id="annonceGeneree"
-                    class="result-text"
-                >
-
-                ${data.result}
-
-                </div>
+        };
 
 
-                <div class="buttons">
+        afficherAnnonce(
+            derniereAnnonce
+        );
 
 
-                    <button
-                        class="copy"
-                        onclick="copierAnnonce()"
-                    >
-
-                    📋 Copier l'annonce
-
-                    </button>
-
-
-                    <button
-                        class="regenerate"
-                        onclick="genererAnnonce()"
-                    >
-
-                    🔄 Regénérer
-
-                    </button>
-
-
-                </div>
-
-            </div>
-
-        `;
+        enregistrerHistorique(
+            derniereAnnonce
+        );
 
 
     } catch (error) {
@@ -1032,17 +2875,11 @@ async function genererAnnonce() {
 
 
         resultat.innerHTML = `
-
-            <div class="result-card">
-
-                <div class="error">
-
-                ❌ ${error.message}
-
-                </div>
-
+            <div class="result-container">
+                <span class="error">
+                ❌ ${echapperHTML(error.message)}
+                </span>
             </div>
-
         `;
 
     }
@@ -1052,38 +2889,358 @@ async function genererAnnonce() {
         false;
 
 
-    bouton.innerText =
-        "🚀 Générer mon annonce";
+    bouton.textContent =
+        "✨ Générer mon annonce";
 
 }
 
 
-// =======================
-// COPIER
-// =======================
+// ======================================================
+// AFFICHER ANNONCE
+// ======================================================
 
-async function copierAnnonce() {
+function afficherAnnonce(data) {
 
-    const annonce =
+    const resultat =
         document.getElementById(
-            "annonceGeneree"
+            "resultat"
         );
 
 
-    if (!annonce) {
-        return;
+    const motsCles =
+        Array.isArray(
+            data.motsCles
+        )
+            ? data.motsCles
+            : [];
+
+
+    resultat.innerHTML = `
+
+        <div class="result-container">
+
+
+            <div class="result-main-title">
+            🎉 Ton annonce est prête
+            </div>
+
+
+            <div class="result-subtitle">
+            Vérifie les informations avant de la publier.
+            </div>
+
+
+            <div class="price-grid">
+
+                <div class="price-card">
+
+                    <div class="price-label">
+                    Fourchette basse
+                    </div>
+
+                    <div class="price-number">
+                    ${formatPrix(data.prixMin)}
+                    </div>
+
+                </div>
+
+
+                <div class="price-card">
+
+                    <div class="price-label">
+                    Prix conseillé
+                    </div>
+
+                    <div class="price-number">
+                    ${formatPrix(data.prixConseille)}
+                    </div>
+
+                </div>
+
+
+                <div class="price-card">
+
+                    <div class="price-label">
+                    Fourchette haute
+                    </div>
+
+                    <div class="price-number">
+                    ${formatPrix(data.prixMax)}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="result-section">
+
+                <div class="result-label">
+                📌 Titre
+                </div>
+
+                <div
+                    id="resultTitre"
+                    class="result-value"
+                ></div>
+
+                <button
+                    class="small-copy"
+                    onclick="copierElement('resultTitre')"
+                >
+                Copier le titre
+                </button>
+
+            </div>
+
+
+            <div class="result-section">
+
+                <div class="result-label">
+                📝 Description
+                </div>
+
+                <div
+                    id="resultDescription"
+                    class="result-value"
+                ></div>
+
+                <button
+                    class="small-copy"
+                    onclick="copierElement('resultDescription')"
+                >
+                Copier la description
+                </button>
+
+            </div>
+
+
+            <div class="result-section">
+
+                <div class="result-label">
+                🏷️ Mots-clés
+                </div>
+
+                <div
+                    id="keywords"
+                    class="keywords"
+                ></div>
+
+                <button
+                    class="small-copy"
+                    onclick="copierMotsCles()"
+                >
+                Copier les mots-clés
+                </button>
+
+            </div>
+
+
+            <div class="result-actions">
+
+
+                <button
+                    class="action-button secondary"
+                    onclick="copierTout()"
+                >
+                📋 Tout copier
+                </button>
+
+
+                <button
+                    class="action-button secondary"
+                    onclick="genererAnnonce()"
+                >
+                🔄 Regénérer
+                </button>
+
+
+                <button
+                    class="action-button primary"
+                    onclick="nouvelleAnnonce()"
+                >
+                ＋ Nouvelle annonce
+                </button>
+
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    document.getElementById(
+        "resultTitre"
+    ).textContent =
+        data.titre || "";
+
+
+    document.getElementById(
+        "resultDescription"
+    ).textContent =
+        data.description || "";
+
+
+    const zone =
+        document.getElementById(
+            "keywords"
+        );
+
+
+    motsCles.forEach(
+        mot => {
+
+            const span =
+                document.createElement(
+                    "span"
+                );
+
+
+            span.className =
+                "keyword";
+
+
+            span.textContent =
+                mot;
+
+
+            zone.appendChild(
+                span
+            );
+
+        }
+    );
+
+
+    resultat.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}
+
+
+// ======================================================
+// FORMAT PRIX
+// ======================================================
+
+function formatPrix(prix) {
+
+    if (
+        prix === undefined ||
+        prix === null ||
+        String(prix).trim() === ""
+    ) {
+
+        return "—";
+
     }
 
+
+    return `${prix} €`;
+
+}
+
+
+// ======================================================
+// COPIER
+// ======================================================
+
+async function copierElement(id) {
+
+    const element =
+        document.getElementById(id);
+
+
+    if (!element) {
+
+        return;
+
+    }
+
+
+    await copier(
+        element.innerText
+    );
+
+}
+
+
+async function copierMotsCles() {
+
+    if (!derniereAnnonce) {
+
+        return;
+
+    }
+
+
+    const mots =
+        Array.isArray(
+            derniereAnnonce.motsCles
+        )
+            ? derniereAnnonce.motsCles
+            : [];
+
+
+    await copier(
+        mots.join(" ")
+    );
+
+}
+
+
+async function copierTout() {
+
+    if (!derniereAnnonce) {
+
+        return;
+
+    }
+
+
+    const mots =
+        Array.isArray(
+            derniereAnnonce.motsCles
+        )
+            ? derniereAnnonce.motsCles.join(
+                " "
+            )
+            : "";
+
+
+    const texte = `
+${derniereAnnonce.titre}
+
+${derniereAnnonce.description}
+
+Prix conseillé : ${formatPrix(
+    derniereAnnonce.prixConseille
+)}
+
+Mots-clés : ${mots}
+`.trim();
+
+
+    await copier(
+        texte
+    );
+
+}
+
+
+async function copier(texte) {
 
     try {
 
         await navigator.clipboard.writeText(
-            annonce.innerText
+            texte
         );
 
 
         alert(
-            "✅ Annonce copiée !"
+            "✅ Copié !"
         );
 
 
@@ -1097,7 +3254,346 @@ async function copierAnnonce() {
 
 }
 
+
+// ======================================================
+// HISTORIQUE
+// ======================================================
+
+function obtenirHistorique() {
+
+    try {
+
+        const historique =
+            JSON.parse(
+                localStorage.getItem(
+                    "vintedboost_history"
+                ) || "[]"
+            );
+
+
+        return Array.isArray(
+            historique
+        )
+            ? historique
+            : [];
+
+
+    } catch (error) {
+
+        return [];
+
+    }
+
+}
+
+
+function enregistrerHistorique(
+    annonce
+) {
+
+    let historique =
+        obtenirHistorique();
+
+
+    historique.unshift(
+        annonce
+    );
+
+
+    historique =
+        historique.slice(
+            0,
+            10
+        );
+
+
+    localStorage.setItem(
+        "vintedboost_history",
+        JSON.stringify(
+            historique
+        )
+    );
+
+
+    afficherHistorique();
+
+}
+
+
+function afficherHistorique() {
+
+    const zone =
+        document.getElementById(
+            "historyList"
+        );
+
+
+    const historique =
+        obtenirHistorique();
+
+
+    if (
+        historique.length === 0
+    ) {
+
+        zone.innerHTML = `
+            <div class="empty-history">
+            Aucune annonce générée pour le moment.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    zone.innerHTML = "";
+
+
+    historique.forEach(
+        annonce => {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "history-item";
+
+
+            const gauche =
+                document.createElement(
+                    "div"
+                );
+
+
+            const titre =
+                document.createElement(
+                    "div"
+                );
+
+
+            titre.className =
+                "history-title";
+
+
+            titre.textContent =
+                annonce.titre ||
+                "Annonce";
+
+
+            const meta =
+                document.createElement(
+                    "div"
+                );
+
+
+            meta.className =
+                "history-meta";
+
+
+            let date =
+                "Date inconnue";
+
+
+            if (annonce.date) {
+
+                date =
+                    new Date(
+                        annonce.date
+                    ).toLocaleDateString(
+                        "fr-FR"
+                    );
+
+            }
+
+
+            meta.textContent =
+                `${
+                    annonce.plateforme ===
+                    "ebay"
+                        ? "eBay"
+                        : "Vinted"
+                } • ${date}`;
+
+
+            gauche.appendChild(
+                titre
+            );
+
+
+            gauche.appendChild(
+                meta
+            );
+
+
+            const prix =
+                document.createElement(
+                    "div"
+                );
+
+
+            prix.className =
+                "history-price";
+
+
+            prix.textContent =
+                formatPrix(
+                    annonce.prixConseille
+                );
+
+
+            item.appendChild(
+                gauche
+            );
+
+
+            item.appendChild(
+                prix
+            );
+
+
+            zone.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+// ======================================================
+// NOUVELLE ANNONCE
+// ======================================================
+
+function nouvelleAnnonce() {
+
+    photosBase64 = [];
+
+    derniereAnnonce = null;
+
+
+    const ids = [
+        "article",
+        "marque",
+        "categorie",
+        "taille",
+        "couleur",
+        "etat",
+        "prix",
+        "details",
+        "defauts"
+    ];
+
+
+    ids.forEach(
+        id => {
+
+            const element =
+                document.getElementById(
+                    id
+                );
+
+
+            if (element) {
+
+                element.value = "";
+
+            }
+
+        }
+    );
+
+
+    document.getElementById(
+        "naturel"
+    ).checked =
+        true;
+
+
+    document.getElementById(
+        "plateformeVinted"
+    ).checked =
+        true;
+
+
+    document.getElementById(
+        "photoMessage"
+    ).innerHTML = "";
+
+
+    document.getElementById(
+        "resultat"
+    ).style.display =
+        "none";
+
+
+    afficherPhotos();
+
+    mettreAJourScore();
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+
+// ======================================================
+// SECURITE AFFICHAGE ERREURS
+// ======================================================
+
+function echapperHTML(texte) {
+
+    return String(
+        texte || ""
+    )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
+// ======================================================
+// DEMARRAGE PAGE
+// ======================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        afficherHistorique();
+
+        mettreAJourScore();
+
+    }
+);
+
 </script>
+
 
 </body>
 

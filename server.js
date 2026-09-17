@@ -3,298 +3,825 @@ require("dotenv").config();
 
 const app = express();
 
-// Permet d'envoyer les photos en Base64
-app.use(express.json({ limit: "12mb" }));
+app.set("trust proxy", 1);
+
+app.use(express.json({ limit: "25mb" }));
 app.use(express.static(__dirname));
 
 
-// =============================
-// ANALYSE DE LA PHOTO
-// =============================
+// ======================================================
+// CONFIGURATION
+// ======================================================
 
-app.post("/analyze-photo", async (req, res) => {
-    try {
-        const { image } = req.body;
+const PORT = process.env.PORT || 3000;
 
-        if (!image) {
-            return res.status(400).json({
-                error: "Aucune photo reçue."
-            });
-        }
+const MAX_PHOTOS = 4;
 
-        const prompt = `
-Analyse cette photo d'un article destiné à être vendu sur une plateforme de seconde main.
+// Limitation simple contre les abus
+const limites = new Map();
 
-Retourne UNIQUEMENT un JSON valide.
 
-Tu dois essayer d'identifier :
-- le type d'article
-- la marque seulement si elle est clairement visible
-- la couleur principale
-- l'état apparent
+// ======================================================
+// RATE LIMIT SIMPLE
+// ======================================================
 
-N'invente jamais une marque si tu ne peux pas la lire clairement.
-N'invente pas la taille.
-N'affirme jamais qu'un article est authentique.
+function limiterRequetes(req, res, next) {
 
-Format exact :
+    const ip = req.ip || "inconnue";
 
-{
-  "article": "",
-  "couleur": "",
-  "etat": "",
-  "details": ""
+    const maintenant = Date.now();
+
+    const duree = 60 * 60 * 1000;
+
+    const maximum = 20;
+
+    let utilisateur = limites.get(ip);
+
+    if (
+        !utilisateur ||
+        maintenant > utilisateur.reset
+    ) {
+
+        utilisateur = {
+            nombre: 0,
+            reset: maintenant + duree
+        };
+
+    }
+
+    utilisateur.nombre++;
+
+    limites.set(ip, utilisateur);
+
+    if (utilisateur.nombre > maximum) {
+
+        return res.status(429).json({
+            error:
+                "Trop de générations. Réessaie un peu plus tard."
+        });
+
+    }
+
+    next();
 }
 
-Pour "etat", utilise uniquement une de ces valeurs :
+
+// ======================================================
+// NETTOYAGE TEXTE
+// ======================================================
+
+function nettoyerTexte(valeur, longueur = 500) {
+
+    if (typeof valeur !== "string") {
+        return "";
+    }
+
+    return valeur
+        .trim()
+        .slice(0, longueur);
+}
+
+
+// ======================================================
+// EXTRAIRE JSON IA
+// ======================================================
+
+function extraireJSON(texte) {
+
+    let nettoyage = texte
+        .replace(/```json/gi, "")
+        .replace(/```/g, "")
+        .trim();
+
+    const debut =
+        nettoyage.indexOf("{");
+
+    const fin =
+        nettoyage.lastIndexOf("}");
+
+    if (
+        debut !== -1 &&
+        fin !== -1
+    ) {
+
+        nettoyage =
+            nettoyage.slice(
+                debut,
+                fin + 1
+            );
+
+    }
+
+    return JSON.parse(nettoyage);
+}
+
+
+// ======================================================
+// APPEL OPENROUTER
+// ======================================================
+
+async function appelerIA(messages) {
+
+    if (!process.env.OPENROUTER_API_KEY) {
+
+        throw new Error(
+            "La clé OpenRouter n'est pas configurée."
+        );
+
+    }
+
+    const response = await fetch(
+        "https://openrouter.ai/api/v1/chat/completions",
+        {
+            method: "POST",
+
+            headers: {
+                "Authorization":
+                    `Bearer ${process.env.OPENROUTER_API_KEY}`,
+
+                "Content-Type":
+                    "application/json"
+            },
+
+            body: JSON.stringify({
+                model: "openrouter/free",
+                messages,
+                temperature: 0.4
+            })
+        }
+    );
+
+    const data =
+        await response.json();
+
+
+    if (!response.ok) {
+
+        console.error(
+            "ERREUR OPENROUTER :",
+            data
+        );
+
+        throw new Error(
+            data?.error?.message ||
+            "Le service IA est temporairement indisponible."
+        );
+
+    }
+
+
+    const texte =
+        data.choices?.[0]?.message?.content;
+
+
+    if (!texte) {
+
+        throw new Error(
+            "L'IA n'a renvoyé aucune réponse."
+        );
+
+    }
+
+
+    return texte;
+}
+
+
+// ======================================================
+// ANALYSE DE PLUSIEURS PHOTOS
+// ======================================================
+
+app.post(
+    "/analyze-photos",
+    limiterRequetes,
+    async (req, res) => {
+
+        try {
+
+            let { images } = req.body;
+
+
+            if (!Array.isArray(images)) {
+
+                return res.status(400).json({
+                    error:
+                        "Format des photos incorrect."
+                });
+
+            }
+
+
+            images =
+                images.slice(
+                    0,
+                    MAX_PHOTOS
+                );
+
+
+            if (images.length === 0) {
+
+                return res.status(400).json({
+                    error:
+                        "Ajoute au moins une photo."
+                });
+
+            }
+
+
+            const imagesValides =
+                images.filter(
+                    image =>
+                        typeof image === "string" &&
+                        /^data:image\/(jpeg|jpg|png|webp);base64,/i.test(
+                            image
+                        )
+                );
+
+
+            if (imagesValides.length === 0) {
+
+                return res.status(400).json({
+                    error:
+                        "Les photos envoyées ne sont pas valides."
+                });
+
+            }
+
+
+            const prompt = `
+Tu analyses plusieurs photos DU MÊME article destiné à être vendu d'occasion.
+
+Les différentes photos peuvent montrer :
+- l'article entier
+- le logo ou la marque
+- une étiquette
+- des détails
+- des défauts
+
+Analyse toutes les photos ensemble.
+
+IMPORTANT :
+
+Tu dois uniquement décrire ce qui est réellement visible.
+
+N'invente JAMAIS :
+- une marque non lisible
+- un modèle précis incertain
+- une taille non visible
+- une matière non identifiable avec certitude
+- une preuve d'authenticité
+- un défaut invisible
+
+Tu ne dois jamais affirmer qu'un article est authentique.
+
+Pour l'état, sois prudent.
+Une photo ne permet pas toujours de connaître parfaitement l'état réel.
+
+Retourne UNIQUEMENT un JSON valide :
+
+{
+    "article": "",
+    "marque": "",
+    "categorie": "",
+    "couleur": "",
+    "tailleVisible": "",
+    "etat": "",
+    "details": "",
+    "defauts": ""
+}
+
+categorie doit être une catégorie simple comme :
+"Veste",
+"Sweat",
+"T-shirt",
+"Pantalon",
+"Jean",
+"Chaussures",
+"Accessoire",
+"Robe",
+"Chemise",
+"Pull",
+"Short",
+"Autre"
+
+etat doit être exactement une valeur parmi :
+
 "Neuf avec étiquette"
 "Neuf sans étiquette"
 "Très bon état"
 "Bon état"
 "État satisfaisant"
 
-Dans details, donne une courte description uniquement de ce qui est réellement visible.
+Si tu ne peux pas déterminer une information,
+retourne une chaîne vide "".
+
+Dans "details", décris brièvement les éléments utiles réellement visibles.
+
+Dans "defauts", indique uniquement les défauts clairement visibles.
+Sinon retourne "".
 `;
 
-        const response = await fetch(
-            "https://openrouter.ai/api/v1/chat/completions",
-            {
-                method: "POST",
 
-                headers: {
-                    "Authorization":
-                        `Bearer ${process.env.OPENROUTER_API_KEY}`,
+            const contenu = [
+                {
+                    type: "text",
+                    text: prompt
+                }
+            ];
 
-                    "Content-Type": "application/json"
-                },
 
-                body: JSON.stringify({
-                    model: "openrouter/free",
+            for (
+                const image of imagesValides
+            ) {
 
-                    messages: [
-                        {
-                            role: "user",
+                contenu.push({
+                    type: "image_url",
 
-                            content: [
-                                {
-                                    type: "text",
-                                    text: prompt
-                                },
+                    image_url: {
+                        url: image
+                    }
+                });
 
-                                {
-                                    type: "image_url",
-
-                                    image_url: {
-                                        url: image
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                })
             }
-        );
 
-        const data = await response.json();
 
-        if (!response.ok) {
-            console.error(
-                "ERREUR ANALYSE PHOTO :",
-                data
-            );
+            const texte =
+                await appelerIA([
+                    {
+                        role: "user",
+                        content: contenu
+                    }
+                ]);
 
-            return res.status(response.status).json({
-                error:
-                    data?.error?.message ||
-                    "Impossible d'analyser la photo."
+
+            let analyse;
+
+
+            try {
+
+                analyse =
+                    extraireJSON(texte);
+
+            } catch (error) {
+
+                console.error(
+                    "JSON PHOTO INVALIDE :",
+                    texte
+                );
+
+                return res.status(500).json({
+                    error:
+                        "L'analyse n'a pas pu être comprise. Réessaie."
+                });
+
+            }
+
+
+            res.json({
+                article:
+                    nettoyerTexte(
+                        analyse.article,
+                        100
+                    ),
+
+                marque:
+                    nettoyerTexte(
+                        analyse.marque,
+                        100
+                    ),
+
+                categorie:
+                    nettoyerTexte(
+                        analyse.categorie,
+                        100
+                    ),
+
+                couleur:
+                    nettoyerTexte(
+                        analyse.couleur,
+                        100
+                    ),
+
+                tailleVisible:
+                    nettoyerTexte(
+                        analyse.tailleVisible,
+                        50
+                    ),
+
+                etat:
+                    nettoyerTexte(
+                        analyse.etat,
+                        50
+                    ),
+
+                details:
+                    nettoyerTexte(
+                        analyse.details,
+                        700
+                    ),
+
+                defauts:
+                    nettoyerTexte(
+                        analyse.defauts,
+                        500
+                    )
             });
-        }
 
-        let texte =
-            data.choices?.[0]?.message?.content;
 
-        if (!texte) {
-            throw new Error(
-                "L'IA n'a renvoyé aucune analyse."
+        } catch (error) {
+
+            console.error(
+                "ERREUR ANALYSE :",
+                error
             );
+
+            res.status(500).json({
+                error:
+                    error.message
+            });
+
         }
 
-        // Retire les balises ```json éventuelles
-        texte = texte
-            .replace(/```json/gi, "")
-            .replace(/```/g, "")
-            .trim();
+    }
+);
 
-        let analyse;
+
+// ======================================================
+// GENERATION ANNONCE
+// ======================================================
+
+app.post(
+    "/generate",
+    limiterRequetes,
+    async (req, res) => {
 
         try {
-            analyse = JSON.parse(texte);
-        } catch (e) {
-            console.error(
-                "JSON PHOTO INVALIDE :",
-                texte
-            );
 
-            return res.status(500).json({
-                error:
-                    "L'analyse de la photo n'a pas pu être comprise. Réessaie avec une autre photo."
-            });
-        }
+            const article =
+                nettoyerTexte(
+                    req.body.article,
+                    100
+                );
 
-        res.json(analyse);
+            const marque =
+                nettoyerTexte(
+                    req.body.marque,
+                    100
+                );
 
-    } catch (error) {
-        console.error(
-            "ERREUR PHOTO :",
-            error
-        );
+            const categorie =
+                nettoyerTexte(
+                    req.body.categorie,
+                    100
+                );
 
-        res.status(500).json({
-            error: error.message
-        });
-    }
-});
+            const taille =
+                nettoyerTexte(
+                    req.body.taille,
+                    50
+                );
+
+            const couleur =
+                nettoyerTexte(
+                    req.body.couleur,
+                    100
+                );
+
+            const etat =
+                nettoyerTexte(
+                    req.body.etat,
+                    50
+                );
+
+            const prix =
+                nettoyerTexte(
+                    String(
+                        req.body.prix || ""
+                    ),
+                    20
+                );
+
+            const details =
+                nettoyerTexte(
+                    req.body.details,
+                    1000
+                );
+
+            const defauts =
+                nettoyerTexte(
+                    req.body.defauts,
+                    500
+                );
+
+            const style =
+                nettoyerTexte(
+                    req.body.style,
+                    30
+                );
+
+            const plateforme =
+                nettoyerTexte(
+                    req.body.plateforme,
+                    30
+                );
 
 
-// =============================
-// GENERATION DE L'ANNONCE
-// =============================
+            if (!article) {
 
-app.post("/generate", async (req, res) => {
-    try {
-        const {
-            article,
-            taille,
-            couleur,
-            etat,
-            prix,
-            details
-        } = req.body;
+                return res.status(400).json({
+                    error:
+                        "Indique au minimum le type d'article."
+                });
 
-        if (!article) {
-            return res.status(400).json({
-                error:
-                    "Indique au minimum le nom de l'article."
-            });
-        }
+            }
 
-        const prompt = `
-Tu es un spécialiste de la rédaction d'annonces de vêtements et accessoires d'occasion.
 
-Crée une annonce naturelle, claire et attractive.
+            let consigneStyle =
+                "Utilise un ton naturel, simple et crédible.";
 
-Informations :
 
-Article : ${article}
-Taille : ${taille || "non renseignée"}
-Couleur : ${couleur || "non renseignée"}
-État : ${etat || "non renseigné"}
-Prix souhaité : ${prix || "non renseigné"} €
-Détails : ${details || "aucun"}
+            if (style === "court") {
+
+                consigneStyle =
+                    "Fais une annonce courte et très directe.";
+
+            }
+
+
+            if (style === "vendeur") {
+
+                consigneStyle =
+                    "Fais une annonce attractive et dynamique, sans exagération.";
+
+            }
+
+
+            if (style === "premium") {
+
+                consigneStyle =
+                    "Utilise un ton élégant, soigné et premium, sans inventer d'informations.";
+
+            }
+
+
+            let consignePlateforme =
+                "Adapte l'annonce à une plateforme de seconde main.";
+
+
+            if (plateforme === "vinted") {
+
+                consignePlateforme = `
+L'annonce est destinée à Vinted.
+Utilise un style naturel adapté à une annonce entre particuliers.
+Le titre doit être clair et relativement court.
+`;
+
+            }
+
+
+            if (plateforme === "ebay") {
+
+                consignePlateforme = `
+L'annonce est destinée à eBay.
+Le titre doit être précis et descriptif.
+La description peut être légèrement plus structurée.
+`;
+
+            }
+
+
+            const prompt = `
+Tu rédiges une annonce de vente d'occasion.
+
+PLATEFORME :
+${plateforme || "non précisée"}
+
+${consignePlateforme}
+
+STYLE :
+${consigneStyle}
+
+INFORMATIONS FOURNIES PAR L'UTILISATEUR :
+
+Article :
+${article}
+
+Marque :
+${marque || "non renseignée"}
+
+Catégorie :
+${categorie || "non renseignée"}
+
+Taille :
+${taille || "non renseignée"}
+
+Couleur :
+${couleur || "non renseignée"}
+
+État :
+${etat || "non renseigné"}
+
+Prix souhaité :
+${prix ? prix + " €" : "non renseigné"}
+
+Détails :
+${details || "aucun"}
+
+Défauts :
+${defauts || "aucun défaut renseigné"}
 
 RÈGLES IMPORTANTES :
 
-- N'invente aucune caractéristique.
-- N'invente jamais la matière.
-- N'invente jamais l'authenticité.
+- N'invente aucune information.
+- N'invente jamais une marque.
+- N'invente jamais une matière.
 - N'invente jamais le prix neuf.
-- N'invente jamais une marque absente des informations.
-- Fais une description naturelle.
-- Le titre doit être court et efficace.
+- N'invente jamais une taille.
+- N'affirme jamais que l'article est authentique.
+- Mentionne les défauts renseignés de manière honnête.
+- N'utilise pas de fausse urgence.
+- N'affirme pas que l'article va forcément se vendre.
+- Évite les phrases robotiques.
 - Maximum 8 mots-clés.
-- Si un prix est indiqué, propose un prix proche et cohérent.
-- Si aucun prix n'est indiqué, donne une estimation prudente.
+- Les mots-clés doivent être pertinents.
 
-Réponds exactement sous cette forme :
+PRIX :
 
-📌 Titre :
-...
+Si un prix souhaité est fourni :
+base ta suggestion principalement sur ce prix et les informations fournies.
 
-📝 Description :
-...
+Si aucun prix n'est fourni :
+fais uniquement une estimation indicative prudente basée sur les informations disponibles.
 
-💰 Prix conseillé :
-...
+Tu n'as PAS accès aux ventes réelles actuelles de Vinted ou eBay.
+Ne prétends donc jamais utiliser des ventes récentes ou des données de marché en temps réel.
 
-🏷️ Mots-clés :
-...
+Retourne UNIQUEMENT ce JSON valide :
+
+{
+    "titre": "",
+    "description": "",
+    "prixConseille": "",
+    "prixMin": "",
+    "prixMax": "",
+    "motsCles": []
+}
+
+Pour prixConseille, prixMin et prixMax :
+retourne uniquement un nombre entier sous forme de texte.
+Exemple :
+"39"
+
+motsCles doit être un tableau de chaînes de caractères.
 `;
 
-        const response = await fetch(
-            "https://openrouter.ai/api/v1/chat/completions",
-            {
-                method: "POST",
 
-                headers: {
-                    "Authorization":
-                        `Bearer ${process.env.OPENROUTER_API_KEY}`,
+            const texte =
+                await appelerIA([
+                    {
+                        role: "user",
+                        content: prompt
+                    }
+                ]);
 
-                    "Content-Type": "application/json"
-                },
 
-                body: JSON.stringify({
-                    model: "openrouter/free",
+            let annonce;
 
-                    messages: [
-                        {
-                            role: "user",
-                            content: prompt
-                        }
-                    ]
-                })
+
+            try {
+
+                annonce =
+                    extraireJSON(texte);
+
+            } catch (error) {
+
+                console.error(
+                    "JSON ANNONCE INVALIDE :",
+                    texte
+                );
+
+                return res.status(500).json({
+                    error:
+                        "L'IA a renvoyé une réponse incorrecte. Clique sur Regénérer."
+                });
+
             }
-        );
 
-        const data = await response.json();
 
-        if (!response.ok) {
-            console.error(
-                "ERREUR OPENROUTER :",
-                data
-            );
+            let motsCles =
+                annonce.motsCles;
 
-            return res.status(response.status).json({
-                error:
-                    data?.error?.message ||
-                    "Erreur de génération."
+
+            if (
+                !Array.isArray(
+                    motsCles
+                )
+            ) {
+
+                motsCles = [];
+
+            }
+
+
+            motsCles =
+                motsCles
+                    .slice(0, 8)
+                    .map(
+                        mot =>
+                            nettoyerTexte(
+                                String(mot),
+                                50
+                            )
+                    )
+                    .filter(Boolean);
+
+
+            res.json({
+
+                titre:
+                    nettoyerTexte(
+                        annonce.titre,
+                        160
+                    ),
+
+                description:
+                    nettoyerTexte(
+                        annonce.description,
+                        2000
+                    ),
+
+                prixConseille:
+                    nettoyerTexte(
+                        String(
+                            annonce.prixConseille ||
+                            ""
+                        ),
+                        20
+                    ),
+
+                prixMin:
+                    nettoyerTexte(
+                        String(
+                            annonce.prixMin ||
+                            ""
+                        ),
+                        20
+                    ),
+
+                prixMax:
+                    nettoyerTexte(
+                        String(
+                            annonce.prixMax ||
+                            ""
+                        ),
+                        20
+                    ),
+
+                motsCles
+
             });
-        }
 
-        const texte =
-            data.choices?.[0]?.message?.content;
 
-        if (!texte) {
-            throw new Error(
-                "L'IA n'a renvoyé aucune annonce."
+        } catch (error) {
+
+            console.error(
+                "ERREUR GENERATION :",
+                error
             );
+
+            res.status(500).json({
+                error:
+                    error.message
+            });
+
         }
 
-        res.json({
-            result: texte
-        });
-
-    } catch (error) {
-        console.error(
-            "ERREUR SERVEUR :",
-            error
-        );
-
-        res.status(500).json({
-            error: error.message
-        });
     }
+);
+
+
+// ======================================================
+// TEST SERVEUR
+// ======================================================
+
+app.get("/health", (req, res) => {
+
+    res.json({
+        status: "ok",
+        app: "VintedBoost"
+    });
+
 });
 
 
-// =============================
+// ======================================================
 // DEMARRAGE
-// =============================
-
-const PORT =
-    process.env.PORT || 3000;
+// ======================================================
 
 app.listen(PORT, () => {
+
     console.log(
         `🚀 VintedBoost fonctionne sur le port ${PORT}`
     );
+
 });
