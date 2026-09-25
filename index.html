@@ -85,7 +85,248 @@ header{
     font-size:13px;
     font-weight:800;
 }
+/* ============================
+   AUTHENTIFICATION V8
+============================ */
 
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.auth-button{
+    border:0;
+    background:linear-gradient(90deg,var(--violet),var(--violet2));
+    color:white;
+    padding:9px 15px;
+    border-radius:10px;
+    font-size:13px;
+    font-weight:800;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.auth-button:hover{
+    transform:translateY(-1px);
+    box-shadow:0 7px 18px rgba(124,58,237,.2);
+}
+
+.user-zone{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+#userEmail{
+    max-width:180px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:12px;
+    font-weight:700;
+}
+
+.logout-button{
+    border:1px solid var(--border);
+    background:white;
+    padding:8px 11px;
+    border-radius:9px;
+    font-size:12px;
+    font-weight:750;
+    cursor:pointer;
+}
+
+.logout-button:hover{
+    background:#fafafa;
+}
+
+/* FOND DE LA FENETRE */
+
+.auth-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    background:rgba(24,24,27,.55);
+    backdrop-filter:blur(5px);
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.auth-modal.open{
+    display:flex;
+}
+
+/* CARTE */
+
+.auth-card{
+    position:relative;
+    width:100%;
+    max-width:430px;
+    background:white;
+    border:1px solid #ebe7f1;
+    border-radius:24px;
+    padding:32px;
+    box-shadow:0 30px 80px rgba(0,0,0,.2);
+}
+
+.auth-close{
+    position:absolute;
+    top:15px;
+    right:15px;
+    width:34px;
+    height:34px;
+    border:0;
+    border-radius:50%;
+    background:#f4f4f5;
+    font-size:22px;
+    line-height:1;
+    cursor:pointer;
+}
+
+.auth-close:hover{
+    background:#e4e4e7;
+}
+
+.auth-logo{
+    margin-bottom:22px;
+    font-size:21px;
+    font-weight:900;
+}
+
+.auth-logo span{
+    color:var(--violet);
+}
+
+.auth-card h2{
+    margin:0;
+    font-size:28px;
+}
+
+.auth-subtitle{
+    margin:8px 0 22px;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.5;
+}
+
+.auth-label{
+    display:block;
+    margin:14px 0 7px;
+    font-size:13px;
+    font-weight:800;
+}
+
+.auth-input{
+    width:100%;
+    padding:14px;
+    border:1px solid var(--border);
+    border-radius:11px;
+    outline:none;
+    background:white;
+}
+
+.auth-input:focus{
+    border-color:var(--violet);
+    box-shadow:0 0 0 3px rgba(124,58,237,.08);
+}
+
+.auth-submit{
+    width:100%;
+    margin-top:20px;
+    padding:14px;
+    border:0;
+    border-radius:11px;
+    color:white;
+    background:linear-gradient(
+        90deg,
+        var(--violet),
+        var(--violet2)
+    );
+    font-weight:850;
+    cursor:pointer;
+}
+
+.auth-submit:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.auth-switch{
+    margin:19px 0 0;
+    text-align:center;
+    color:var(--muted);
+    font-size:13px;
+}
+
+.auth-switch button{
+    border:0;
+    padding:3px;
+    background:transparent;
+    color:var(--violet);
+    font-weight:850;
+    cursor:pointer;
+}
+
+.auth-message{
+    display:none;
+    margin-bottom:14px;
+    padding:11px 13px;
+    border-radius:10px;
+    font-size:13px;
+    line-height:1.45;
+}
+
+.auth-message.error{
+    display:block;
+    color:#991b1b;
+    background:#fef2f2;
+    border:1px solid #fecaca;
+}
+
+.auth-message.success{
+    display:block;
+    color:#166534;
+    background:#f0fdf4;
+    border:1px solid #bbf7d0;
+}
+
+/* MOBILE AUTH */
+
+@media(max-width:700px){
+
+    .header-right{
+        gap:6px;
+    }
+
+    .header-right .version{
+        display:none;
+    }
+
+    #userEmail{
+        display:none;
+    }
+
+    .auth-button{
+        padding:8px 10px;
+        font-size:12px;
+    }
+
+    .logout-button{
+        padding:8px 9px;
+    }
+
+    .auth-card{
+        padding:27px 20px;
+        border-radius:20px;
+    }
+
+    .auth-card h2{
+        font-size:24px;
+    }
+}
 /* HERO */
 
 .hero{
@@ -736,17 +977,121 @@ footer{
 <body>
 
 <header>
+<header>
     <div class="logo">
         <span class="logo-icon">⚡</span>
         Vinted<span>Boost</span>
     </div>
 
-    <div class="version">
-        V7 • Assistant IA
+    <div class="header-right">
+        <div class="version">
+            V8 • Comptes + IA
+        </div>
+
+        <button
+            id="authButton"
+            class="auth-button"
+            type="button"
+            onclick="ouvrirAuth()"
+        >
+            👤 Se connecter
+        </button>
+
+        <div id="userZone" class="user-zone" style="display:none;">
+            <span id="userEmail"></span>
+
+            <button
+                type="button"
+                class="logout-button"
+                onclick="deconnexion()"
+            >
+                Déconnexion
+            </button>
+        </div>
     </div>
 </header>
+</header>
 
+<!-- ============================
+     AUTHENTIFICATION V8
+============================ -->
 
+<div id="authModal" class="auth-modal">
+
+    <div class="auth-card">
+
+        <button
+            type="button"
+            class="auth-close"
+            onclick="fermerAuth()"
+        >
+            ×
+        </button>
+
+        <div class="auth-logo">
+            ⚡ Vinted<span>Boost</span>
+        </div>
+
+        <h2 id="authTitle">
+            Se connecter
+        </h2>
+
+        <p id="authSubtitle" class="auth-subtitle">
+            Connecte-toi pour accéder à ton compte VintedBoost.
+        </p>
+
+        <div id="authMessage" class="auth-message"></div>
+
+        <label class="auth-label" for="authEmail">
+            Adresse email
+        </label>
+
+        <input
+            id="authEmail"
+            class="auth-input"
+            type="email"
+            autocomplete="email"
+            placeholder="exemple@email.com"
+        >
+
+        <label class="auth-label" for="authPassword">
+            Mot de passe
+        </label>
+
+        <input
+            id="authPassword"
+            class="auth-input"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Minimum 6 caractères"
+        >
+
+        <button
+            id="authSubmit"
+            type="button"
+            class="auth-submit"
+            onclick="envoyerAuth()"
+        >
+            Se connecter
+        </button>
+
+        <p class="auth-switch">
+            <span id="authSwitchText">
+                Pas encore de compte ?
+            </span>
+
+            <button
+                id="authSwitchButton"
+                type="button"
+                onclick="changerModeAuth()"
+            >
+                Créer un compte
+            </button>
+        </p>
+
+    </div>
+
+</div>
 <section class="hero">
 
     <div class="hero-badge">
@@ -1161,12 +1506,631 @@ footer{
     VintedBoost V7 • Assistant IA pour tes annonces
 </footer>
 
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 
 let photosBase64 = [];
 let derniereAnnonce = null;
+/* ============================
+   AUTHENTIFICATION V8
+============================ */
 
+let supabaseClient = null;
+let modeAuth = "login";
+
+
+async function initialiserSupabase(){
+
+    try{
+
+        const response =
+            await fetch("/supabase-config");
+
+        if(!response.ok){
+            throw new Error(
+                "Configuration Supabase indisponible."
+            );
+        }
+
+        const config =
+            await response.json();
+
+        if(
+            !config.url ||
+            !config.publishableKey
+        ){
+            throw new Error(
+                "Configuration Supabase incomplète."
+            );
+        }
+
+
+        supabaseClient =
+            window.supabase.createClient(
+                config.url,
+                config.publishableKey,
+                {
+                    auth:{
+                        persistSession:true,
+                        autoRefreshToken:true,
+                        detectSessionInUrl:true
+                    }
+                }
+            );
+
+
+        const {
+            data:{
+                session
+            }
+        } =
+            await supabaseClient
+                .auth
+                .getSession();
+
+
+        mettreAJourUtilisateur(
+            session?.user || null
+        );
+
+
+        supabaseClient
+            .auth
+            .onAuthStateChange(
+                (event,session)=>{
+
+                    mettreAJourUtilisateur(
+                        session?.user || null
+                    );
+
+                }
+            );
+
+
+    }catch(error){
+
+        console.error(
+            "Erreur Supabase :",
+            error
+        );
+    }
+}
+
+
+function ouvrirAuth(){
+
+    if(!supabaseClient){
+
+        alert(
+            "Connexion au service utilisateur en cours. Réessaie dans quelques secondes."
+        );
+
+        return;
+    }
+
+
+    document
+        .getElementById("authModal")
+        .classList
+        .add("open");
+
+
+    document
+        .getElementById("authEmail")
+        .focus();
+}
+
+
+function fermerAuth(){
+
+    document
+        .getElementById("authModal")
+        .classList
+        .remove("open");
+
+
+    cacherMessageAuth();
+}
+
+
+function changerModeAuth(){
+
+    modeAuth =
+        modeAuth === "login"
+        ? "signup"
+        : "login";
+
+
+    const title =
+        document.getElementById(
+            "authTitle"
+        );
+
+    const subtitle =
+        document.getElementById(
+            "authSubtitle"
+        );
+
+    const submit =
+        document.getElementById(
+            "authSubmit"
+        );
+
+    const switchText =
+        document.getElementById(
+            "authSwitchText"
+        );
+
+    const switchButton =
+        document.getElementById(
+            "authSwitchButton"
+        );
+
+
+    if(modeAuth === "signup"){
+
+        title.textContent =
+            "Créer un compte";
+
+        subtitle.textContent =
+            "Crée ton compte VintedBoost gratuitement.";
+
+        submit.textContent =
+            "Créer mon compte";
+
+        switchText.textContent =
+            "Déjà un compte ?";
+
+        switchButton.textContent =
+            "Se connecter";
+
+
+        document
+            .getElementById(
+                "authPassword"
+            )
+            .setAttribute(
+                "autocomplete",
+                "new-password"
+            );
+
+
+    }else{
+
+        title.textContent =
+            "Se connecter";
+
+        subtitle.textContent =
+            "Connecte-toi pour accéder à ton compte VintedBoost.";
+
+        submit.textContent =
+            "Se connecter";
+
+        switchText.textContent =
+            "Pas encore de compte ?";
+
+        switchButton.textContent =
+            "Créer un compte";
+
+
+        document
+            .getElementById(
+                "authPassword"
+            )
+            .setAttribute(
+                "autocomplete",
+                "current-password"
+            );
+    }
+
+
+    cacherMessageAuth();
+}
+
+
+async function envoyerAuth(){
+
+    if(!supabaseClient){
+
+        afficherMessageAuth(
+            "Service utilisateur indisponible.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const email =
+        document
+            .getElementById(
+                "authEmail"
+            )
+            .value
+            .trim();
+
+
+    const password =
+        document
+            .getElementById(
+                "authPassword"
+            )
+            .value;
+
+
+    if(!email){
+
+        afficherMessageAuth(
+            "Entre ton adresse email.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(password.length < 6){
+
+        afficherMessageAuth(
+            "Le mot de passe doit contenir au moins 6 caractères.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const button =
+        document.getElementById(
+            "authSubmit"
+        );
+
+
+    button.disabled = true;
+
+    button.textContent =
+        modeAuth === "signup"
+        ? "Création du compte..."
+        : "Connexion...";
+
+
+    cacherMessageAuth();
+
+
+    try{
+
+        if(modeAuth === "signup"){
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .auth
+                    .signUp({
+                        email,
+                        password
+                    });
+
+
+            if(error){
+                throw error;
+            }
+
+
+            if(data.session){
+
+                afficherMessageAuth(
+                    "✅ Compte créé et connecté !",
+                    "success"
+                );
+
+
+                setTimeout(
+                    fermerAuth,
+                    900
+                );
+
+
+            }else{
+
+                afficherMessageAuth(
+                    "✅ Compte créé. Vérifie maintenant ta boîte mail pour confirmer ton adresse.",
+                    "success"
+                );
+            }
+
+
+        }else{
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .auth
+                    .signInWithPassword({
+                        email,
+                        password
+                    });
+
+
+            if(error){
+                throw error;
+            }
+
+
+            if(data.user){
+
+                afficherMessageAuth(
+                    "✅ Connexion réussie !",
+                    "success"
+                );
+
+
+                setTimeout(
+                    fermerAuth,
+                    700
+                );
+            }
+        }
+
+
+    }catch(error){
+
+        console.error(
+            "Erreur authentification :",
+            error
+        );
+
+
+        afficherMessageAuth(
+            traduireErreurAuth(
+                error.message
+            ),
+            "error"
+        );
+
+
+    }finally{
+
+        button.disabled = false;
+
+        button.textContent =
+            modeAuth === "signup"
+            ? "Créer mon compte"
+            : "Se connecter";
+    }
+}
+
+
+async function deconnexion(){
+
+    if(!supabaseClient){
+        return;
+    }
+
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .auth
+            .signOut();
+
+
+    if(error){
+
+        alert(
+            "Impossible de se déconnecter."
+        );
+
+        return;
+    }
+
+
+    mettreAJourUtilisateur(null);
+}
+
+
+function mettreAJourUtilisateur(user){
+
+    const authButton =
+        document.getElementById(
+            "authButton"
+        );
+
+    const userZone =
+        document.getElementById(
+            "userZone"
+        );
+
+    const userEmail =
+        document.getElementById(
+            "userEmail"
+        );
+
+
+    if(user){
+
+        authButton.style.display =
+            "none";
+
+        userZone.style.display =
+            "flex";
+
+        userEmail.textContent =
+            user.email || "Mon compte";
+
+
+    }else{
+
+        authButton.style.display =
+            "block";
+
+        userZone.style.display =
+            "none";
+
+        userEmail.textContent =
+            "";
+    }
+}
+
+
+function afficherMessageAuth(
+    message,
+    type
+){
+
+    const zone =
+        document.getElementById(
+            "authMessage"
+        );
+
+
+    zone.textContent =
+        message;
+
+    zone.className =
+        "auth-message " + type;
+}
+
+
+function cacherMessageAuth(){
+
+    const zone =
+        document.getElementById(
+            "authMessage"
+        );
+
+
+    zone.textContent = "";
+
+    zone.className =
+        "auth-message";
+}
+
+
+function traduireErreurAuth(message){
+
+    const texte =
+        String(message || "")
+        .toLowerCase();
+
+
+    if(
+        texte.includes(
+            "invalid login credentials"
+        )
+    ){
+
+        return "Email ou mot de passe incorrect.";
+    }
+
+
+    if(
+        texte.includes(
+            "email not confirmed"
+        )
+    ){
+
+        return "Confirme d'abord ton adresse email.";
+    }
+
+
+    if(
+        texte.includes(
+            "user already registered"
+        )
+    ){
+
+        return "Un compte existe déjà avec cette adresse email.";
+    }
+
+
+    if(
+        texte.includes(
+            "password"
+        )
+    ){
+
+        return "Le mot de passe n'est pas valide.";
+    }
+
+
+    if(
+        texte.includes(
+            "rate limit"
+        )
+    ){
+
+        return "Trop de tentatives. Attends quelques minutes avant de réessayer.";
+    }
+
+
+    return message ||
+        "Une erreur est survenue.";
+}
+
+
+/* Fermer la fenêtre en cliquant
+   sur le fond */
+
+document.addEventListener(
+    "click",
+    event=>{
+
+        const modal =
+            document.getElementById(
+                "authModal"
+            );
+
+
+        if(
+            modal &&
+            event.target === modal
+        ){
+
+            fermerAuth();
+        }
+    }
+);
+
+
+/* Entrée = connexion / inscription */
+
+document.addEventListener(
+    "keydown",
+    event=>{
+
+        const modal =
+            document.getElementById(
+                "authModal"
+            );
+
+
+        if(
+            event.key === "Enter" &&
+            modal?.classList.contains(
+                "open"
+            )
+        ){
+
+            envoyerAuth();
+        }
+
+
+        if(
+            event.key === "Escape" &&
+            modal?.classList.contains(
+                "open"
+            )
+        ){
+
+            fermerAuth();
+        }
+    }
+);
 
 /* ============================
    OUTILS
@@ -2749,6 +3713,8 @@ document.addEventListener(
         updateScore();
 
         setStep(1);
+
+        initialiserSupabase();
     }
 );
 
