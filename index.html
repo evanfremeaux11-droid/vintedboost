@@ -1,1597 +1,787 @@
 <!DOCTYPE html>
-
 <html lang="fr">
-
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="VintedBoost transforme les photos de tes vêtements en annonces optimisées grâce à l'IA.">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
-<title>VintedBoost — Générateur d'annonces IA</title>
+<title>VintedBoost V7 — Assistant IA</title>
 
 <style>
-
-:root {
-
-    --purple: #7c3aed;
-    --purple-dark: #6d28d9;
-    --purple-light: #f5f3ff;
-    --purple-border: #ddd6fe;
-
-    --background: #f8f7fc;
-    --white: #ffffff;
-
-    --text: #18181b;
-    --muted: #71717a;
-
-    --green: #15803d;
-    --red: #b91c1c;
-
-    --border: #e4e4e7;
-
+:root{
+    --violet:#7c3aed;
+    --violet2:#9333ea;
+    --violetLight:#f5f3ff;
+    --violetBorder:#ddd6fe;
+    --text:#18181b;
+    --muted:#71717a;
+    --border:#e4e4e7;
+    --background:#faf9ff;
+    --green:#16a34a;
+    --red:#dc2626;
+    --orange:#f97316;
 }
 
-* {
-    box-sizing: border-box;
+*{
+    box-sizing:border-box;
 }
 
-body {
+html{
+    scroll-behavior:smooth;
+}
 
-    margin: 0;
-
-    font-family:
-        Inter,
-        Arial,
-        sans-serif;
-
+body{
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    color:var(--text);
     background:
-        linear-gradient(
-            180deg,
-            #faf8ff 0%,
-            #f8f7fc 45%,
-            #ffffff 100%
-        );
-
-    color: var(--text);
-
+        radial-gradient(circle at 50% 0%,#f3e8ff 0,transparent 32%),
+        var(--background);
 }
 
-
-/* ================= HEADER ================= */
-
-header {
-
-    height: 72px;
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            0.92
-        );
-
-    backdrop-filter:
-        blur(10px);
-
-    border-bottom:
-        1px solid #eee;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content:
-        space-between;
-
-    padding:
-        0 max(
-            20px,
-            calc(
-                (100% - 1100px) / 2
-            )
-        );
-
-    position: sticky;
-
-    top: 0;
-
-    z-index: 20;
-
+button,input,select,textarea{
+    font:inherit;
 }
 
-.logo {
-
-    font-size: 23px;
-
-    font-weight: 900;
-
+button{
+    -webkit-tap-highlight-color:transparent;
 }
 
-.logo span {
-    color: var(--purple);
+/* HEADER */
+
+header{
+    height:68px;
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid #eee;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 max(18px,calc((100% - 1100px)/2));
+    position:sticky;
+    top:0;
+    z-index:50;
 }
 
-.header-right {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
+.logo{
+    font-size:23px;
+    font-weight:900;
+    letter-spacing:-.7px;
 }
 
-.badge {
-
-    padding:
-        8px 13px;
-
-    border-radius:
-        30px;
-
-    background:
-        var(--purple-light);
-
-    color:
-        var(--purple);
-
-    font-size:
-        13px;
-
-    font-weight:
-        700;
-
+.logo-icon{
+    color:var(--orange);
 }
 
-
-/* ================= HERO ================= */
-
-.hero {
-
-    max-width:
-        850px;
-
-    margin:
-        auto;
-
-    padding:
-        70px 20px 40px;
-
-    text-align:
-        center;
-
+.logo span{
+    color:var(--violet);
 }
 
-.hero-tag {
-
-    display:
-        inline-flex;
-
-    align-items:
-        center;
-
-    gap:
-        7px;
-
-    padding:
-        8px 14px;
-
-    border:
-        1px solid
-        var(--purple-border);
-
-    border-radius:
-        50px;
-
-    background:
-        var(--purple-light);
-
-    color:
-        var(--purple-dark);
-
-    font-size:
-        14px;
-
-    font-weight:
-        700;
-
+.version{
+    background:var(--violetLight);
+    color:var(--violet);
+    padding:8px 13px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:800;
 }
 
-h1 {
+/* HERO */
 
-    margin:
-        20px 0 15px;
-
-    font-size:
-        clamp(
-            38px,
-            6vw,
-            62px
-        );
-
-    line-height:
-        1.02;
-
-    letter-spacing:
-        -2px;
-
+.hero{
+    max-width:900px;
+    margin:auto;
+    text-align:center;
+    padding:60px 20px 32px;
 }
 
-.gradient-text {
-
-    background:
-        linear-gradient(
-            90deg,
-            #7c3aed,
-            #a855f7
-        );
-
-    -webkit-background-clip:
-        text;
-
-    background-clip:
-        text;
-
-    color:
-        transparent;
-
+.hero-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:8px 14px;
+    border:1px solid var(--violetBorder);
+    background:rgba(255,255,255,.65);
+    border-radius:999px;
+    color:var(--violet);
+    font-weight:800;
+    font-size:14px;
 }
 
-.hero p {
-
-    max-width:
-        650px;
-
-    margin:
-        auto;
-
-    color:
-        var(--muted);
-
-    font-size:
-        18px;
-
-    line-height:
-        1.6;
-
+.hero h1{
+    margin:20px 0 15px;
+    font-size:clamp(40px,6vw,64px);
+    line-height:1.02;
+    letter-spacing:-2.7px;
 }
 
-
-/* ================= STEPS ================= */
-
-.steps {
-
-    max-width:
-        850px;
-
-    margin:
-        0 auto 35px;
-
-    padding:
-        0 20px;
-
-    display:
-        grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap:
-        12px;
-
+.gradient{
+    background:linear-gradient(90deg,var(--violet),#a855f7);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
 }
 
-.step {
-
-    background:
-        white;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:
-        15px;
-
-    padding:
-        15px;
-
-    text-align:
-        center;
-
-    color:
-        #52525b;
-
-    font-size:
-        14px;
-
+.hero p{
+    max-width:690px;
+    margin:auto;
+    color:var(--muted);
+    font-size:18px;
+    line-height:1.65;
 }
 
-.step strong {
+/* ETAPES */
 
-    display:
-        block;
-
-    color:
-        var(--text);
-
-    margin-bottom:
-        3px;
-
+.steps{
+    max-width:900px;
+    margin:0 auto 35px;
+    padding:0 20px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
 }
 
-
-/* ================= MAIN ================= */
-
-.container {
-
-    max-width:
-        900px;
-
-    margin:
-        auto;
-
-    padding:
-        0 20px 80px;
-
+.step{
+    position:relative;
+    padding:17px;
+    border-radius:16px;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.8);
+    text-align:center;
+    font-size:13px;
+    color:var(--muted);
+    transition:.2s;
 }
 
-.card {
-
-    background:
-        var(--white);
-
-    border:
-        1px solid
-        #ebe7f1;
-
-    border-radius:
-        24px;
-
-    padding:
-        32px;
-
-    box-shadow:
-        0 25px 60px
-        rgba(
-            63,
-            30,
-            100,
-            0.08
-        );
-
+.step strong{
+    display:block;
+    color:var(--text);
+    font-size:14px;
+    margin-bottom:4px;
 }
 
-.section-title {
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        space-between;
-
-    gap:
-        15px;
-
-    margin-bottom:
-        5px;
-
+.step.active{
+    border-color:var(--violet);
+    background:var(--violetLight);
+    box-shadow:0 8px 30px rgba(124,58,237,.08);
 }
 
-.section-title h2 {
-
-    margin:
-        0;
-
-    font-size:
-        24px;
-
+.step.done{
+    border-color:#bbf7d0;
+    background:#f0fdf4;
 }
 
-.subtitle {
+/* MAIN */
 
-    margin:
-        7px 0 25px;
-
-    color:
-        var(--muted);
-
-    line-height:
-        1.5;
-
+.container{
+    max-width:900px;
+    margin:auto;
+    padding:0 20px 55px;
 }
 
-
-/* ================= PHOTOS ================= */
-
-.photo-zone {
-
-    border:
-        2px dashed
-        #c4b5fd;
-
-    background:
-        #fbfaff;
-
-    border-radius:
-        17px;
-
-    padding:
-        27px;
-
-    text-align:
-        center;
-
-    cursor:
-        pointer;
-
-    transition:
-        0.2s;
-
+.card{
+    background:#fff;
+    border:1px solid #ebe7f1;
+    border-radius:25px;
+    padding:32px;
+    box-shadow:0 25px 65px rgba(63,30,100,.08);
 }
 
-.photo-zone:hover {
-
-    border-color:
-        var(--purple);
-
-    background:
-        var(--purple-light);
-
+.section-title{
+    margin:0;
+    font-size:25px;
 }
 
-.photo-icon {
-
-    font-size:
-        38px;
-
+.subtitle{
+    margin:7px 0 24px;
+    color:var(--muted);
+    line-height:1.55;
 }
 
-.photo-zone strong {
+/* PHOTOS */
 
-    display:
-        block;
-
-    margin-top:
-        8px;
-
-    font-size:
-        16px;
-
+.photo-zone{
+    border:2px dashed #c4b5fd;
+    border-radius:18px;
+    padding:30px 20px;
+    background:#fcfbff;
+    text-align:center;
+    cursor:pointer;
+    transition:.2s;
 }
 
-.photo-zone span {
-
-    display:
-        block;
-
-    margin-top:
-        6px;
-
-    color:
-        var(--muted);
-
-    font-size:
-        13px;
-
+.photo-zone:hover{
+    background:var(--violetLight);
+    border-color:var(--violet);
+    transform:translateY(-1px);
 }
 
-.previews {
-
-    display:
-        grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    gap:
-        10px;
-
-    margin-top:
-        15px;
-
+.photo-icon{
+    font-size:38px;
 }
 
-.preview-item {
-
-    position:
-        relative;
-
-    aspect-ratio:
-        1 / 1;
-
-    border-radius:
-        13px;
-
-    overflow:
-        hidden;
-
-    background:
-        #f4f4f5;
-
-    border:
-        1px solid
-        var(--border);
-
+.photo-zone strong{
+    display:block;
+    margin-top:7px;
+    font-size:16px;
 }
 
-.preview-item img {
-
-    width:
-        100%;
-
-    height:
-        100%;
-
-    object-fit:
-        cover;
-
+.photo-zone span{
+    display:block;
+    margin-top:5px;
+    color:var(--muted);
+    font-size:13px;
 }
 
-.remove-photo {
-
-    position:
-        absolute;
-
-    top:
-        6px;
-
-    right:
-        6px;
-
-    width:
-        28px;
-
-    height:
-        28px;
-
-    border:
-        none;
-
-    border-radius:
-        50%;
-
-    background:
-        rgba(
-            0,
-            0,
-            0,
-            0.7
-        );
-
-    color:
-        white;
-
-    cursor:
-        pointer;
-
-    font-weight:
-        bold;
-
+.previews{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-top:14px;
 }
 
-.analyse {
-
-    display:
-        none;
-
-    width:
-        100%;
-
-    margin-top:
-        12px;
-
-    padding:
-        14px;
-
-    border:
-        1px solid
-        var(--purple);
-
-    border-radius:
-        11px;
-
-    background:
-        white;
-
-    color:
-        var(--purple);
-
-    font-weight:
-        800;
-
-    cursor:
-        pointer;
-
+.preview{
+    position:relative;
+    aspect-ratio:1;
+    overflow:hidden;
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:#f4f4f5;
 }
 
-.analyse:hover {
-
-    background:
-        var(--purple-light);
-
+.preview img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
 }
 
-#photoMessage {
-
-    margin-top:
-        10px;
-
-    text-align:
-        center;
-
-    font-size:
-        14px;
-
+.preview-number{
+    position:absolute;
+    bottom:6px;
+    left:6px;
+    background:rgba(0,0,0,.7);
+    color:#fff;
+    border-radius:20px;
+    padding:4px 8px;
+    font-size:11px;
+    font-weight:700;
 }
 
-
-/* ================= FORM ================= */
-
-.separator {
-
-    height:
-        1px;
-
-    background:
-        #f0edf4;
-
-    margin:
-        28px 0;
-
+.remove-photo{
+    position:absolute;
+    right:6px;
+    top:6px;
+    width:29px;
+    height:29px;
+    border:0;
+    border-radius:50%;
+    background:rgba(0,0,0,.75);
+    color:white;
+    cursor:pointer;
+    font-size:18px;
 }
 
-label {
+.photo-counter{
+    margin-top:10px;
+    color:var(--muted);
+    font-size:12px;
+    text-align:right;
+}
 
-    display:
-        block;
+.analyse-button{
+    display:none;
+    width:100%;
+    margin-top:13px;
+    padding:15px;
+    border:1px solid var(--violet);
+    border-radius:12px;
+    background:white;
+    color:var(--violet);
+    font-weight:850;
+    cursor:pointer;
+    transition:.2s;
+}
 
-    margin:
-        17px 0 7px;
+.analyse-button:hover{
+    background:var(--violetLight);
+}
 
-    font-size:
-        14px;
+.status{
+    display:none;
+    margin-top:13px;
+    padding:13px 15px;
+    border-radius:12px;
+    font-size:13px;
+    line-height:1.5;
+}
 
-    font-weight:
-        700;
+.status.loading{
+    display:block;
+    background:#faf5ff;
+    border:1px solid #e9d5ff;
+    color:#6b21a8;
+}
 
+.status.success{
+    display:block;
+    background:#f0fdf4;
+    border:1px solid #bbf7d0;
+    color:#166534;
+}
+
+.status.error{
+    display:block;
+    background:#fef2f2;
+    border:1px solid #fecaca;
+    color:#991b1b;
+}
+
+.spinner{
+    width:14px;
+    height:14px;
+    display:inline-block;
+    border:2px solid currentColor;
+    border-right-color:transparent;
+    border-radius:50%;
+    vertical-align:-2px;
+    margin-right:6px;
+    animation:spin .7s linear infinite;
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg)}
+}
+
+.separator{
+    height:1px;
+    background:#f0edf4;
+    margin:30px 0;
+}
+
+/* FORM */
+
+label.field-label{
+    display:block;
+    margin:17px 0 7px;
+    font-size:14px;
+    font-weight:750;
+}
+
+.row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
 }
 
 input,
 select,
-textarea {
-
-    width:
-        100%;
-
-    padding:
-        14px;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:
-        11px;
-
-    background:
-        white;
-
-    color:
-        var(--text);
-
-    font-size:
-        15px;
-
-    outline:
-        none;
-
-    transition:
-        0.15s;
-
+textarea{
+    width:100%;
+    padding:14px;
+    border:1px solid var(--border);
+    border-radius:11px;
+    outline:none;
+    color:var(--text);
+    background:white;
+    transition:.15s;
 }
 
 input:focus,
 select:focus,
-textarea:focus {
-
-    border-color:
-        var(--purple);
-
-    box-shadow:
-        0 0 0 3px
-        rgba(
-            124,
-            58,
-            237,
-            0.08
-        );
-
+textarea:focus{
+    border-color:var(--violet);
+    box-shadow:0 0 0 3px rgba(124,58,237,.08);
 }
 
-textarea {
-
-    resize:
-        vertical;
-
-    min-height:
-        105px;
-
+textarea{
+    min-height:100px;
+    resize:vertical;
 }
 
-.row {
-
-    display:
-        grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
-    gap:
-        15px;
-
+.choice-title{
+    margin-top:22px;
+    font-size:14px;
+    font-weight:800;
 }
 
-
-/* ================= PLATFORM ================= */
-
-.choice-title {
-
-    margin-top:
-        22px;
-
-    font-size:
-        14px;
-
-    font-weight:
-        800;
-
+.choices{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:9px;
+    margin-top:9px;
 }
 
-.choices {
-
-    display:
-        grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap:
-        9px;
-
-    margin-top:
-        9px;
-
+.styles{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:9px;
+    margin-top:9px;
 }
 
-.styles {
-
-    display:
-        grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    gap:
-        9px;
-
-    margin-top:
-        9px;
-
+.choice input{
+    display:none;
 }
 
-.choice {
-
-    position:
-        relative;
-
+.choice label{
+    display:block;
+    padding:13px 9px;
+    margin:0;
+    text-align:center;
+    border:1px solid var(--border);
+    border-radius:11px;
+    cursor:pointer;
+    transition:.15s;
 }
 
-.choice input {
-
-    display:
-        none;
-
+.choice input:checked + label{
+    border-color:var(--violet);
+    color:var(--violet);
+    background:var(--violetLight);
+    font-weight:800;
 }
 
-.choice label {
+/* SCORE */
 
-    margin:
-        0;
-
-    display:
-        block;
-
-    padding:
-        13px 10px;
-
-    text-align:
-        center;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:
-        11px;
-
-    cursor:
-        pointer;
-
-    font-weight:
-        500;
-
-    transition:
-        0.15s;
-
+.score{
+    margin-top:24px;
+    padding:17px;
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:#fafafa;
 }
 
-.choice input:checked + label {
-
-    border-color:
-        var(--purple);
-
-    background:
-        var(--purple-light);
-
-    color:
-        var(--purple-dark);
-
-    font-weight:
-        800;
-
+.score-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-size:14px;
+    font-weight:750;
 }
 
-
-/* ================= SCORE ================= */
-
-.score-box {
-
-    margin-top:
-        24px;
-
-    padding:
-        17px;
-
-    background:
-        #fafafa;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:
-        13px;
-
+.score-bar{
+    height:8px;
+    overflow:hidden;
+    background:#e4e4e7;
+    border-radius:50px;
+    margin-top:10px;
 }
 
-.score-top {
-
-    display:
-        flex;
-
-    justify-content:
-        space-between;
-
-    align-items:
-        center;
-
-    gap:
-        10px;
-
-    font-size:
-        14px;
-
-    font-weight:
-        700;
-
+.score-progress{
+    height:100%;
+    width:0;
+    background:linear-gradient(90deg,var(--violet),#a855f7);
+    border-radius:50px;
+    transition:.3s;
 }
 
-.progress {
-
-    height:
-        8px;
-
-    margin-top:
-        10px;
-
-    border-radius:
-        50px;
-
-    overflow:
-        hidden;
-
-    background:
-        #e4e4e7;
-
+.score-help{
+    margin-top:8px;
+    color:var(--muted);
+    font-size:12px;
 }
 
-.progress-bar {
+/* GENERATE */
 
-    width:
-        0%;
-
-    height:
-        100%;
-
-    border-radius:
-        50px;
-
-    background:
-        var(--purple);
-
-    transition:
-        width 0.25s;
-
+.generate{
+    width:100%;
+    margin-top:24px;
+    padding:17px;
+    border:0;
+    border-radius:13px;
+    color:white;
+    background:linear-gradient(90deg,var(--violet),var(--violet2));
+    box-shadow:0 10px 25px rgba(124,58,237,.18);
+    font-size:16px;
+    font-weight:850;
+    cursor:pointer;
+    transition:.2s;
 }
 
-.score-help {
-
-    margin-top:
-        8px;
-
-    color:
-        var(--muted);
-
-    font-size:
-        12px;
-
+.generate:hover{
+    transform:translateY(-1px);
+    box-shadow:0 13px 30px rgba(124,58,237,.25);
 }
 
-
-/* ================= BUTTONS ================= */
-
-.generate {
-
-    width:
-        100%;
-
-    margin-top:
-        24px;
-
-    padding:
-        17px;
-
-    border:
-        none;
-
-    border-radius:
-        12px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #7c3aed,
-            #8b5cf6
-        );
-
-    color:
-        white;
-
-    font-size:
-        17px;
-
-    font-weight:
-        800;
-
-    cursor:
-        pointer;
-
-    box-shadow:
-        0 10px 25px
-        rgba(
-            124,
-            58,
-            237,
-            0.20
-        );
-
+button:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+    transform:none!important;
 }
 
-.generate:hover {
+/* RESULT */
 
-    transform:
-        translateY(-1px);
-
+#resultat{
+    display:none;
+    margin-top:28px;
 }
 
-.generate:disabled,
-.analyse:disabled {
-
-    opacity:
-        0.55;
-
-    cursor:
-        not-allowed;
-
-    transform:
-        none;
-
+.result{
+    padding:23px;
+    border:1px solid var(--violetBorder);
+    background:var(--violetLight);
+    border-radius:19px;
 }
 
-
-/* ================= RESULT ================= */
-
-#resultat {
-
-    display:
-        none;
-
-    margin-top:
-        28px;
-
+.result h2{
+    margin:0;
 }
 
-.result-container {
-
-    padding:
-        22px;
-
-    background:
-        var(--purple-light);
-
-    border:
-        1px solid
-        var(--purple-border);
-
-    border-radius:
-        18px;
-
+.result-subtitle{
+    margin-top:5px;
+    color:var(--muted);
+    font-size:13px;
 }
 
-.result-main-title {
-
-    font-size:
-        22px;
-
-    font-weight:
-        900;
-
+.price-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-top:17px;
 }
 
-.result-subtitle {
-
-    margin-top:
-        5px;
-
-    color:
-        var(--muted);
-
-    font-size:
-        13px;
-
+.price{
+    padding:15px;
+    border:1px solid var(--border);
+    border-radius:13px;
+    background:white;
+    text-align:center;
 }
 
-.price-grid {
-
-    display:
-        grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap:
-        9px;
-
-    margin-top:
-        15px;
-
+.price small{
+    display:block;
+    color:var(--muted);
 }
 
-.price-card {
-
-    background:
-        white;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:
-        12px;
-
-    padding:
-        14px;
-
-    text-align:
-        center;
-
+.price strong{
+    display:block;
+    margin-top:5px;
+    font-size:21px;
 }
 
-.price-label {
-
-    color:
-        var(--muted);
-
-    font-size:
-        12px;
-
+.price.main{
+    border-color:var(--violet);
 }
 
-.price-number {
-
-    margin-top:
-        5px;
-
-    font-size:
-        21px;
-
-    font-weight:
-        900;
-
+.result-section{
+    margin-top:12px;
+    padding:17px;
+    background:white;
+    border:1px solid var(--border);
+    border-radius:13px;
 }
 
-.result-section {
-
-    margin-top:
-        12px;
-
-    padding:
-        17px;
-
-    background:
-        white;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:
-        13px;
-
+.result-label{
+    margin-bottom:9px;
+    font-weight:800;
 }
 
-.result-label {
-
-    margin-bottom:
-        9px;
-
-    font-weight:
-        800;
-
+.result-text{
+    white-space:pre-line;
+    line-height:1.65;
 }
 
-.result-value {
-
-    white-space:
-        pre-line;
-
-    line-height:
-        1.6;
-
+.keywords{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
 }
 
-.keywords {
-
-    display:
-        flex;
-
-    flex-wrap:
-        wrap;
-
-    gap:
-        7px;
-
+.keyword{
+    padding:7px 10px;
+    background:var(--violetLight);
+    color:var(--violet);
+    border-radius:30px;
+    font-size:13px;
 }
 
-.keyword {
-
-    padding:
-        7px 10px;
-
-    border-radius:
-        20px;
-
-    background:
-        var(--purple-light);
-
-    color:
-        var(--purple-dark);
-
-    font-size:
-        13px;
-
+.copy{
+    margin-top:11px;
+    padding:8px 12px;
+    border:1px solid var(--violet);
+    border-radius:8px;
+    background:white;
+    color:var(--violet);
+    font-weight:750;
+    cursor:pointer;
 }
 
-.small-copy {
-
-    margin-top:
-        11px;
-
-    padding:
-        8px 12px;
-
-    border:
-        1px solid
-        var(--purple);
-
-    border-radius:
-        8px;
-
-    background:
-        white;
-
-    color:
-        var(--purple);
-
-    font-weight:
-        700;
-
-    cursor:
-        pointer;
-
+.result-actions{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:9px;
+    margin-top:15px;
 }
 
-.result-actions {
-
-    display:
-        grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap:
-        9px;
-
-    margin-top:
-        15px;
-
+.action{
+    padding:13px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:800;
 }
 
-.action-button {
-
-    padding:
-        13px;
-
-    border-radius:
-        10px;
-
-    cursor:
-        pointer;
-
-    font-weight:
-        800;
-
+.secondary{
+    border:1px solid var(--violet);
+    background:white;
+    color:var(--violet);
 }
 
-.secondary {
-
-    border:
-        1px solid
-        var(--purple);
-
-    background:
-        white;
-
-    color:
-        var(--purple);
-
+.primary{
+    border:0;
+    background:var(--violet);
+    color:white;
 }
 
-.primary {
+/* HISTORY */
 
-    border:
-        none;
-
-    background:
-        var(--purple);
-
-    color:
-        white;
-
+.history{
+    max-width:900px;
+    margin:0 auto 70px;
+    padding:0 20px;
 }
 
-
-/* ================= HISTORY ================= */
-
-.history {
-
-    max-width:
-        900px;
-
-    margin:
-        25px auto 80px;
-
-    padding:
-        0 20px;
-
+.history-card{
+    padding:25px;
+    border:1px solid var(--border);
+    border-radius:20px;
+    background:white;
 }
 
-.history-card {
-
-    background:
-        white;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:
-        20px;
-
-    padding:
-        25px;
-
+.history-card h2{
+    margin-top:0;
 }
 
-.history-card h2 {
-
-    margin:
-        0 0 5px;
-
+.history-description{
+    color:var(--muted);
+    font-size:13px;
 }
 
-.history-description {
-
-    color:
-        var(--muted);
-
-    margin-bottom:
-        15px;
-
-    font-size:
-        14px;
-
+.history-item{
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    border-top:1px solid #eee;
+    padding:13px 0;
 }
 
-.history-item {
-
-    display:
-        flex;
-
-    justify-content:
-        space-between;
-
-    gap:
-        15px;
-
-    padding:
-        13px 0;
-
-    border-top:
-        1px solid #eee;
-
+.history-title{
+    font-weight:750;
 }
 
-.history-title {
-
-    font-weight:
-        700;
-
+.history-meta{
+    margin-top:4px;
+    color:var(--muted);
+    font-size:12px;
 }
 
-.history-meta {
-
-    margin-top:
-        4px;
-
-    color:
-        var(--muted);
-
-    font-size:
-        12px;
-
+.history-price{
+    white-space:nowrap;
+    color:var(--violet);
+    font-weight:850;
 }
 
-.history-price {
-
-    white-space:
-        nowrap;
-
-    font-weight:
-        800;
-
-    color:
-        var(--purple);
-
+footer{
+    text-align:center;
+    color:#a1a1aa;
+    padding:25px;
+    font-size:12px;
 }
 
-.empty-history {
+/* MOBILE */
 
-    padding:
-        15px 0;
+@media(max-width:700px){
 
-    color:
-        var(--muted);
-
-    font-size:
-        14px;
-
-}
-
-
-/* ================= MESSAGES ================= */
-
-.success {
-    color:
-        var(--green);
-}
-
-.error {
-    color:
-        var(--red);
-}
-
-
-/* ================= FOOTER ================= */
-
-footer {
-
-    padding:
-        35px 20px;
-
-    text-align:
-        center;
-
-    color:
-        #a1a1aa;
-
-    font-size:
-        13px;
-
-}
-
-
-/* ================= MOBILE ================= */
-
-@media(
-    max-width: 700px
-) {
-
-    header {
-
-        padding:
-            0 18px;
-
+    header{
+        height:62px;
     }
 
-    .badge {
-        display:
-            none;
+    .logo{
+        font-size:20px;
     }
 
-    .hero {
-
-        padding-top:
-            45px;
-
+    .version{
+        padding:6px 9px;
+        font-size:11px;
     }
 
-    h1 {
-
-        letter-spacing:
-            -1px;
-
+    .hero{
+        padding-top:42px;
     }
 
-    .steps {
-
-        grid-template-columns:
-            1fr;
-
+    .hero h1{
+        letter-spacing:-1.7px;
     }
 
-    .card {
-
-        padding:
-            21px;
-
-        border-radius:
-            18px;
-
+    .steps,
+    .row,
+    .price-grid,
+    .result-actions{
+        grid-template-columns:1fr;
     }
 
-    .row {
-
-        grid-template-columns:
-            1fr;
-
-        gap:
-            0;
-
+    .styles{
+        grid-template-columns:1fr 1fr;
     }
 
-    .previews {
-
-        grid-template-columns:
-            repeat(2, 1fr);
-
+    .previews{
+        grid-template-columns:1fr 1fr;
     }
 
-    .styles {
-
-        grid-template-columns:
-            1fr 1fr;
-
+    .card{
+        padding:21px;
     }
-
-    .price-grid {
-
-        grid-template-columns:
-            1fr;
-
-    }
-
-    .result-actions {
-
-        grid-template-columns:
-            1fr;
-
-    }
-
 }
-
 </style>
-
 </head>
-
 
 <body>
 
-
 <header>
+    <div class="logo">
+        <span class="logo-icon">⚡</span>
+        Vinted<span>Boost</span>
+    </div>
 
-<div class="logo">
-⚡ Vinted<span>Boost</span>
-</div>
-
-<div class="header-right">
-
-<div class="badge">
-V4 • Assistant IA
-</div>
-
-</div>
-
+    <div class="version">
+        V7 • Assistant IA
+    </div>
 </header>
 
 
 <section class="hero">
 
-<div class="hero-tag">
-✨ Générateur d'annonces avec IA
-</div>
+    <div class="hero-badge">
+        ✨ Générateur d'annonces avec IA
+    </div>
 
-<h1>
-De tes photos à une<br>
-<span class="gradient-text">
-annonce prête à publier
-</span>
-</h1>
+    <h1>
+        Vends plus facilement avec
+        <span class="gradient">une annonce optimisée</span>
+    </h1>
 
-<p>
-Ajoute jusqu'à 4 photos de ton article,
-vérifie les informations détectées
-et génère une annonce adaptée à ta plateforme.
-</p>
+    <p>
+        Ajoute les photos de ton article. L'IA détecte les informations
+        utiles et prépare une annonce Vinted ou eBay prête à copier.
+    </p>
 
 </section>
 
 
 <section class="steps">
 
-<div class="step">
-<strong>📸 1. Ajoute tes photos</strong>
-Jusqu'à 4 vues
-</div>
+    <div class="step active" id="step1">
+        <strong>📸 1. Photos</strong>
+        Ajoute jusqu'à 4 vues
+    </div>
 
-<div class="step">
-<strong>🤖 2. Analyse IA</strong>
-L'IA préremplit l'annonce
-</div>
+    <div class="step" id="step2">
+        <strong>🔍 2. Analyse IA</strong>
+        Identification de l'article
+    </div>
 
-<div class="step">
-<strong>📋 3. Copie ton annonce</strong>
-Vérifie puis publie
-</div>
+    <div class="step" id="step3">
+        <strong>✨ 3. Annonce</strong>
+        Génération et copie
+    </div>
 
 </section>
 
@@ -1600,50 +790,38 @@ Vérifie puis publie
 
 <div class="card">
 
-
-<div class="section-title">
-
-<h2>
-Créer une annonce
+<h2 class="section-title">
+    Créer une annonce
 </h2>
 
-</div>
-
-
 <p class="subtitle">
-Ajoute plusieurs vues du même article pour aider l'IA à mieux l'analyser.
+    Pour une meilleure analyse, ajoute une photo de face,
+    une photo de l'étiquette et une photo des éventuels défauts.
 </p>
 
-
-<!-- PHOTOS -->
 
 <div
     class="photo-zone"
     onclick="document.getElementById('photos').click()"
 >
+    <div class="photo-icon">📸</div>
 
-<div class="photo-icon">
-📸
-</div>
+    <strong>
+        Ajouter des photos
+    </strong>
 
-<strong>
-Ajouter jusqu'à 4 photos
-</strong>
+    <span>
+        Jusqu'à 4 photos • JPEG, PNG ou WebP
+    </span>
 
-<span>
-JPEG, PNG ou WebP • maximum 4 Mo par photo
-</span>
-
-
-<input
-    id="photos"
-    type="file"
-    accept="image/jpeg,image/png,image/webp"
-    multiple
-    style="display:none"
-    onchange="photosSelectionnees()"
->
-
+    <input
+        type="file"
+        id="photos"
+        accept="image/jpeg,image/png,image/webp"
+        multiple
+        hidden
+        onchange="selectionPhotos()"
+    >
 </div>
 
 
@@ -1652,370 +830,295 @@ JPEG, PNG ou WebP • maximum 4 Mo par photo
     class="previews"
 ></div>
 
+<div
+    id="photoCounter"
+    class="photo-counter"
+>
+    0 / 4 photos
+</div>
+
 
 <button
     id="analyseButton"
-    class="analyse"
+    class="analyse-button"
     onclick="analyserPhotos()"
 >
-🤖 Analyser mes photos
+    🤖 Analyser mes photos
 </button>
 
 
-<div id="photoMessage"></div>
+<div
+    id="analyseStatus"
+    class="status"
+></div>
 
 
 <div class="separator"></div>
 
 
-<!-- PLATEFORME -->
-
 <div class="choice-title">
-Où veux-tu vendre ?
+    Plateforme
 </div>
-
 
 <div class="choices">
 
-<div class="choice">
+    <div class="choice">
+        <input
+            type="radio"
+            id="vinted"
+            name="plateforme"
+            value="vinted"
+            checked
+        >
+        <label for="vinted">
+            👕 Vinted
+        </label>
+    </div>
 
-<input
-    type="radio"
-    name="plateforme"
-    id="plateformeVinted"
-    value="vinted"
-    checked
->
-
-<label for="plateformeVinted">
-👕 Vinted
-</label>
-
-</div>
-
-
-<div class="choice">
-
-<input
-    type="radio"
-    name="plateforme"
-    id="plateformeEbay"
-    value="ebay"
->
-
-<label for="plateformeEbay">
-🛒 eBay
-</label>
-
-</div>
-
-</div>
-
-
-<!-- ARTICLE -->
-
-<div class="row">
-
-<div>
-
-<label for="article">
-Type d'article *
-</label>
-
-<input
-    id="article"
-    type="text"
-    maxlength="100"
-    placeholder="Ex : Sweat à capuche"
-    oninput="mettreAJourScore()"
->
-
-</div>
-
-
-<div>
-
-<label for="marque">
-Marque
-</label>
-
-<input
-    id="marque"
-    type="text"
-    maxlength="100"
-    placeholder="Ex : Nike"
-    oninput="mettreAJourScore()"
->
-
-</div>
+    <div class="choice">
+        <input
+            type="radio"
+            id="ebay"
+            name="plateforme"
+            value="ebay"
+        >
+        <label for="ebay">
+            🛒 eBay
+        </label>
+    </div>
 
 </div>
 
 
 <div class="row">
 
-<div>
+    <div>
+        <label class="field-label">
+            Type d'article *
+        </label>
 
-<label for="categorie">
-Catégorie
-</label>
+        <input
+            id="article"
+            placeholder="Ex : Pull demi-zip"
+            oninput="updateScore()"
+        >
+    </div>
 
-<select
-    id="categorie"
-    onchange="mettreAJourScore()"
->
+    <div>
+        <label class="field-label">
+            Marque
+        </label>
 
-<option value="">
-Choisir
-</option>
-
-<option>Veste</option>
-<option>Sweat</option>
-<option>T-shirt</option>
-<option>Pantalon</option>
-<option>Jean</option>
-<option>Chaussures</option>
-<option>Accessoire</option>
-<option>Robe</option>
-<option>Chemise</option>
-<option>Pull</option>
-<option>Short</option>
-<option>Autre</option>
-
-</select>
-
-</div>
-
-
-<div>
-
-<label for="taille">
-Taille
-</label>
-
-<input
-    id="taille"
-    type="text"
-    maxlength="50"
-    placeholder="Ex : M / 42"
-    oninput="mettreAJourScore()"
->
-
-</div>
+        <input
+            id="marque"
+            placeholder="Ex : Stone Island"
+            oninput="updateScore()"
+        >
+    </div>
 
 </div>
 
 
 <div class="row">
 
-<div>
+    <div>
 
-<label for="couleur">
-Couleur
-</label>
+        <label class="field-label">
+            Catégorie
+        </label>
 
-<input
-    id="couleur"
-    type="text"
-    maxlength="100"
-    placeholder="Ex : Noir"
-    oninput="mettreAJourScore()"
->
+        <select
+            id="categorie"
+            onchange="updateScore()"
+        >
+            <option value="">Choisir</option>
+            <option>Veste</option>
+            <option>Pull</option>
+            <option>Sweat</option>
+            <option>T-shirt</option>
+            <option>Chemise</option>
+            <option>Pantalon</option>
+            <option>Jean</option>
+            <option>Short</option>
+            <option>Robe</option>
+            <option>Chaussures</option>
+            <option>Accessoire</option>
+            <option>Autre</option>
+        </select>
 
-</div>
+    </div>
 
 
-<div>
+    <div>
 
-<label for="etat">
-État
-</label>
+        <label class="field-label">
+            Taille
+        </label>
 
-<select
-    id="etat"
-    onchange="mettreAJourScore()"
->
+        <input
+            id="taille"
+            placeholder="Ex : M"
+            oninput="updateScore()"
+        >
 
-<option value="">
-Choisir
-</option>
-
-<option>
-Neuf avec étiquette
-</option>
-
-<option>
-Neuf sans étiquette
-</option>
-
-<option>
-Très bon état
-</option>
-
-<option>
-Bon état
-</option>
-
-<option>
-État satisfaisant
-</option>
-
-</select>
-
-</div>
+    </div>
 
 </div>
 
 
-<label for="prix">
-Prix que tu envisages (€)
+<div class="row">
+
+    <div>
+
+        <label class="field-label">
+            Couleur
+        </label>
+
+        <input
+            id="couleur"
+            placeholder="Ex : Bleu marine"
+            oninput="updateScore()"
+        >
+
+    </div>
+
+
+    <div>
+
+        <label class="field-label">
+            État
+        </label>
+
+        <select
+            id="etat"
+            onchange="updateScore()"
+        >
+            <option value="">Choisir</option>
+            <option>Neuf avec étiquette</option>
+            <option>Neuf sans étiquette</option>
+            <option>Très bon état</option>
+            <option>Bon état</option>
+            <option>État satisfaisant</option>
+        </select>
+
+    </div>
+
+</div>
+
+
+<label class="field-label">
+    Prix envisagé (€)
 </label>
 
 <input
     id="prix"
     type="number"
     min="1"
-    max="100000"
-    placeholder="Ex : 50"
-    oninput="mettreAJourScore()"
+    placeholder="Ex : 45"
+    oninput="updateScore()"
 >
 
 
-<label for="details">
-Détails supplémentaires
+<label class="field-label">
+    Détails supplémentaires
 </label>
 
 <textarea
     id="details"
-    maxlength="1000"
-    placeholder="Ex : porté quelques fois, coupe oversize, fermeture fonctionnelle..."
-    oninput="mettreAJourScore()"
+    placeholder="Ex : coupe oversize, logo brodé, matière épaisse..."
+    oninput="updateScore()"
 ></textarea>
 
 
-<label for="defauts">
-Défauts éventuels
+<label class="field-label">
+    Défauts éventuels
 </label>
 
 <textarea
     id="defauts"
-    maxlength="500"
-    placeholder="Ex : petite trace sur la manche gauche..."
-    oninput="mettreAJourScore()"
+    placeholder="Ex : légère trace sur la manche gauche..."
+    oninput="updateScore()"
 ></textarea>
 
 
-<!-- STYLE -->
-
 <div class="choice-title">
-Style de l'annonce
+    Style de l'annonce
 </div>
-
 
 <div class="styles">
 
+    <div class="choice">
+        <input
+            type="radio"
+            name="style"
+            id="naturel"
+            value="naturel"
+            checked
+        >
+        <label for="naturel">
+            🙂 Naturel
+        </label>
+    </div>
 
-<div class="choice">
+    <div class="choice">
+        <input
+            type="radio"
+            name="style"
+            id="court"
+            value="court"
+        >
+        <label for="court">
+            ⚡ Court
+        </label>
+    </div>
 
-<input
-    type="radio"
-    name="style"
-    id="naturel"
-    value="naturel"
-    checked
->
+    <div class="choice">
+        <input
+            type="radio"
+            name="style"
+            id="vendeur"
+            value="vendeur"
+        >
+        <label for="vendeur">
+            🔥 Vendeur
+        </label>
+    </div>
 
-<label for="naturel">
-🙂 Naturel
-</label>
-
-</div>
-
-
-<div class="choice">
-
-<input
-    type="radio"
-    name="style"
-    id="court"
-    value="court"
->
-
-<label for="court">
-⚡ Court
-</label>
-
-</div>
-
-
-<div class="choice">
-
-<input
-    type="radio"
-    name="style"
-    id="vendeur"
-    value="vendeur"
->
-
-<label for="vendeur">
-🔥 Vendeur
-</label>
-
-</div>
-
-
-<div class="choice">
-
-<input
-    type="radio"
-    name="style"
-    id="premium"
-    value="premium"
->
-
-<label for="premium">
-💎 Premium
-</label>
+    <div class="choice">
+        <input
+            type="radio"
+            name="style"
+            id="premium"
+            value="premium"
+        >
+        <label for="premium">
+            💎 Premium
+        </label>
+    </div>
 
 </div>
 
 
-</div>
+<div class="score">
 
+    <div class="score-header">
+        <span>Qualité des informations</span>
+        <span id="scoreText">0 %</span>
+    </div>
 
-<!-- SCORE -->
+    <div class="score-bar">
+        <div
+            id="scoreProgress"
+            class="score-progress"
+        ></div>
+    </div>
 
-<div class="score-box">
-
-<div class="score-top">
-
-<span>
-Complétude de l'annonce
-</span>
-
-<span id="scoreText">
-0 %
-</span>
-
-</div>
-
-
-<div class="progress">
-
-<div
-    id="progressBar"
-    class="progress-bar"
-></div>
-
-</div>
-
-
-<div
-    id="scoreHelp"
-    class="score-help"
->
-Ajoute des informations pour améliorer ton annonce.
-</div>
+    <div
+        id="scoreHelp"
+        class="score-help"
+    >
+        Ajoute quelques informations pour obtenir une meilleure annonce.
+    </div>
 
 </div>
 
@@ -2025,33 +1128,29 @@ Ajoute des informations pour améliorer ton annonce.
     class="generate"
     onclick="genererAnnonce()"
 >
-✨ Générer mon annonce
+    ✨ Générer mon annonce
 </button>
 
 
 <div id="resultat"></div>
-
 
 </div>
 
 </main>
 
 
-<!-- HISTORIQUE -->
-
 <section class="history">
 
 <div class="history-card">
 
-<h2>
-🕘 Mes dernières annonces
-</h2>
+    <h2>🕘 Mes dernières annonces</h2>
 
-<div class="history-description">
-Conservées uniquement sur cet appareil.
-</div>
+    <p class="history-description">
+        Les 10 dernières annonces sont conservées uniquement
+        sur cet appareil.
+    </p>
 
-<div id="historyList"></div>
+    <div id="historyList"></div>
 
 </div>
 
@@ -2059,155 +1158,313 @@ Conservées uniquement sur cet appareil.
 
 
 <footer>
-VintedBoost • Assistant de création d'annonces
+    VintedBoost V7 • Assistant IA pour tes annonces
 </footer>
 
 
 <script>
 
 let photosBase64 = [];
-
 let derniereAnnonce = null;
 
 
-// ======================================================
-// PHOTOS
-// ======================================================
+/* ============================
+   OUTILS
+============================ */
 
-function photosSelectionnees() {
+function value(id){
+    return document.getElementById(id)?.value?.trim() || "";
+}
+
+
+function escapeHTML(text){
+
+    return String(text || "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
+
+
+function setStep(numero){
+
+    for(let i=1;i<=3;i++){
+
+        const step =
+            document.getElementById("step"+i);
+
+        step.classList.remove(
+            "active",
+            "done"
+        );
+
+        if(i < numero){
+            step.classList.add("done");
+        }
+
+        if(i === numero){
+            step.classList.add("active");
+        }
+    }
+}
+
+
+async function fetchTimeout(
+    url,
+    options={},
+    timeout=90000
+){
+
+    const controller =
+        new AbortController();
+
+    const timer =
+        setTimeout(
+            ()=>controller.abort(),
+            timeout
+        );
+
+    try{
+
+        return await fetch(
+            url,
+            {
+                ...options,
+                signal:controller.signal
+            }
+        );
+
+    }finally{
+
+        clearTimeout(timer);
+    }
+}
+
+
+/* ============================
+   COMPRESSION IMAGE V7
+============================ */
+
+function compresserImage(file){
+
+    return new Promise(
+        (resolve,reject)=>{
+
+            const reader =
+                new FileReader();
+
+            reader.onload = e => {
+
+                const img =
+                    new Image();
+
+                img.onload = ()=>{
+
+                    /*
+                    V7 :
+                    640px au lieu de 800px.
+
+                    Moins de données envoyées
+                    au serveur = transfert
+                    généralement plus rapide.
+                    */
+
+                    const MAX = 640;
+
+                    let width =
+                        img.width;
+
+                    let height =
+                        img.height;
+
+                    if(
+                        width > MAX ||
+                        height > MAX
+                    ){
+
+                        const ratio =
+                            Math.min(
+                                MAX/width,
+                                MAX/height
+                            );
+
+                        width =
+                            Math.round(
+                                width*ratio
+                            );
+
+                        height =
+                            Math.round(
+                                height*ratio
+                            );
+                    }
+
+
+                    const canvas =
+                        document.createElement(
+                            "canvas"
+                        );
+
+                    canvas.width =
+                        width;
+
+                    canvas.height =
+                        height;
+
+
+                    const ctx =
+                        canvas.getContext(
+                            "2d",
+                            {
+                                alpha:false
+                            }
+                        );
+
+
+                    ctx.drawImage(
+                        img,
+                        0,
+                        0,
+                        width,
+                        height
+                    );
+
+
+                    const data =
+                        canvas.toDataURL(
+                            "image/jpeg",
+                            .65
+                        );
+
+                    resolve(data);
+                };
+
+                img.onerror =
+                    reject;
+
+                img.src =
+                    e.target.result;
+            };
+
+
+            reader.onerror =
+                reject;
+
+            reader.readAsDataURL(
+                file
+            );
+        }
+    );
+}
+
+
+/* ============================
+   PHOTOS
+============================ */
+
+async function selectionPhotos(){
 
     const input =
         document.getElementById(
             "photos"
         );
 
-
-    const nouveauxFichiers =
+    const files =
         Array.from(
-            input.files
+            input.files || []
         );
 
 
-    if (
-        nouveauxFichiers.length === 0
-    ) {
-
-        return;
-
-    }
-
-
-    const placesDisponibles =
+    const places =
         4 - photosBase64.length;
 
 
-    const fichiers =
-        nouveauxFichiers.slice(
-            0,
-            placesDisponibles
-        );
-
-
-    if (
-        nouveauxFichiers.length >
-        placesDisponibles
-    ) {
+    if(places <= 0){
 
         alert(
-            "Tu peux ajouter maximum 4 photos."
+            "Tu as déjà ajouté 4 photos."
         );
 
+        input.value="";
+        return;
     }
 
 
-    fichiers.forEach(
-        fichier => {
-
-            if (
-                ![
-                    "image/jpeg",
-                    "image/png",
-                    "image/webp"
-                ].includes(
-                    fichier.type
-                )
-            ) {
-
-                return;
-
-            }
+    const selected =
+        files.slice(0,places);
 
 
-            if (
-                fichier.size >
-                4 * 1024 * 1024
-            ) {
+    if(files.length > places){
 
-                alert(
-                    `${fichier.name} dépasse 4 Mo.`
+        alert(
+            "Maximum 4 photos."
+        );
+    }
+
+
+    for(const file of selected){
+
+        if(
+            ![
+                "image/jpeg",
+                "image/png",
+                "image/webp"
+            ].includes(file.type)
+        ){
+
+            continue;
+        }
+
+
+        try{
+
+            const image =
+                await compresserImage(
+                    file
                 );
 
-                return;
-
-            }
-
-
-            const reader =
-                new FileReader();
-
-
-            reader.onload =
-                event => {
-
-                    photosBase64.push(
-                        event.target.result
-                    );
-
-
-                    afficherPhotos();
-
-                };
-
-
-            reader.readAsDataURL(
-                fichier
+            photosBase64.push(
+                image
             );
 
+        }catch(error){
+
+            console.error(
+                "Erreur image:",
+                error
+            );
         }
-    );
+    }
 
 
-    input.value = "";
+    input.value="";
 
+    afficherPhotos();
 }
 
 
-// ======================================================
-// AFFICHER PHOTOS
-// ======================================================
-
-function afficherPhotos() {
+function afficherPhotos(){
 
     const previews =
         document.getElementById(
             "previews"
         );
 
-
-    previews.innerHTML = "";
+    previews.innerHTML="";
 
 
     photosBase64.forEach(
-        (photo, index) => {
+        (photo,index)=>{
 
-            const div =
+            const container =
                 document.createElement(
                     "div"
                 );
 
-
-            div.className =
-                "preview-item";
+            container.className =
+                "preview";
 
 
             const img =
@@ -2215,429 +1472,390 @@ function afficherPhotos() {
                     "img"
                 );
 
-
             img.src =
                 photo;
 
-
             img.alt =
-                `Photo ${index + 1}`;
+                "Photo article";
 
 
-            const bouton =
+            const number =
+                document.createElement(
+                    "div"
+                );
+
+            number.className =
+                "preview-number";
+
+            number.textContent =
+                `Photo ${index+1}`;
+
+
+            const remove =
                 document.createElement(
                     "button"
                 );
 
-
-            bouton.className =
+            remove.className =
                 "remove-photo";
 
+            remove.type =
+                "button";
 
-            bouton.textContent =
+            remove.textContent =
                 "×";
 
 
-            bouton.type =
-                "button";
+            remove.onclick =
+                e=>{
 
+                    e.stopPropagation();
 
-            bouton.onclick =
-                event => {
-
-                    event.stopPropagation();
-
-                    supprimerPhoto(
-                        index
+                    photosBase64.splice(
+                        index,
+                        1
                     );
 
+                    afficherPhotos();
                 };
 
 
-            div.appendChild(
-                img
+            container.append(
+                img,
+                number,
+                remove
             );
-
-
-            div.appendChild(
-                bouton
-            );
-
 
             previews.appendChild(
-                div
+                container
             );
-
         }
     );
+
+
+    document.getElementById(
+        "photoCounter"
+    ).textContent =
+        `${photosBase64.length} / 4 photos`;
 
 
     document.getElementById(
         "analyseButton"
     ).style.display =
         photosBase64.length
-            ? "block"
-            : "none";
+        ? "block"
+        : "none";
 
 
-    mettreAJourScore();
+    if(photosBase64.length){
 
+        setStep(2);
+
+    }else{
+
+        setStep(1);
+    }
+
+
+    updateScore();
 }
 
 
-// ======================================================
-// SUPPRIMER PHOTO
-// ======================================================
+/* ============================
+   ANALYSE IA
+============================ */
 
-function supprimerPhoto(index) {
+async function analyserPhotos(){
 
-    photosBase64.splice(
-        index,
-        1
-    );
-
-
-    afficherPhotos();
-
-
-    document.getElementById(
-        "photoMessage"
-    ).innerHTML = "";
-
-}
-
-
-// ======================================================
-// ANALYSE IA
-// ======================================================
-
-async function analyserPhotos() {
-
-    if (
-        photosBase64.length === 0
-    ) {
+    if(!photosBase64.length){
 
         alert(
             "Ajoute au moins une photo."
         );
 
         return;
-
     }
 
 
-    const bouton =
+    const button =
         document.getElementById(
             "analyseButton"
         );
 
-
-    const message =
+    const status =
         document.getElementById(
-            "photoMessage"
+            "analyseStatus"
         );
 
 
-    bouton.disabled =
-        true;
+    button.disabled=true;
+
+    button.textContent =
+        "Analyse en cours...";
 
 
-    bouton.textContent =
-        "⏳ Analyse en cours...";
+    status.className =
+        "status loading";
+
+    status.innerHTML =
+        `<span class="spinner"></span>
+        Analyse des photos par l'IA...`;
 
 
-    message.innerHTML =
-        "🤖 L'IA analyse les différentes vues de ton article...";
+    setStep(2);
 
 
-    try {
+    try{
 
         const response =
-            await fetch(
+            await fetchTimeout(
                 "/analyze-photos",
                 {
+                    method:"POST",
 
-                    method:
-                        "POST",
-
-                    headers: {
-
+                    headers:{
                         "Content-Type":
-                            "application/json"
-
+                        "application/json"
                     },
 
-                    body:
-                        JSON.stringify({
-                            images:
-                                photosBase64
-                        })
-
+                    body:JSON.stringify({
+                        images:
+                            photosBase64
+                    })
                 }
             );
 
 
-        const data =
-            await response.json();
+        let data;
+
+        try{
+
+            data =
+                await response.json();
+
+        }catch{
+
+            throw new Error(
+                "Réponse du serveur invalide."
+            );
+        }
 
 
-        if (!response.ok) {
+        if(!response.ok){
 
             throw new Error(
                 data.error ||
                 "Impossible d'analyser les photos."
             );
-
         }
 
 
-        if (data.article) {
+        remplirChamp(
+            "article",
+            data.article
+        );
 
-            document.getElementById(
-                "article"
-            ).value =
-                data.article;
+        remplirChamp(
+            "marque",
+            data.marque
+        );
 
-        }
+        remplirChamp(
+            "couleur",
+            data.couleur
+        );
 
+        remplirChamp(
+            "taille",
+            data.tailleVisible
+        );
 
-        if (data.marque) {
+        remplirChamp(
+            "details",
+            data.details
+        );
 
-            document.getElementById(
-                "marque"
-            ).value =
-                data.marque;
-
-        }
-
-
-        if (data.categorie) {
-
-            const categorie =
-                document.getElementById(
-                    "categorie"
-                );
-
-
-            const valeurs =
-                Array.from(
-                    categorie.options
-                ).map(
-                    option =>
-                        option.value
-                );
-
-
-            if (
-                valeurs.includes(
-                    data.categorie
-                )
-            ) {
-
-                categorie.value =
-                    data.categorie;
-
-            }
-
-        }
-
-
-        if (data.couleur) {
-
-            document.getElementById(
-                "couleur"
-            ).value =
-                data.couleur;
-
-        }
-
-
-        if (data.tailleVisible) {
-
-            document.getElementById(
-                "taille"
-            ).value =
-                data.tailleVisible;
-
-        }
-
-
-        if (data.etat) {
-
-            const etat =
-                document.getElementById(
-                    "etat"
-                );
-
-
-            const valeurs =
-                Array.from(
-                    etat.options
-                ).map(
-                    option =>
-                        option.value
-                );
-
-
-            if (
-                valeurs.includes(
-                    data.etat
-                )
-            ) {
-
-                etat.value =
-                    data.etat;
-
-            }
-
-        }
-
-
-        if (data.details) {
-
-            document.getElementById(
-                "details"
-            ).value =
-                data.details;
-
-        }
-
-
-        if (data.defauts) {
-
-            document.getElementById(
-                "defauts"
-            ).value =
-                data.defauts;
-
-        }
-
-
-        message.innerHTML = `
-            <span class="success">
-            ✅ Analyse terminée.
-            Vérifie toujours les informations détectées.
-            </span>
-        `;
-
-
-        mettreAJourScore();
-
-
-    } catch (error) {
-
-        console.error(
-            error
+        remplirChamp(
+            "defauts",
+            data.defauts
         );
 
 
-        message.innerHTML = `
-            <span class="error">
-            ❌ ${echapperHTML(error.message)}
-            </span>
-        `;
+        remplirSelect(
+            "categorie",
+            data.categorie
+        );
 
+        remplirSelect(
+            "etat",
+            data.etat
+        );
+
+
+        status.className =
+            "status success";
+
+        status.innerHTML =
+            "✅ Analyse terminée. Vérifie les informations détectées avant de générer l'annonce.";
+
+
+        button.textContent =
+            "🔄 Analyser de nouveau";
+
+
+        setStep(3);
+
+        updateScore();
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        let message =
+            error.message;
+
+
+        if(
+            error.name ===
+            "AbortError"
+        ){
+
+            message =
+                "L'IA met trop de temps à répondre. Réessaie.";
+        }
+
+
+        status.className =
+            "status error";
+
+        status.textContent =
+            "❌ " + message;
+
+
+        button.textContent =
+            "🤖 Réessayer l'analyse";
+
+    }finally{
+
+        button.disabled=false;
     }
-
-
-    bouton.disabled =
-        false;
-
-
-    bouton.textContent =
-        "🤖 Analyser de nouveau";
-
 }
 
 
-// ======================================================
-// SCORE DE COMPLETUDE
-// ======================================================
+function remplirChamp(
+    id,
+    nouvelleValeur
+){
 
-function mettreAJourScore() {
-
-    let score = 0;
-
-
-    if (
-        photosBase64.length > 0
-    ) {
-
-        score += 15;
-
+    if(
+        nouvelleValeur ===
+        undefined ||
+        nouvelleValeur ===
+        null
+    ){
+        return;
     }
 
 
-    if (
-        valeur("article")
-    ) {
+    const texte =
+        String(
+            nouvelleValeur
+        ).trim();
 
-        score += 20;
 
+    if(!texte){
+        return;
     }
 
 
-    if (
-        valeur("marque")
-    ) {
+    document.getElementById(
+        id
+    ).value =
+        texte;
+}
 
-        score += 10;
 
+function remplirSelect(
+    id,
+    nouvelleValeur
+){
+
+    if(!nouvelleValeur){
+        return;
     }
 
 
-    if (
-        valeur("categorie")
-    ) {
+    const select =
+        document.getElementById(
+            id
+        );
 
-        score += 10;
 
+    const recherche =
+        String(
+            nouvelleValeur
+        )
+        .trim()
+        .toLowerCase();
+
+
+    const option =
+        Array.from(
+            select.options
+        )
+        .find(
+            o =>
+            o.value
+            .toLowerCase()
+            === recherche
+        );
+
+
+    if(option){
+
+        select.value =
+            option.value;
     }
+}
 
 
-    if (
-        valeur("taille")
-    ) {
+/* ============================
+   SCORE
+============================ */
 
-        score += 10;
+function updateScore(){
 
-    }
-
-
-    if (
-        valeur("couleur")
-    ) {
-
-        score += 10;
-
-    }
+    let score=0;
 
 
-    if (
-        valeur("etat")
-    ) {
+    if(photosBase64.length)
+        score+=15;
 
-        score += 10;
+    if(value("article"))
+        score+=20;
 
-    }
+    if(value("marque"))
+        score+=10;
 
+    if(value("categorie"))
+        score+=10;
 
-    if (
-        valeur("prix")
-    ) {
+    if(value("taille"))
+        score+=10;
 
-        score += 5;
+    if(value("couleur"))
+        score+=10;
 
-    }
+    if(value("etat"))
+        score+=10;
 
+    if(value("prix"))
+        score+=5;
 
-    if (
-        valeur("details")
-    ) {
-
-        score += 10;
-
-    }
+    if(value("details"))
+        score+=10;
 
 
     score =
@@ -2650,73 +1868,54 @@ function mettreAJourScore() {
     document.getElementById(
         "scoreText"
     ).textContent =
-        `${score} %`;
+        score+" %";
 
 
     document.getElementById(
-        "progressBar"
+        "scoreProgress"
     ).style.width =
-        `${score}%`;
+        score+"%";
 
 
-    let aide =
-        "Ajoute des informations pour améliorer ton annonce.";
+    let text =
+        "Ajoute quelques informations pour obtenir une meilleure annonce.";
 
 
-    if (score >= 80) {
+    if(score >= 85){
 
-        aide =
-            "Très bien : ton annonce contient la plupart des informations utiles.";
+        text =
+            "Excellent : les informations sont suffisamment complètes.";
 
-    } else if (score >= 50) {
+    }else if(score >= 60){
 
-        aide =
-            "Bonne base. Complète encore quelques informations.";
+        text =
+            "Bonne base. Quelques informations supplémentaires peuvent encore aider.";
 
+    }else if(score >= 30){
+
+        text =
+            "Continue à compléter les caractéristiques de ton article.";
     }
 
 
     document.getElementById(
         "scoreHelp"
     ).textContent =
-        aide;
-
+        text;
 }
 
 
-// ======================================================
-// VALEUR FORMULAIRE
-// ======================================================
+/* ============================
+   GENERATION
+============================ */
 
-function valeur(id) {
-
-    const element =
-        document.getElementById(id);
-
-
-    if (!element) {
-
-        return "";
-
-    }
-
-
-    return element.value.trim();
-
-}
-
-
-// ======================================================
-// GENERATION
-// ======================================================
-
-async function genererAnnonce() {
+async function genererAnnonce(){
 
     const article =
-        valeur("article");
+        value("article");
 
 
-    if (!article) {
+    if(!article){
 
         alert(
             "Indique au minimum le type d'article."
@@ -2727,133 +1926,159 @@ async function genererAnnonce() {
         ).focus();
 
         return;
-
     }
 
 
-    const formulaire = {
+    const payload={
 
-        article,
+        article:
+            article,
 
         marque:
-            valeur("marque"),
+            value("marque"),
 
         categorie:
-            valeur("categorie"),
+            value("categorie"),
 
         taille:
-            valeur("taille"),
+            value("taille"),
 
         couleur:
-            valeur("couleur"),
+            value("couleur"),
 
         etat:
-            valeur("etat"),
+            value("etat"),
 
         prix:
-            valeur("prix"),
+            value("prix"),
 
         details:
-            valeur("details"),
+            value("details"),
 
         defauts:
-            valeur("defauts"),
-
-        style:
-            document.querySelector(
-                'input[name="style"]:checked'
-            ).value,
+            value("defauts"),
 
         plateforme:
             document.querySelector(
                 'input[name="plateforme"]:checked'
-            ).value
+            ).value,
 
+        style:
+            document.querySelector(
+                'input[name="style"]:checked'
+            ).value
     };
 
 
-    const bouton =
+    const button =
         document.getElementById(
             "generateButton"
         );
 
-
-    const resultat =
+    const result =
         document.getElementById(
             "resultat"
         );
 
 
-    resultat.style.display =
+    button.disabled=true;
+
+    button.innerHTML =
+        `<span class="spinner"></span>
+        Création de l'annonce...`;
+
+
+    result.style.display =
         "block";
 
 
-    resultat.innerHTML = `
-        <div class="result-container">
-            ⏳ L'IA prépare ton annonce...
+    result.innerHTML=`
+
+        <div class="result">
+
+            <h2>
+                ✨ Création en cours
+            </h2>
+
+            <p class="result-subtitle">
+                L'IA rédige ton titre,
+                ta description et estime
+                une fourchette de prix.
+            </p>
+
         </div>
     `;
 
 
-    bouton.disabled =
-        true;
+    setStep(3);
 
 
-    bouton.textContent =
-        "⏳ Génération en cours...";
-
-
-    try {
+    try{
 
         const response =
-            await fetch(
+            await fetchTimeout(
                 "/generate",
                 {
+                    method:"POST",
 
-                    method:
-                        "POST",
-
-                    headers: {
-
+                    headers:{
                         "Content-Type":
-                            "application/json"
-
+                        "application/json"
                     },
 
                     body:
                         JSON.stringify(
-                            formulaire
+                            payload
                         )
-
                 }
             );
 
 
-        const data =
-            await response.json();
+        let data;
 
 
-        if (!response.ok) {
+        try{
+
+            data =
+                await response.json();
+
+        }catch{
 
             throw new Error(
-                data.error ||
-                "Erreur pendant la génération."
+                "Réponse du serveur invalide."
             );
-
         }
 
 
-        derniereAnnonce = {
+        if(!response.ok){
 
+            throw new Error(
+                data.error ||
+                "Impossible de générer l'annonce."
+            );
+        }
+
+
+        if(
+            !data.titre ||
+            !data.description
+        ){
+
+            throw new Error(
+                "L'IA n'a pas généré une annonce complète."
+            );
+        }
+
+
+        derniereAnnonce={
             ...data,
 
             plateforme:
-                formulaire.plateforme,
+                payload.plateforme,
 
             date:
                 new Date()
-                    .toISOString()
-
+                .toISOString()
         };
 
 
@@ -2867,106 +2092,147 @@ async function genererAnnonce() {
         );
 
 
-    } catch (error) {
-
-        console.error(
-            error
-        );
+        setStep(3);
 
 
-        resultat.innerHTML = `
-            <div class="result-container">
-                <span class="error">
-                ❌ ${echapperHTML(error.message)}
-                </span>
+    }catch(error){
+
+        console.error(error);
+
+
+        const message =
+            error.name ===
+            "AbortError"
+
+            ? "L'IA met trop de temps à répondre. Réessaie."
+
+            : error.message;
+
+
+        result.innerHTML=`
+
+            <div class="result">
+
+                <div class="status error">
+
+                    ❌ ${escapeHTML(
+                        message
+                    )}
+
+                </div>
+
             </div>
         `;
 
+    }finally{
+
+        button.disabled=false;
+
+        button.textContent =
+            "✨ Générer mon annonce";
     }
-
-
-    bouton.disabled =
-        false;
-
-
-    bouton.textContent =
-        "✨ Générer mon annonce";
-
 }
 
 
-// ======================================================
-// AFFICHER ANNONCE
-// ======================================================
+/* ============================
+   RESULTAT
+============================ */
 
-function afficherAnnonce(data) {
+function formatPrix(prix){
 
-    const resultat =
+    if(
+        prix === undefined ||
+        prix === null ||
+        String(prix).trim()===""
+    ){
+
+        return "—";
+    }
+
+
+    let texte =
+        String(prix)
+        .replace("€","")
+        .trim();
+
+
+    return texte+" €";
+}
+
+
+function afficherAnnonce(data){
+
+    const result =
         document.getElementById(
             "resultat"
         );
 
 
-    const motsCles =
+    const mots =
         Array.isArray(
             data.motsCles
         )
-            ? data.motsCles
-            : [];
+        ? data.motsCles
+        : [];
 
 
-    resultat.innerHTML = `
+    result.innerHTML=`
 
-        <div class="result-container">
+        <div class="result">
 
+            <h2>
+                🎉 Ton annonce est prête
+            </h2>
 
-            <div class="result-main-title">
-            🎉 Ton annonce est prête
-            </div>
-
-
-            <div class="result-subtitle">
-            Vérifie les informations avant de la publier.
-            </div>
+            <p class="result-subtitle">
+                Vérifie toujours les informations
+                et l'état réel de l'article avant publication.
+            </p>
 
 
             <div class="price-grid">
 
-                <div class="price-card">
+                <div class="price">
 
-                    <div class="price-label">
-                    Fourchette basse
-                    </div>
+                    <small>
+                        Prix bas
+                    </small>
 
-                    <div class="price-number">
-                    ${formatPrix(data.prixMin)}
-                    </div>
-
-                </div>
-
-
-                <div class="price-card">
-
-                    <div class="price-label">
-                    Prix conseillé
-                    </div>
-
-                    <div class="price-number">
-                    ${formatPrix(data.prixConseille)}
-                    </div>
+                    <strong>
+                        ${formatPrix(
+                            data.prixMin
+                        )}
+                    </strong>
 
                 </div>
 
 
-                <div class="price-card">
+                <div class="price main">
 
-                    <div class="price-label">
-                    Fourchette haute
-                    </div>
+                    <small>
+                        Prix conseillé
+                    </small>
 
-                    <div class="price-number">
-                    ${formatPrix(data.prixMax)}
-                    </div>
+                    <strong>
+                        ${formatPrix(
+                            data.prixConseille
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="price">
+
+                    <small>
+                        Prix haut
+                    </small>
+
+                    <strong>
+                        ${formatPrix(
+                            data.prixMax
+                        )}
+                    </strong>
 
                 </div>
 
@@ -2976,19 +2242,19 @@ function afficherAnnonce(data) {
             <div class="result-section">
 
                 <div class="result-label">
-                📌 Titre
+                    📌 Titre optimisé
                 </div>
 
                 <div
-                    id="resultTitre"
-                    class="result-value"
+                    id="resultTitle"
+                    class="result-text"
                 ></div>
 
                 <button
-                    class="small-copy"
-                    onclick="copierElement('resultTitre')"
+                    class="copy"
+                    onclick="copierElement('resultTitle')"
                 >
-                Copier le titre
+                    📋 Copier le titre
                 </button>
 
             </div>
@@ -2997,19 +2263,19 @@ function afficherAnnonce(data) {
             <div class="result-section">
 
                 <div class="result-label">
-                📝 Description
+                    📝 Description
                 </div>
 
                 <div
                     id="resultDescription"
-                    class="result-value"
+                    class="result-text"
                 ></div>
 
                 <button
-                    class="small-copy"
+                    class="copy"
                     onclick="copierElement('resultDescription')"
                 >
-                Copier la description
+                    📋 Copier la description
                 </button>
 
             </div>
@@ -3018,7 +2284,7 @@ function afficherAnnonce(data) {
             <div class="result-section">
 
                 <div class="result-label">
-                🏷️ Mots-clés
+                    🏷️ Mots-clés
                 </div>
 
                 <div
@@ -3026,52 +2292,40 @@ function afficherAnnonce(data) {
                     class="keywords"
                 ></div>
 
-                <button
-                    class="small-copy"
-                    onclick="copierMotsCles()"
-                >
-                Copier les mots-clés
-                </button>
-
             </div>
 
 
             <div class="result-actions">
 
-
                 <button
-                    class="action-button secondary"
+                    class="action secondary"
                     onclick="copierTout()"
                 >
-                📋 Tout copier
+                    📋 Tout copier
                 </button>
 
-
                 <button
-                    class="action-button secondary"
+                    class="action secondary"
                     onclick="genererAnnonce()"
                 >
-                🔄 Regénérer
+                    🔄 Regénérer
                 </button>
-
 
                 <button
-                    class="action-button primary"
+                    class="action primary"
                     onclick="nouvelleAnnonce()"
                 >
-                ＋ Nouvelle annonce
+                    ＋ Nouvelle annonce
                 </button>
-
 
             </div>
 
         </div>
-
     `;
 
 
     document.getElementById(
-        "resultTitre"
+        "resultTitle"
     ).textContent =
         data.titre || "";
 
@@ -3082,188 +2336,143 @@ function afficherAnnonce(data) {
         data.description || "";
 
 
-    const zone =
+    const keywordZone =
         document.getElementById(
             "keywords"
         );
 
 
-    motsCles.forEach(
-        mot => {
+    mots.forEach(mot=>{
 
-            const span =
-                document.createElement(
-                    "span"
-                );
-
-
-            span.className =
-                "keyword";
-
-
-            span.textContent =
-                mot;
-
-
-            zone.appendChild(
-                span
+        const span =
+            document.createElement(
+                "span"
             );
 
-        }
-    );
+        span.className =
+            "keyword";
 
+        span.textContent =
+            mot;
 
-    resultat.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
+        keywordZone.appendChild(
+            span
+        );
     });
 
+
+    result.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
 }
 
 
-// ======================================================
-// FORMAT PRIX
-// ======================================================
+/* ============================
+   COPIER
+============================ */
 
-function formatPrix(prix) {
+async function copierTexte(text){
 
-    if (
-        prix === undefined ||
-        prix === null ||
-        String(prix).trim() === ""
-    ) {
+    try{
 
-        return "—";
+        await navigator
+            .clipboard
+            .writeText(text);
 
+        alert(
+            "✅ Copié dans le presse-papiers."
+        );
+
+    }catch{
+
+        const textarea =
+            document.createElement(
+                "textarea"
+            );
+
+        textarea.value =
+            text;
+
+        document.body.appendChild(
+            textarea
+        );
+
+        textarea.select();
+
+        document.execCommand(
+            "copy"
+        );
+
+        textarea.remove();
+
+        alert(
+            "✅ Copié."
+        );
     }
-
-
-    return `${prix} €`;
-
 }
 
 
-// ======================================================
-// COPIER
-// ======================================================
-
-async function copierElement(id) {
+function copierElement(id){
 
     const element =
-        document.getElementById(id);
+        document.getElementById(
+            id
+        );
 
-
-    if (!element) {
-
+    if(!element)
         return;
 
-    }
-
-
-    await copier(
+    copierTexte(
         element.innerText
     );
-
 }
 
 
-async function copierMotsCles() {
+function copierTout(){
 
-    if (!derniereAnnonce) {
-
+    if(!derniereAnnonce)
         return;
-
-    }
 
 
     const mots =
         Array.isArray(
             derniereAnnonce.motsCles
         )
-            ? derniereAnnonce.motsCles
-            : [];
+
+        ? derniereAnnonce
+            .motsCles
+            .join(" ")
+
+        : "";
 
 
-    await copier(
-        mots.join(" ")
-    );
-
-}
-
-
-async function copierTout() {
-
-    if (!derniereAnnonce) {
-
-        return;
-
-    }
-
-
-    const mots =
-        Array.isArray(
-            derniereAnnonce.motsCles
-        )
-            ? derniereAnnonce.motsCles.join(
-                " "
-            )
-            : "";
-
-
-    const texte = `
+    const texte=`
 ${derniereAnnonce.titre}
 
 ${derniereAnnonce.description}
 
-Prix conseillé : ${formatPrix(
-    derniereAnnonce.prixConseille
-)}
+💰 Prix conseillé : ${formatPrix(derniereAnnonce.prixConseille)}
 
-Mots-clés : ${mots}
+🏷️ ${mots}
 `.trim();
 
 
-    await copier(
+    copierTexte(
         texte
     );
-
 }
 
 
-async function copier(texte) {
+/* ============================
+   HISTORIQUE
+============================ */
 
-    try {
+function getHistory(){
 
-        await navigator.clipboard.writeText(
-            texte
-        );
+    try{
 
-
-        alert(
-            "✅ Copié !"
-        );
-
-
-    } catch (error) {
-
-        alert(
-            "Impossible de copier automatiquement."
-        );
-
-    }
-
-}
-
-
-// ======================================================
-// HISTORIQUE
-// ======================================================
-
-function obtenirHistorique() {
-
-    try {
-
-        const historique =
+        const history =
             JSON.parse(
                 localStorage.getItem(
                     "vintedboost_history"
@@ -3272,36 +2481,33 @@ function obtenirHistorique() {
 
 
         return Array.isArray(
-            historique
+            history
         )
-            ? historique
-            : [];
+        ? history
+        : [];
 
-
-    } catch (error) {
+    }catch{
 
         return [];
-
     }
-
 }
 
 
 function enregistrerHistorique(
     annonce
-) {
+){
 
-    let historique =
-        obtenirHistorique();
+    let history =
+        getHistory();
 
 
-    historique.unshift(
+    history.unshift(
         annonce
     );
 
 
-    historique =
-        historique.slice(
+    history =
+        history.slice(
             0,
             10
         );
@@ -3310,17 +2516,16 @@ function enregistrerHistorique(
     localStorage.setItem(
         "vintedboost_history",
         JSON.stringify(
-            historique
+            history
         )
     );
 
 
     afficherHistorique();
-
 }
 
 
-function afficherHistorique() {
+function afficherHistorique(){
 
     const zone =
         document.getElementById(
@@ -3328,58 +2533,54 @@ function afficherHistorique() {
         );
 
 
-    const historique =
-        obtenirHistorique();
+    const history =
+        getHistory();
 
 
-    if (
-        historique.length === 0
-    ) {
+    if(!history.length){
 
-        zone.innerHTML = `
-            <div class="empty-history">
-            Aucune annonce générée pour le moment.
-            </div>
+        zone.innerHTML=`
+
+            <p class="history-description">
+                Aucune annonce générée
+                pour le moment.
+            </p>
         `;
 
         return;
-
     }
 
 
-    zone.innerHTML = "";
+    zone.innerHTML="";
 
 
-    historique.forEach(
-        annonce => {
+    history.forEach(
+        annonce=>{
 
             const item =
                 document.createElement(
                     "div"
                 );
 
-
             item.className =
                 "history-item";
 
 
-            const gauche =
+            const left =
                 document.createElement(
                     "div"
                 );
 
 
-            const titre =
+            const title =
                 document.createElement(
                     "div"
                 );
 
-
-            titre.className =
+            title.className =
                 "history-title";
 
-
-            titre.textContent =
+            title.textContent =
                 annonce.titre ||
                 "Annonce";
 
@@ -3389,7 +2590,6 @@ function afficherHistorique() {
                     "div"
                 );
 
-
             meta.className =
                 "history-meta";
 
@@ -3398,85 +2598,81 @@ function afficherHistorique() {
                 "Date inconnue";
 
 
-            if (annonce.date) {
+            if(annonce.date){
 
-                date =
+                const d =
                     new Date(
                         annonce.date
-                    ).toLocaleDateString(
-                        "fr-FR"
                     );
 
+                if(
+                    !Number.isNaN(
+                        d.getTime()
+                    )
+                ){
+
+                    date =
+                        d.toLocaleDateString(
+                            "fr-FR"
+                        );
+                }
             }
 
 
             meta.textContent =
                 `${
-                    annonce.plateforme ===
-                    "ebay"
-                        ? "eBay"
-                        : "Vinted"
+                    annonce.plateforme
+                    === "ebay"
+                    ? "eBay"
+                    : "Vinted"
                 } • ${date}`;
 
 
-            gauche.appendChild(
-                titre
-            );
-
-
-            gauche.appendChild(
+            left.append(
+                title,
                 meta
             );
 
 
-            const prix =
+            const price =
                 document.createElement(
                     "div"
                 );
 
-
-            prix.className =
+            price.className =
                 "history-price";
 
-
-            prix.textContent =
+            price.textContent =
                 formatPrix(
                     annonce.prixConseille
                 );
 
 
-            item.appendChild(
-                gauche
-            );
-
-
-            item.appendChild(
-                prix
+            item.append(
+                left,
+                price
             );
 
 
             zone.appendChild(
                 item
             );
-
         }
     );
-
 }
 
 
-// ======================================================
-// NOUVELLE ANNONCE
-// ======================================================
+/* ============================
+   NOUVELLE ANNONCE
+============================ */
 
-function nouvelleAnnonce() {
+function nouvelleAnnonce(){
 
-    photosBase64 = [];
+    photosBase64=[];
+    derniereAnnonce=null;
 
-    derniereAnnonce = null;
 
-
-    const ids = [
+    [
         "article",
         "marque",
         "categorie",
@@ -3486,43 +2682,38 @@ function nouvelleAnnonce() {
         "prix",
         "details",
         "defauts"
-    ];
+    ].forEach(id=>{
 
+        const el =
+            document.getElementById(
+                id
+            );
 
-    ids.forEach(
-        id => {
-
-            const element =
-                document.getElementById(
-                    id
-                );
-
-
-            if (element) {
-
-                element.value = "";
-
-            }
-
+        if(el){
+            el.value="";
         }
-    );
+    });
 
 
     document.getElementById(
         "naturel"
-    ).checked =
-        true;
+    ).checked=true;
 
 
     document.getElementById(
-        "plateformeVinted"
-    ).checked =
-        true;
+        "vinted"
+    ).checked=true;
 
 
-    document.getElementById(
-        "photoMessage"
-    ).innerHTML = "";
+    const status =
+        document.getElementById(
+            "analyseStatus"
+        );
+
+    status.className =
+        "status";
+
+    status.innerHTML="";
 
 
     document.getElementById(
@@ -3533,68 +2724,35 @@ function nouvelleAnnonce() {
 
     afficherPhotos();
 
-    mettreAJourScore();
+    updateScore();
+
+    setStep(1);
 
 
     window.scrollTo({
-        top: 0,
-        behavior: "smooth"
+        top:0,
+        behavior:"smooth"
     });
-
 }
 
 
-// ======================================================
-// SECURITE AFFICHAGE ERREURS
-// ======================================================
-
-function echapperHTML(texte) {
-
-    return String(
-        texte || ""
-    )
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
-
-}
-
-
-// ======================================================
-// DEMARRAGE PAGE
-// ======================================================
+/* ============================
+   INITIALISATION
+============================ */
 
 document.addEventListener(
     "DOMContentLoaded",
-    () => {
+    ()=>{
 
         afficherHistorique();
 
-        mettreAJourScore();
+        updateScore();
 
+        setStep(1);
     }
 );
 
 </script>
 
-
 </body>
-
 </html>

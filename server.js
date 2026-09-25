@@ -3,39 +3,75 @@ require("dotenv").config();
 
 const app = express();
 
+/* ======================================================
+   VINTEDBOOST V7
+====================================================== */
+
 app.set("trust proxy", 1);
 
-app.use(express.json({ limit: "25mb" }));
+app.use(
+    express.json({
+        limit: "15mb"
+    })
+);
+
 app.use(express.static(__dirname));
 
 
-// ======================================================
-// CONFIGURATION
-// ======================================================
+/* ======================================================
+   CONFIGURATION
+====================================================== */
 
-const PORT = process.env.PORT || 3000;
+const PORT =
+    process.env.PORT || 3000;
 
 const MAX_PHOTOS = 4;
 
-// Limitation simple contre les abus
-const limites = new Map();
+/*
+2 tentatives au lieu de 3.
+
+Si l'IA répond correctement :
+1 seul appel.
+
+Si le routeur gratuit renvoie une
+réponse vide/invalide :
+1 nouvelle tentative.
+*/
+const MAX_TENTATIVES = 2;
+
+const MODELE =
+    "openrouter/free";
+
+const limites =
+    new Map();
 
 
-// ======================================================
-// RATE LIMIT SIMPLE
-// ======================================================
+/* ======================================================
+   RATE LIMIT
+====================================================== */
 
-function limiterRequetes(req, res, next) {
+function limiterRequetes(
+    req,
+    res,
+    next
+) {
 
-    const ip = req.ip || "inconnue";
+    const ip =
+        req.ip || "inconnue";
 
-    const maintenant = Date.now();
+    const maintenant =
+        Date.now();
 
-    const duree = 60 * 60 * 1000;
+    const duree =
+        60 * 60 * 1000;
 
-    const maximum = 20;
+    const maximum =
+        30;
 
-    let utilisateur = limites.get(ip);
+
+    let utilisateur =
+        limites.get(ip);
+
 
     if (
         !utilisateur ||
@@ -43,286 +79,731 @@ function limiterRequetes(req, res, next) {
     ) {
 
         utilisateur = {
-            nombre: 0,
-            reset: maintenant + duree
-        };
 
+            nombre: 0,
+
+            reset:
+                maintenant + duree
+        };
     }
+
 
     utilisateur.nombre++;
 
-    limites.set(ip, utilisateur);
+    limites.set(
+        ip,
+        utilisateur
+    );
 
-    if (utilisateur.nombre > maximum) {
 
-        return res.status(429).json({
-            error:
-                "Trop de générations. Réessaie un peu plus tard."
-        });
+    if (
+        utilisateur.nombre >
+        maximum
+    ) {
 
+        return res
+            .status(429)
+            .json({
+
+                error:
+                    "Trop de requêtes. Réessaie un peu plus tard."
+            });
     }
+
 
     next();
 }
 
 
-// ======================================================
-// NETTOYAGE TEXTE
-// ======================================================
+/* ======================================================
+   NETTOYAGE
+====================================================== */
 
-function nettoyerTexte(valeur, longueur = 500) {
+function nettoyerTexte(
+    valeur,
+    longueur = 500
+) {
 
-    if (typeof valeur !== "string") {
+    if (
+        valeur === undefined ||
+        valeur === null
+    ) {
+
         return "";
     }
 
-    return valeur
+
+    return String(valeur)
         .trim()
         .slice(0, longueur);
 }
 
 
-// ======================================================
-// EXTRAIRE JSON IA
-// ======================================================
+/* ======================================================
+   PETITE PAUSE
+====================================================== */
 
-function extraireJSON(texte) {
+function attendre(ms) {
 
-    let nettoyage = texte
-        .replace(/```json/gi, "")
-        .replace(/```/g, "")
-        .trim();
-
-    const debut =
-        nettoyage.indexOf("{");
-
-    const fin =
-        nettoyage.lastIndexOf("}");
-
-    if (
-        debut !== -1 &&
-        fin !== -1
-    ) {
-
-        nettoyage =
-            nettoyage.slice(
-                debut,
-                fin + 1
-            );
-
-    }
-
-    return JSON.parse(nettoyage);
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                ms
+            )
+    );
 }
 
 
-// ======================================================
-// APPEL OPENROUTER
-// ======================================================
+/* ======================================================
+   EXTRACTION JSON
+====================================================== */
 
-async function appelerIA(messages) {
-
-    if (!process.env.OPENROUTER_API_KEY) {
-
-        throw new Error(
-            "La clé OpenRouter n'est pas configurée."
-        );
-
-    }
-
-    const response = await fetch(
-        "https://openrouter.ai/api/v1/chat/completions",
-        {
-            method: "POST",
-
-            headers: {
-                "Authorization":
-                    `Bearer ${process.env.OPENROUTER_API_KEY}`,
-
-                "Content-Type":
-                    "application/json"
-            },
-
-            body: JSON.stringify({
-                model: "openrouter/free",
-                messages,
-                temperature: 0.4
-            })
-        }
-    );
-
-    const data =
-        await response.json();
-
-
-    if (!response.ok) {
-
-        console.error(
-            "ERREUR OPENROUTER :",
-            data
-        );
-
-        throw new Error(
-            data?.error?.message ||
-            "Le service IA est temporairement indisponible."
-        );
-
-    }
-
-
-    const texte =
-        data.choices?.[0]?.message?.content;
-
+function extraireJSON(texte) {
 
     if (!texte) {
 
         throw new Error(
-            "L'IA n'a renvoyé aucune réponse."
+            "Réponse IA vide."
         );
-
     }
 
 
-    return texte;
+    if (
+        typeof texte === "object" &&
+        !Array.isArray(texte)
+    ) {
+
+        return texte;
+    }
+
+
+    let propre =
+        String(texte)
+            .replace(/```json/gi, "")
+            .replace(/```javascript/gi, "")
+            .replace(/```js/gi, "")
+            .replace(/```/g, "")
+            .trim();
+
+
+    if (
+        !propre ||
+        propre.length < 2
+    ) {
+
+        throw new Error(
+            "Réponse IA inutilisable."
+        );
+    }
+
+
+    const lower =
+        propre.toLowerCase();
+
+
+    if (
+        lower === "safe" ||
+        lower === "user safety: safe"
+    ) {
+
+        throw new Error(
+            "Réponse IA inutilisable."
+        );
+    }
+
+
+    /*
+    1 - JSON direct
+    */
+
+    try {
+
+        return JSON.parse(
+            propre
+        );
+
+    } catch {
+
+        // On continue.
+    }
+
+
+    /*
+    2 - Recherche du premier {
+        et du dernier }
+    */
+
+    const debut =
+        propre.indexOf("{");
+
+    const fin =
+        propre.lastIndexOf("}");
+
+
+    if (
+        debut !== -1 &&
+        fin !== -1 &&
+        fin > debut
+    ) {
+
+        let jsonPossible =
+            propre.slice(
+                debut,
+                fin + 1
+            );
+
+
+        jsonPossible =
+            jsonPossible
+                .replace(
+                    /,\s*}/g,
+                    "}"
+                )
+                .replace(
+                    /,\s*]/g,
+                    "]"
+                );
+
+
+        try {
+
+            return JSON.parse(
+                jsonPossible
+            );
+
+        } catch {
+
+            console.error(
+                "JSON détecté mais invalide."
+            );
+        }
+    }
+
+
+    throw new Error(
+        "JSON IA invalide."
+    );
 }
 
 
-// ======================================================
-// ANALYSE DE PLUSIEURS PHOTOS
-// ======================================================
+/* ======================================================
+   CONTENU DE LA REPONSE OPENROUTER
+====================================================== */
+
+function recupererTexteIA(data) {
+
+    const content =
+        data?.choices?.[0]
+            ?.message?.content;
+
+
+    if (
+        typeof content === "string"
+    ) {
+
+        return content.trim();
+    }
+
+
+    /*
+    Certains modèles renvoient
+    plusieurs parties.
+    */
+
+    if (
+        Array.isArray(content)
+    ) {
+
+        return content
+            .map(partie => {
+
+                if (
+                    typeof partie ===
+                    "string"
+                ) {
+
+                    return partie;
+                }
+
+
+                if (
+                    partie &&
+                    typeof partie.text ===
+                    "string"
+                ) {
+
+                    return partie.text;
+                }
+
+
+                return "";
+
+            })
+            .join("")
+            .trim();
+    }
+
+
+    return "";
+}
+
+
+/* ======================================================
+   APPEL OPENROUTER
+====================================================== */
+
+async function appelerOpenRouter(
+    messages,
+    options = {}
+) {
+
+    if (
+        !process.env
+            .OPENROUTER_API_KEY
+    ) {
+
+        throw new Error(
+            "La clé OpenRouter n'est pas configurée."
+        );
+    }
+
+
+    const maxTokens =
+        options.maxTokens || 1800;
+
+
+    /*
+    Timeout serveur.
+
+    On évite qu'un appel IA reste
+    bloqué indéfiniment.
+    */
+
+    const controller =
+        new AbortController();
+
+    const timeout =
+        setTimeout(
+            () =>
+                controller.abort(),
+            70000
+        );
+
+
+    const debut =
+        Date.now();
+
+
+    try {
+
+        const response =
+            await fetch(
+                "https://openrouter.ai/api/v1/chat/completions",
+                {
+
+                    method: "POST",
+
+                    signal:
+                        controller.signal,
+
+                    headers: {
+
+                        "Authorization":
+                            `Bearer ${process.env.OPENROUTER_API_KEY}`,
+
+                        "Content-Type":
+                            "application/json",
+
+                        "X-Title":
+                            "VintedBoost"
+                    },
+
+
+                    body:
+                        JSON.stringify({
+
+                            model:
+                                MODELE,
+
+                            messages,
+
+                            temperature:
+                                0.1,
+
+                            max_tokens:
+                                maxTokens
+                        })
+                }
+            );
+
+
+        let data;
+
+
+        try {
+
+            data =
+                await response.json();
+
+        } catch {
+
+            throw new Error(
+                "Réponse OpenRouter illisible."
+            );
+        }
+
+
+        if (!response.ok) {
+
+            console.error(
+                "OPENROUTER :",
+                response.status,
+                data?.error?.message ||
+                "Erreur inconnue"
+            );
+
+
+            const erreur =
+                new Error(
+                    data?.error?.message ||
+                    "Erreur OpenRouter."
+                );
+
+
+            erreur.status =
+                response.status;
+
+
+            throw erreur;
+        }
+
+
+        const texte =
+            recupererTexteIA(
+                data
+            );
+
+
+        const temps =
+            (
+                (
+                    Date.now() -
+                    debut
+                ) / 1000
+            ).toFixed(1);
+
+
+        console.log(
+            `🤖 ${data?.model || MODELE} • ${temps}s • ${data?.choices?.[0]?.finish_reason || "?"}`
+        );
+
+
+        if (!texte) {
+
+            throw new Error(
+                "L'IA a renvoyé une réponse vide."
+            );
+        }
+
+
+        return texte;
+
+
+    } catch (error) {
+
+        if (
+            error.name ===
+            "AbortError"
+        ) {
+
+            throw new Error(
+                "OpenRouter met trop de temps à répondre."
+            );
+        }
+
+
+        throw error;
+
+
+    } finally {
+
+        clearTimeout(
+            timeout
+        );
+    }
+}
+
+
+/* ======================================================
+   IA JSON + RETRY
+====================================================== */
+
+async function appelerIAJSON(
+    messages,
+    options = {}
+) {
+
+    let derniereErreur;
+
+
+    for (
+        let tentative = 1;
+        tentative <= MAX_TENTATIVES;
+        tentative++
+    ) {
+
+        try {
+
+            console.log(
+                `🤖 IA ${tentative}/${MAX_TENTATIVES}`
+            );
+
+
+            const texte =
+                await appelerOpenRouter(
+                    messages,
+                    options
+                );
+
+
+            const resultat =
+                extraireJSON(
+                    texte
+                );
+
+
+            console.log(
+                "✅ Réponse IA valide"
+            );
+
+
+            return resultat;
+
+
+        } catch (error) {
+
+            derniereErreur =
+                error;
+
+
+            console.error(
+                `❌ IA ${tentative}:`,
+                error.message
+            );
+
+
+            /*
+            Erreurs où refaire la même
+            requête n'est pas utile.
+            */
+
+            if (
+                error.status === 401 ||
+                error.status === 402 ||
+                error.status === 403
+            ) {
+
+                break;
+            }
+
+
+            if (
+                tentative <
+                MAX_TENTATIVES
+            ) {
+
+                /*
+                Seulement 350 ms.
+
+                Ancienne version :
+                800 ms.
+                */
+
+                await attendre(
+                    350
+                );
+            }
+        }
+    }
+
+
+    throw new Error(
+        derniereErreur?.message ||
+        "L'IA n'a pas réussi à répondre."
+    );
+}
+
+
+/* ======================================================
+   VALIDATION ANALYSE
+====================================================== */
+
+function normaliserAnalyse(
+    analyse
+) {
+
+    return {
+
+        article:
+            nettoyerTexte(
+                analyse?.article,
+                100
+            ),
+
+        marque:
+            nettoyerTexte(
+                analyse?.marque,
+                100
+            ),
+
+        categorie:
+            nettoyerTexte(
+                analyse?.categorie,
+                100
+            ),
+
+        couleur:
+            nettoyerTexte(
+                analyse?.couleur,
+                100
+            ),
+
+        tailleVisible:
+            nettoyerTexte(
+                analyse?.tailleVisible,
+                50
+            ),
+
+        etat:
+            nettoyerTexte(
+                analyse?.etat,
+                50
+            ),
+
+        details:
+            nettoyerTexte(
+                analyse?.details,
+                700
+            ),
+
+        defauts:
+            nettoyerTexte(
+                analyse?.defauts,
+                500
+            )
+    };
+}
+
+
+/* ======================================================
+   ANALYSE PHOTOS
+====================================================== */
 
 app.post(
     "/analyze-photos",
     limiterRequetes,
     async (req, res) => {
 
+        const debut =
+            Date.now();
+
+
         try {
 
-            let { images } = req.body;
+            let images =
+                req.body?.images;
 
 
-            if (!Array.isArray(images)) {
+            if (
+                !Array.isArray(
+                    images
+                )
+            ) {
 
-                return res.status(400).json({
-                    error:
-                        "Format des photos incorrect."
-                });
+                return res
+                    .status(400)
+                    .json({
 
+                        error:
+                            "Format des photos incorrect."
+                    });
             }
 
 
             images =
-                images.slice(
-                    0,
-                    MAX_PHOTOS
-                );
+                images
+                    .slice(
+                        0,
+                        MAX_PHOTOS
+                    )
+                    .filter(
+                        image =>
+
+                            typeof image ===
+                                "string" &&
+
+                            /^data:image\/(jpeg|jpg|png|webp);base64,/i
+                                .test(image)
+                    );
 
 
-            if (images.length === 0) {
+            if (
+                images.length === 0
+            ) {
 
-                return res.status(400).json({
-                    error:
-                        "Ajoute au moins une photo."
-                });
+                return res
+                    .status(400)
+                    .json({
 
+                        error:
+                            "Ajoute au moins une photo valide."
+                    });
             }
 
 
-            const imagesValides =
-                images.filter(
-                    image =>
-                        typeof image === "string" &&
-                        /^data:image\/(jpeg|jpg|png|webp);base64,/i.test(
-                            image
-                        )
-                );
+            /*
+            Prompt V7 plus court.
 
-
-            if (imagesValides.length === 0) {
-
-                return res.status(400).json({
-                    error:
-                        "Les photos envoyées ne sont pas valides."
-                });
-
-            }
-
+            Moins de texte à traiter.
+            */
 
             const prompt = `
-Tu analyses plusieurs photos DU MÊME article destiné à être vendu d'occasion.
+Analyse ces photos du même vêtement ou article d'occasion.
 
-Les différentes photos peuvent montrer :
-- l'article entier
-- le logo ou la marque
-- une étiquette
-- des détails
-- des défauts
-
-Analyse toutes les photos ensemble.
-
-IMPORTANT :
-
-Tu dois uniquement décrire ce qui est réellement visible.
-
-N'invente JAMAIS :
-- une marque non lisible
-- un modèle précis incertain
-- une taille non visible
-- une matière non identifiable avec certitude
-- une preuve d'authenticité
-- un défaut invisible
-
-Tu ne dois jamais affirmer qu'un article est authentique.
-
-Pour l'état, sois prudent.
-Une photo ne permet pas toujours de connaître parfaitement l'état réel.
-
-Retourne UNIQUEMENT un JSON valide :
+Retourne UNIQUEMENT un objet JSON valide avec exactement ces clés :
 
 {
-    "article": "",
-    "marque": "",
-    "categorie": "",
-    "couleur": "",
-    "tailleVisible": "",
-    "etat": "",
-    "details": "",
-    "defauts": ""
+"article":"",
+"marque":"",
+"categorie":"",
+"couleur":"",
+"tailleVisible":"",
+"etat":"",
+"details":"",
+"defauts":""
 }
 
-categorie doit être une catégorie simple comme :
-"Veste",
-"Sweat",
-"T-shirt",
-"Pantalon",
-"Jean",
-"Chaussures",
-"Accessoire",
-"Robe",
-"Chemise",
-"Pull",
-"Short",
-"Autre"
+Règles :
+- utilise uniquement ce qui est visible ;
+- n'invente jamais marque, taille, matière, modèle ou défaut ;
+- ne confirme jamais l'authenticité ;
+- information inconnue = "";
+- details = caractéristiques visibles, texte court ;
+- defauts = uniquement les défauts clairement visibles.
 
-etat doit être exactement une valeur parmi :
+categorie = uniquement :
+Veste, Sweat, T-shirt, Pantalon, Jean, Chaussures, Accessoire, Robe, Chemise, Pull, Short, Autre.
 
-"Neuf avec étiquette"
-"Neuf sans étiquette"
-"Très bon état"
-"Bon état"
-"État satisfaisant"
+etat = uniquement :
+Neuf avec étiquette, Neuf sans étiquette, Très bon état, Bon état, État satisfaisant, ou "".
 
-Si tu ne peux pas déterminer une information,
-retourne une chaîne vide "".
-
-Dans "details", décris brièvement les éléments utiles réellement visibles.
-
-Dans "defauts", indique uniquement les défauts clairement visibles.
-Sinon retourne "".
-`;
+Aucun Markdown. Aucune explication.
+`.trim();
 
 
             const contenu = [
+
                 {
                     type: "text",
                     text: prompt
@@ -331,396 +812,345 @@ Sinon retourne "".
 
 
             for (
-                const image of imagesValides
+                const image of images
             ) {
 
                 contenu.push({
-                    type: "image_url",
+
+                    type:
+                        "image_url",
 
                     image_url: {
                         url: image
                     }
                 });
-
             }
 
 
-            const texte =
-                await appelerIA([
+            /*
+            Analyse photo :
+            on laisse assez de tokens
+            pour les modèles gratuits
+            qui peuvent utiliser des
+            tokens de raisonnement.
+            */
+
+            const analyse =
+                await appelerIAJSON(
+                    [
+                        {
+                            role:
+                                "user",
+
+                            content:
+                                contenu
+                        }
+                    ],
                     {
-                        role: "user",
-                        content: contenu
+                        maxTokens:
+                            1800
                     }
-                ]);
-
-
-            let analyse;
-
-
-            try {
-
-                analyse =
-                    extraireJSON(texte);
-
-            } catch (error) {
-
-                console.error(
-                    "JSON PHOTO INVALIDE :",
-                    texte
                 );
 
-                return res.status(500).json({
-                    error:
-                        "L'analyse n'a pas pu être comprise. Réessaie."
-                });
 
+            const resultat =
+                normaliserAnalyse(
+                    analyse
+                );
+
+
+            /*
+            Au minimum, on veut
+            quelque chose d'exploitable.
+            */
+
+            if (
+                !resultat.article &&
+                !resultat.categorie &&
+                !resultat.details
+            ) {
+
+                throw new Error(
+                    "L'IA n'a pas réussi à identifier l'article."
+                );
             }
 
 
-            res.json({
-                article:
-                    nettoyerTexte(
-                        analyse.article,
-                        100
-                    ),
+            console.log(
+                `📸 Analyse terminée en ${((Date.now() - debut) / 1000).toFixed(1)}s`
+            );
 
-                marque:
-                    nettoyerTexte(
-                        analyse.marque,
-                        100
-                    ),
 
-                categorie:
-                    nettoyerTexte(
-                        analyse.categorie,
-                        100
-                    ),
-
-                couleur:
-                    nettoyerTexte(
-                        analyse.couleur,
-                        100
-                    ),
-
-                tailleVisible:
-                    nettoyerTexte(
-                        analyse.tailleVisible,
-                        50
-                    ),
-
-                etat:
-                    nettoyerTexte(
-                        analyse.etat,
-                        50
-                    ),
-
-                details:
-                    nettoyerTexte(
-                        analyse.details,
-                        700
-                    ),
-
-                defauts:
-                    nettoyerTexte(
-                        analyse.defauts,
-                        500
-                    )
-            });
+            return res.json(
+                resultat
+            );
 
 
         } catch (error) {
 
             console.error(
-                "ERREUR ANALYSE :",
-                error
+                "❌ ANALYSE :",
+                error.message
             );
 
-            res.status(500).json({
-                error:
-                    error.message
-            });
 
+            return res
+                .status(500)
+                .json({
+
+                    error:
+                        "L'analyse IA a échoué. Réessaie dans quelques secondes."
+                });
         }
-
     }
 );
 
 
-// ======================================================
-// GENERATION ANNONCE
-// ======================================================
+/* ======================================================
+   STYLE
+====================================================== */
+
+function obtenirStyle(style) {
+
+    switch (style) {
+
+        case "court":
+
+            return (
+                "Annonce courte, directe, naturelle et efficace."
+            );
+
+
+        case "vendeur":
+
+            return (
+                "Annonce attractive et dynamique, sans exagération ni fausse urgence."
+            );
+
+
+        case "premium":
+
+            return (
+                "Annonce élégante, propre et soignée, sans inventer d'informations."
+            );
+
+
+        default:
+
+            return (
+                "Ton naturel, simple et crédible, comme un particulier."
+            );
+    }
+}
+
+
+/* ======================================================
+   PLATEFORME
+====================================================== */
+
+function obtenirPlateforme(
+    plateforme
+) {
+
+    if (
+        plateforme === "ebay"
+    ) {
+
+        return (
+            "eBay : titre précis et description claire et structurée."
+        );
+    }
+
+
+    return (
+        "Vinted : titre recherché mais naturel, description simple entre particuliers."
+    );
+}
+
+
+/* ======================================================
+   GENERATION ANNONCE
+====================================================== */
 
 app.post(
     "/generate",
     limiterRequetes,
     async (req, res) => {
 
+        const debut =
+            Date.now();
+
+
         try {
 
             const article =
                 nettoyerTexte(
-                    req.body.article,
+                    req.body?.article,
                     100
                 );
 
             const marque =
                 nettoyerTexte(
-                    req.body.marque,
+                    req.body?.marque,
                     100
                 );
 
             const categorie =
                 nettoyerTexte(
-                    req.body.categorie,
+                    req.body?.categorie,
                     100
                 );
 
             const taille =
                 nettoyerTexte(
-                    req.body.taille,
+                    req.body?.taille,
                     50
                 );
 
             const couleur =
                 nettoyerTexte(
-                    req.body.couleur,
+                    req.body?.couleur,
                     100
                 );
 
             const etat =
                 nettoyerTexte(
-                    req.body.etat,
+                    req.body?.etat,
                     50
                 );
 
             const prix =
                 nettoyerTexte(
-                    String(
-                        req.body.prix || ""
-                    ),
+                    req.body?.prix,
                     20
                 );
 
             const details =
                 nettoyerTexte(
-                    req.body.details,
+                    req.body?.details,
                     1000
                 );
 
             const defauts =
                 nettoyerTexte(
-                    req.body.defauts,
+                    req.body?.defauts,
                     500
                 );
 
             const style =
                 nettoyerTexte(
-                    req.body.style,
+                    req.body?.style,
                     30
                 );
 
             const plateforme =
                 nettoyerTexte(
-                    req.body.plateforme,
+                    req.body?.plateforme,
                     30
                 );
 
 
             if (!article) {
 
-                return res.status(400).json({
-                    error:
-                        "Indique au minimum le type d'article."
-                });
+                return res
+                    .status(400)
+                    .json({
 
+                        error:
+                            "Indique au minimum le type d'article."
+                    });
             }
 
 
-            let consigneStyle =
-                "Utilise un ton naturel, simple et crédible.";
-
-
-            if (style === "court") {
-
-                consigneStyle =
-                    "Fais une annonce courte et très directe.";
-
-            }
-
-
-            if (style === "vendeur") {
-
-                consigneStyle =
-                    "Fais une annonce attractive et dynamique, sans exagération.";
-
-            }
-
-
-            if (style === "premium") {
-
-                consigneStyle =
-                    "Utilise un ton élégant, soigné et premium, sans inventer d'informations.";
-
-            }
-
-
-            let consignePlateforme =
-                "Adapte l'annonce à une plateforme de seconde main.";
-
-
-            if (plateforme === "vinted") {
-
-                consignePlateforme = `
-L'annonce est destinée à Vinted.
-Utilise un style naturel adapté à une annonce entre particuliers.
-Le titre doit être clair et relativement court.
-`;
-
-            }
-
-
-            if (plateforme === "ebay") {
-
-                consignePlateforme = `
-L'annonce est destinée à eBay.
-Le titre doit être précis et descriptif.
-La description peut être légèrement plus structurée.
-`;
-
-            }
-
-
-            const prompt = `
-Tu rédiges une annonce de vente d'occasion.
-
-PLATEFORME :
-${plateforme || "non précisée"}
-
-${consignePlateforme}
-
-STYLE :
-${consigneStyle}
-
-INFORMATIONS FOURNIES PAR L'UTILISATEUR :
-
-Article :
-${article}
-
-Marque :
-${marque || "non renseignée"}
-
-Catégorie :
-${categorie || "non renseignée"}
-
-Taille :
-${taille || "non renseignée"}
-
-Couleur :
-${couleur || "non renseignée"}
-
-État :
-${etat || "non renseigné"}
-
-Prix souhaité :
-${prix ? prix + " €" : "non renseigné"}
-
-Détails :
-${details || "aucun"}
-
-Défauts :
-${defauts || "aucun défaut renseigné"}
-
-RÈGLES IMPORTANTES :
-
-- N'invente aucune information.
-- N'invente jamais une marque.
-- N'invente jamais une matière.
-- N'invente jamais le prix neuf.
-- N'invente jamais une taille.
-- N'affirme jamais que l'article est authentique.
-- Mentionne les défauts renseignés de manière honnête.
-- N'utilise pas de fausse urgence.
-- N'affirme pas que l'article va forcément se vendre.
-- Évite les phrases robotiques.
-- Maximum 8 mots-clés.
-- Les mots-clés doivent être pertinents.
-
-PRIX :
-
-Si un prix souhaité est fourni :
-base ta suggestion principalement sur ce prix et les informations fournies.
-
-Si aucun prix n'est fourni :
-fais uniquement une estimation indicative prudente basée sur les informations disponibles.
-
-Tu n'as PAS accès aux ventes réelles actuelles de Vinted ou eBay.
-Ne prétends donc jamais utiliser des ventes récentes ou des données de marché en temps réel.
-
-Retourne UNIQUEMENT ce JSON valide :
-
-{
-    "titre": "",
-    "description": "",
-    "prixConseille": "",
-    "prixMin": "",
-    "prixMax": "",
-    "motsCles": []
-}
-
-Pour prixConseille, prixMin et prixMax :
-retourne uniquement un nombre entier sous forme de texte.
-Exemple :
-"39"
-
-motsCles doit être un tableau de chaînes de caractères.
-`;
-
-
-            const texte =
-                await appelerIA([
-                    {
-                        role: "user",
-                        content: prompt
-                    }
-                ]);
-
-
-            let annonce;
-
-
-            try {
-
-                annonce =
-                    extraireJSON(texte);
-
-            } catch (error) {
-
-                console.error(
-                    "JSON ANNONCE INVALIDE :",
-                    texte
+            const consigneStyle =
+                obtenirStyle(
+                    style
                 );
 
-                return res.status(500).json({
-                    error:
-                        "L'IA a renvoyé une réponse incorrecte. Clique sur Regénérer."
-                });
 
-            }
+            const consignePlateforme =
+                obtenirPlateforme(
+                    plateforme
+                );
+
+
+            /*
+            Prompt génération V7.
+
+            Plus court et plus structuré.
+            */
+
+            const prompt = `
+Crée une annonce de seconde main.
+
+Plateforme :
+${consignePlateforme}
+
+Style :
+${consigneStyle}
+
+Article : ${article}
+Marque : ${marque || "inconnue"}
+Catégorie : ${categorie || "inconnue"}
+Taille : ${taille || "inconnue"}
+Couleur : ${couleur || "inconnue"}
+État : ${etat || "inconnu"}
+Prix envisagé : ${prix ? prix + " €" : "non renseigné"}
+Détails : ${details || "aucun"}
+Défauts : ${defauts || "aucun renseigné"}
+
+Retourne UNIQUEMENT :
+
+{
+"titre":"",
+"description":"",
+"prixConseille":"",
+"prixMin":"",
+"prixMax":"",
+"motsCles":[]
+}
+
+Règles :
+- aucune information inventée ;
+- ne jamais inventer matière ou prix neuf ;
+- ne jamais garantir l'authenticité ;
+- défauts mentionnés honnêtement ;
+- titre clair avec les informations utiles ;
+- description naturelle et facile à lire ;
+- maximum 8 mots-clés pertinents ;
+- pas de fausse urgence ;
+- prix = estimation indicative uniquement ;
+- prixConseille, prixMin et prixMax = nombres entiers sous forme de texte ;
+- prixMin <= prixConseille <= prixMax ;
+- aucun Markdown ;
+- aucun texte hors JSON.
+`.trim();
+
+
+            const annonce =
+                await appelerIAJSON(
+                    [
+                        {
+                            role:
+                                "user",
+
+                            content:
+                                prompt
+                        }
+                    ],
+                    {
+                        maxTokens:
+                            1600
+                    }
+                );
 
 
             let motsCles =
-                annonce.motsCles;
-
-
-            if (
-                !Array.isArray(
-                    motsCles
+                Array.isArray(
+                    annonce?.motsCles
                 )
-            ) {
-
-                motsCles = [];
-
-            }
+                ? annonce.motsCles
+                : [];
 
 
             motsCles =
@@ -729,99 +1159,146 @@ motsCles doit être un tableau de chaînes de caractères.
                     .map(
                         mot =>
                             nettoyerTexte(
-                                String(mot),
+                                mot,
                                 50
                             )
                     )
                     .filter(Boolean);
 
 
-            res.json({
+            const resultat = {
 
                 titre:
                     nettoyerTexte(
-                        annonce.titre,
+                        annonce?.titre,
                         160
                     ),
 
                 description:
                     nettoyerTexte(
-                        annonce.description,
+                        annonce?.description,
                         2000
                     ),
 
                 prixConseille:
                     nettoyerTexte(
-                        String(
-                            annonce.prixConseille ||
-                            ""
-                        ),
+                        annonce?.prixConseille,
                         20
                     ),
 
                 prixMin:
                     nettoyerTexte(
-                        String(
-                            annonce.prixMin ||
-                            ""
-                        ),
+                        annonce?.prixMin,
                         20
                     ),
 
                 prixMax:
                     nettoyerTexte(
-                        String(
-                            annonce.prixMax ||
-                            ""
-                        ),
+                        annonce?.prixMax,
                         20
                     ),
 
                 motsCles
+            };
 
-            });
+
+            if (
+                !resultat.titre ||
+                !resultat.description
+            ) {
+
+                throw new Error(
+                    "Annonce IA incomplète."
+                );
+            }
+
+
+            console.log(
+                `✨ Annonce générée en ${((Date.now() - debut) / 1000).toFixed(1)}s`
+            );
+
+
+            return res.json(
+                resultat
+            );
 
 
         } catch (error) {
 
             console.error(
-                "ERREUR GENERATION :",
-                error
+                "❌ GENERATION :",
+                error.message
             );
 
-            res.status(500).json({
-                error:
-                    error.message
-            });
 
+            return res
+                .status(500)
+                .json({
+
+                    error:
+                        "La génération a échoué. Réessaie dans quelques secondes."
+                });
         }
-
     }
 );
 
 
-// ======================================================
-// TEST SERVEUR
-// ======================================================
+/* ======================================================
+   HEALTH
+====================================================== */
 
-app.get("/health", (req, res) => {
+app.get(
+    "/health",
+    (req, res) => {
 
-    res.json({
-        status: "ok",
-        app: "VintedBoost"
-    });
+        res.json({
 
-});
+            status:
+                "ok",
+
+            app:
+                "VintedBoost",
+
+            version:
+                "7"
+        });
+    }
+);
 
 
-// ======================================================
-// DEMARRAGE
-// ======================================================
+/* ======================================================
+   404 API
+====================================================== */
 
-app.listen(PORT, () => {
+app.use(
+    "/api",
+    (req, res) => {
 
-    console.log(
-        `🚀 VintedBoost fonctionne sur le port ${PORT}`
-    );
+        res
+            .status(404)
+            .json({
 
-});
+                error:
+                    "Route inconnue."
+            });
+    }
+);
+
+
+/* ======================================================
+   DEMARRAGE
+====================================================== */
+
+app.listen(
+    PORT,
+    () => {
+
+        console.log(
+            `🚀 VintedBoost V7 fonctionne sur le port ${PORT}`
+        );
+
+        console.log(
+            `🤖 Modèle : ${MODELE}`
+        );
+    }
+);
