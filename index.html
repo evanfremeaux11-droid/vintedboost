@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="VintedBoost transforme les photos de tes vêtements en annonces optimisées grâce à l'IA.">
 
-<title>VintedBoost V7 — Assistant IA</title>
+<title>VintedBoost V8 — Comptes + IA</title>
 
 <style>
 :root{
@@ -47,26 +47,48 @@ button{
     -webkit-tap-highlight-color:transparent;
 }
 
-/* HEADER */
+
+/* ======================================================
+   HEADER V8
+====================================================== */
 
 header{
     height:68px;
+    width:100%;
     background:rgba(255,255,255,.92);
     backdrop-filter:blur(12px);
     border-bottom:1px solid #eee;
+
     display:flex;
     align-items:center;
     justify-content:space-between;
+
     padding:0 max(18px,calc((100% - 1100px)/2));
+
     position:sticky;
     top:0;
     z-index:50;
+}
+
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    min-width:0;
+}
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-left:auto;
 }
 
 .logo{
     font-size:23px;
     font-weight:900;
     letter-spacing:-.7px;
+    white-space:nowrap;
 }
 
 .logo-icon{
@@ -80,36 +102,55 @@ header{
 .version{
     background:var(--violetLight);
     color:var(--violet);
-    padding:8px 13px;
-    border-radius:999px;
-    font-size:13px;
-    font-weight:800;
-}
-/* ============================
-   AUTHENTIFICATION V8
-============================ */
+    border:1px solid var(--violetBorder);
 
-.header-right{
-    display:flex;
-    align-items:center;
-    gap:10px;
+    padding:7px 12px;
+
+    border-radius:999px;
+
+    font-size:12px;
+    font-weight:800;
+
+    white-space:nowrap;
 }
+
+
+/* ======================================================
+   AUTHENTIFICATION V8
+====================================================== */
 
 .auth-button{
     border:0;
-    background:linear-gradient(90deg,var(--violet),var(--violet2));
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--violet),
+            var(--violet2)
+        );
+
     color:white;
+
     padding:9px 15px;
+
     border-radius:10px;
+
     font-size:13px;
     font-weight:800;
+
     cursor:pointer;
+
     transition:.2s;
+
+    white-space:nowrap;
 }
 
 .auth-button:hover{
     transform:translateY(-1px);
-    box-shadow:0 7px 18px rgba(124,58,237,.2);
+
+    box-shadow:
+        0 7px 18px
+        rgba(124,58,237,.2);
 }
 
 .user-zone{
@@ -120,20 +161,29 @@ header{
 
 #userEmail{
     max-width:180px;
+
     overflow:hidden;
+
     text-overflow:ellipsis;
+
     white-space:nowrap;
+
     font-size:12px;
     font-weight:700;
 }
 
 .logout-button{
     border:1px solid var(--border);
+
     background:white;
+
     padding:8px 11px;
+
     border-radius:9px;
+
     font-size:12px;
     font-weight:750;
+
     cursor:pointer;
 }
 
@@ -141,17 +191,30 @@ header{
     background:#fafafa;
 }
 
-/* FOND DE LA FENETRE */
+
+/* ======================================================
+   FENÊTRE DE CONNEXION
+====================================================== */
 
 .auth-modal{
     display:none;
+
     position:fixed;
+
     inset:0;
+
     z-index:1000;
-    background:rgba(24,24,27,.55);
-    backdrop-filter:blur(5px);
+
+    background:
+        rgba(24,24,27,.55);
+
+    backdrop-filter:
+        blur(5px);
+
     align-items:center;
+
     justify-content:center;
+
     padding:20px;
 }
 
@@ -159,30 +222,46 @@ header{
     display:flex;
 }
 
-/* CARTE */
-
 .auth-card{
     position:relative;
+
     width:100%;
+
     max-width:430px;
+
     background:white;
-    border:1px solid #ebe7f1;
+
+    border:
+        1px solid #ebe7f1;
+
     border-radius:24px;
+
     padding:32px;
-    box-shadow:0 30px 80px rgba(0,0,0,.2);
+
+    box-shadow:
+        0 30px 80px
+        rgba(0,0,0,.2);
 }
 
 .auth-close{
     position:absolute;
+
     top:15px;
     right:15px;
+
     width:34px;
     height:34px;
+
     border:0;
+
     border-radius:50%;
+
     background:#f4f4f5;
+
     font-size:22px;
+
     line-height:1;
+
     cursor:pointer;
 }
 
@@ -192,7 +271,9 @@ header{
 
 .auth-logo{
     margin-bottom:22px;
+
     font-size:21px;
+
     font-weight:900;
 }
 
@@ -202,259 +283,358 @@ header{
 
 .auth-card h2{
     margin:0;
+
     font-size:28px;
 }
 
 .auth-subtitle{
     margin:8px 0 22px;
+
     color:var(--muted);
+
     font-size:14px;
+
     line-height:1.5;
 }
 
 .auth-label{
     display:block;
+
     margin:14px 0 7px;
+
     font-size:13px;
+
     font-weight:800;
 }
 
 .auth-input{
     width:100%;
+
     padding:14px;
-    border:1px solid var(--border);
+
+    border:
+        1px solid var(--border);
+
     border-radius:11px;
+
     outline:none;
+
     background:white;
 }
 
 .auth-input:focus{
     border-color:var(--violet);
-    box-shadow:0 0 0 3px rgba(124,58,237,.08);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(124,58,237,.08);
 }
 
 .auth-submit{
     width:100%;
+
     margin-top:20px;
+
     padding:14px;
+
     border:0;
+
     border-radius:11px;
+
     color:white;
-    background:linear-gradient(
-        90deg,
-        var(--violet),
-        var(--violet2)
-    );
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--violet),
+            var(--violet2)
+        );
+
     font-weight:850;
+
     cursor:pointer;
 }
 
 .auth-submit:disabled{
     opacity:.6;
+
     cursor:not-allowed;
 }
 
 .auth-switch{
     margin:19px 0 0;
+
     text-align:center;
+
     color:var(--muted);
+
     font-size:13px;
 }
 
 .auth-switch button{
     border:0;
+
     padding:3px;
+
     background:transparent;
+
     color:var(--violet);
+
     font-weight:850;
+
     cursor:pointer;
 }
 
 .auth-message{
     display:none;
+
     margin-bottom:14px;
+
     padding:11px 13px;
+
     border-radius:10px;
+
     font-size:13px;
+
     line-height:1.45;
 }
 
 .auth-message.error{
     display:block;
+
     color:#991b1b;
+
     background:#fef2f2;
+
     border:1px solid #fecaca;
 }
 
 .auth-message.success{
     display:block;
+
     color:#166534;
+
     background:#f0fdf4;
+
     border:1px solid #bbf7d0;
 }
 
-/* MOBILE AUTH */
 
-@media(max-width:700px){
-
-    .header-right{
-        gap:6px;
-    }
-
-    .header-right .version{
-        display:none;
-    }
-
-    #userEmail{
-        display:none;
-    }
-
-    .auth-button{
-        padding:8px 10px;
-        font-size:12px;
-    }
-
-    .logout-button{
-        padding:8px 9px;
-    }
-
-    .auth-card{
-        padding:27px 20px;
-        border-radius:20px;
-    }
-
-    .auth-card h2{
-        font-size:24px;
-    }
-}
-/* HERO */
+/* ======================================================
+   HERO
+====================================================== */
 
 .hero{
     max-width:900px;
+
     margin:auto;
+
     text-align:center;
+
     padding:60px 20px 32px;
 }
 
 .hero-badge{
     display:inline-flex;
+
     align-items:center;
+
     gap:6px;
+
     padding:8px 14px;
-    border:1px solid var(--violetBorder);
-    background:rgba(255,255,255,.65);
+
+    border:
+        1px solid var(--violetBorder);
+
+    background:
+        rgba(255,255,255,.65);
+
     border-radius:999px;
+
     color:var(--violet);
+
     font-weight:800;
+
     font-size:14px;
 }
 
 .hero h1{
     margin:20px 0 15px;
-    font-size:clamp(40px,6vw,64px);
+
+    font-size:
+        clamp(40px,6vw,64px);
+
     line-height:1.02;
+
     letter-spacing:-2.7px;
 }
 
 .gradient{
-    background:linear-gradient(90deg,var(--violet),#a855f7);
+    background:
+        linear-gradient(
+            90deg,
+            var(--violet),
+            #a855f7
+        );
+
     -webkit-background-clip:text;
+
     background-clip:text;
+
     color:transparent;
 }
 
 .hero p{
     max-width:690px;
+
     margin:auto;
+
     color:var(--muted);
+
     font-size:18px;
+
     line-height:1.65;
 }
 
-/* ETAPES */
+
+/* ======================================================
+   ÉTAPES
+====================================================== */
 
 .steps{
     max-width:900px;
+
     margin:0 auto 35px;
+
     padding:0 20px;
+
     display:grid;
-    grid-template-columns:repeat(3,1fr);
+
+    grid-template-columns:
+        repeat(3,1fr);
+
     gap:12px;
 }
 
 .step{
     position:relative;
+
     padding:17px;
+
     border-radius:16px;
-    border:1px solid var(--border);
-    background:rgba(255,255,255,.8);
+
+    border:
+        1px solid var(--border);
+
+    background:
+        rgba(255,255,255,.8);
+
     text-align:center;
+
     font-size:13px;
+
     color:var(--muted);
+
     transition:.2s;
 }
 
 .step strong{
     display:block;
+
     color:var(--text);
+
     font-size:14px;
+
     margin-bottom:4px;
 }
 
 .step.active{
     border-color:var(--violet);
+
     background:var(--violetLight);
-    box-shadow:0 8px 30px rgba(124,58,237,.08);
+
+    box-shadow:
+        0 8px 30px
+        rgba(124,58,237,.08);
 }
 
 .step.done{
     border-color:#bbf7d0;
+
     background:#f0fdf4;
 }
 
-/* MAIN */
+
+/* ======================================================
+   CONTENU PRINCIPAL
+====================================================== */
 
 .container{
     max-width:900px;
+
     margin:auto;
+
     padding:0 20px 55px;
 }
 
 .card{
     background:#fff;
-    border:1px solid #ebe7f1;
+
+    border:
+        1px solid #ebe7f1;
+
     border-radius:25px;
+
     padding:32px;
-    box-shadow:0 25px 65px rgba(63,30,100,.08);
+
+    box-shadow:
+        0 25px 65px
+        rgba(63,30,100,.08);
 }
 
 .section-title{
     margin:0;
+
     font-size:25px;
 }
 
 .subtitle{
     margin:7px 0 24px;
+
     color:var(--muted);
+
     line-height:1.55;
 }
 
-/* PHOTOS */
+
+/* ======================================================
+   PHOTOS
+====================================================== */
 
 .photo-zone{
-    border:2px dashed #c4b5fd;
+    border:
+        2px dashed #c4b5fd;
+
     border-radius:18px;
+
     padding:30px 20px;
+
     background:#fcfbff;
+
     text-align:center;
+
     cursor:pointer;
+
     transition:.2s;
 }
 
 .photo-zone:hover{
     background:var(--violetLight);
+
     border-color:var(--violet);
-    transform:translateY(-1px);
+
+    transform:
+        translateY(-1px);
 }
 
 .photo-icon{
@@ -463,83 +643,131 @@ header{
 
 .photo-zone strong{
     display:block;
+
     margin-top:7px;
+
     font-size:16px;
 }
 
 .photo-zone span{
     display:block;
+
     margin-top:5px;
+
     color:var(--muted);
+
     font-size:13px;
 }
 
 .previews{
     display:grid;
-    grid-template-columns:repeat(4,1fr);
+
+    grid-template-columns:
+        repeat(4,1fr);
+
     gap:10px;
+
     margin-top:14px;
 }
 
 .preview{
     position:relative;
+
     aspect-ratio:1;
+
     overflow:hidden;
-    border:1px solid var(--border);
+
+    border:
+        1px solid var(--border);
+
     border-radius:14px;
+
     background:#f4f4f5;
 }
 
 .preview img{
     width:100%;
+
     height:100%;
+
     object-fit:cover;
 }
 
 .preview-number{
     position:absolute;
+
     bottom:6px;
     left:6px;
-    background:rgba(0,0,0,.7);
+
+    background:
+        rgba(0,0,0,.7);
+
     color:#fff;
+
     border-radius:20px;
+
     padding:4px 8px;
+
     font-size:11px;
+
     font-weight:700;
 }
 
 .remove-photo{
     position:absolute;
+
     right:6px;
     top:6px;
+
     width:29px;
     height:29px;
+
     border:0;
+
     border-radius:50%;
-    background:rgba(0,0,0,.75);
+
+    background:
+        rgba(0,0,0,.75);
+
     color:white;
+
     cursor:pointer;
+
     font-size:18px;
 }
 
 .photo-counter{
     margin-top:10px;
+
     color:var(--muted);
+
     font-size:12px;
+
     text-align:right;
 }
 
 .analyse-button{
     display:none;
+
     width:100%;
+
     margin-top:13px;
+
     padding:15px;
-    border:1px solid var(--violet);
+
+    border:
+        1px solid var(--violet);
+
     border-radius:12px;
+
     background:white;
+
     color:var(--violet);
+
     font-weight:850;
+
     cursor:pointer;
+
     transition:.2s;
 }
 
@@ -549,57 +777,89 @@ header{
 
 .status{
     display:none;
+
     margin-top:13px;
+
     padding:13px 15px;
+
     border-radius:12px;
+
     font-size:13px;
+
     line-height:1.5;
 }
 
 .status.loading{
     display:block;
+
     background:#faf5ff;
-    border:1px solid #e9d5ff;
+
+    border:
+        1px solid #e9d5ff;
+
     color:#6b21a8;
 }
 
 .status.success{
     display:block;
+
     background:#f0fdf4;
-    border:1px solid #bbf7d0;
+
+    border:
+        1px solid #bbf7d0;
+
     color:#166534;
 }
 
 .status.error{
     display:block;
+
     background:#fef2f2;
-    border:1px solid #fecaca;
+
+    border:
+        1px solid #fecaca;
+
     color:#991b1b;
 }
 
 .spinner{
     width:14px;
+
     height:14px;
+
     display:inline-block;
-    border:2px solid currentColor;
-    border-right-color:transparent;
+
+    border:
+        2px solid currentColor;
+
+    border-right-color:
+        transparent;
+
     border-radius:50%;
+
     vertical-align:-2px;
+
     margin-right:6px;
-    animation:spin .7s linear infinite;
+
+    animation:
+        spin .7s linear infinite;
 }
 
 @keyframes spin{
-    to{transform:rotate(360deg)}
+    to{
+        transform:rotate(360deg);
+    }
 }
 
 .separator{
     height:1px;
-    background:#f0edf4;
-    margin:30px 0;
-}
 
-/* FORM */
+    background:#f0edf4;
+
+    margin:30px 0;
+}/* ======================================================
+   FORMULAIRE
+====================================================== */
 
 label.field-label{
     display:block;
@@ -681,7 +941,10 @@ textarea{
     font-weight:800;
 }
 
-/* SCORE */
+
+/* ======================================================
+   SCORE
+====================================================== */
 
 .score{
     margin-top:24px;
@@ -721,7 +984,10 @@ textarea{
     font-size:12px;
 }
 
-/* GENERATE */
+
+/* ======================================================
+   BOUTON GÉNÉRATION
+====================================================== */
 
 .generate{
     width:100%;
@@ -749,7 +1015,10 @@ button:disabled{
     transform:none!important;
 }
 
-/* RESULT */
+
+/* ======================================================
+   RÉSULTAT
+====================================================== */
 
 #resultat{
     display:none;
@@ -872,7 +1141,10 @@ button:disabled{
     color:white;
 }
 
-/* HISTORY */
+
+/* ======================================================
+   HISTORIQUE
+====================================================== */
 
 .history{
     max-width:900px;
@@ -927,20 +1199,46 @@ footer{
     font-size:12px;
 }
 
-/* MOBILE */
+
+/* ======================================================
+   MOBILE
+====================================================== */
 
 @media(max-width:700px){
 
     header{
         height:62px;
+        padding:0 12px;
+    }
+
+    .header-left{
+        gap:7px;
     }
 
     .logo{
-        font-size:20px;
+        font-size:19px;
     }
 
     .version{
-        padding:6px 9px;
+        padding:5px 7px;
+        font-size:9px;
+    }
+
+    .header-right{
+        gap:5px;
+    }
+
+    #userEmail{
+        display:none;
+    }
+
+    .auth-button{
+        padding:8px 9px;
+        font-size:11px;
+    }
+
+    .logout-button{
+        padding:8px 9px;
         font-size:11px;
     }
 
@@ -971,22 +1269,45 @@ footer{
         padding:21px;
     }
 }
+
+@media(max-width:480px){
+
+    .version{
+        display:none;
+    }
+
+    .logo{
+        font-size:18px;
+    }
+}
+
 </style>
 </head>
 
 <body>
 
-<header>
-<header>
-    <div class="logo">
-        <span class="logo-icon">⚡</span>
-        Vinted<span>Boost</span>
-    </div>
 
-    <div class="header-right">
+<!-- ======================================================
+     HEADER V8
+====================================================== -->
+
+<header>
+
+    <div class="header-left">
+
+        <div class="logo">
+            <span class="logo-icon">⚡</span>
+            Vinted<span>Boost</span>
+        </div>
+
         <div class="version">
             V8 • Comptes + IA
         </div>
+
+    </div>
+
+
+    <div class="header-right">
 
         <button
             id="authButton"
@@ -997,7 +1318,13 @@ footer{
             👤 Se connecter
         </button>
 
-        <div id="userZone" class="user-zone" style="display:none;">
+
+        <div
+            id="userZone"
+            class="user-zone"
+            style="display:none;"
+        >
+
             <span id="userEmail"></span>
 
             <button
@@ -1007,14 +1334,17 @@ footer{
             >
                 Déconnexion
             </button>
+
         </div>
+
     </div>
-</header>
+
 </header>
 
-<!-- ============================
+
+<!-- ======================================================
      AUTHENTIFICATION V8
-============================ -->
+====================================================== -->
 
 <div id="authModal" class="auth-modal">
 
@@ -1028,23 +1358,38 @@ footer{
             ×
         </button>
 
+
         <div class="auth-logo">
             ⚡ Vinted<span>Boost</span>
         </div>
+
 
         <h2 id="authTitle">
             Se connecter
         </h2>
 
-        <p id="authSubtitle" class="auth-subtitle">
+
+        <p
+            id="authSubtitle"
+            class="auth-subtitle"
+        >
             Connecte-toi pour accéder à ton compte VintedBoost.
         </p>
 
-        <div id="authMessage" class="auth-message"></div>
 
-        <label class="auth-label" for="authEmail">
+        <div
+            id="authMessage"
+            class="auth-message"
+        ></div>
+
+
+        <label
+            class="auth-label"
+            for="authEmail"
+        >
             Adresse email
         </label>
+
 
         <input
             id="authEmail"
@@ -1054,9 +1399,14 @@ footer{
             placeholder="exemple@email.com"
         >
 
-        <label class="auth-label" for="authPassword">
+
+        <label
+            class="auth-label"
+            for="authPassword"
+        >
             Mot de passe
         </label>
+
 
         <input
             id="authPassword"
@@ -1065,6 +1415,7 @@ footer{
             autocomplete="current-password"
             placeholder="Minimum 6 caractères"
         >
+
 
         <button
             id="authSubmit"
@@ -1075,7 +1426,9 @@ footer{
             Se connecter
         </button>
 
+
         <p class="auth-switch">
+
             <span id="authSwitchText">
                 Pas encore de compte ?
             </span>
@@ -1087,11 +1440,18 @@ footer{
             >
                 Créer un compte
             </button>
+
         </p>
 
     </div>
 
 </div>
+
+
+<!-- ======================================================
+     HERO
+====================================================== -->
+
 <section class="hero">
 
     <div class="hero-badge">
@@ -1100,44 +1460,77 @@ footer{
 
     <h1>
         Vends plus facilement avec
-        <span class="gradient">une annonce optimisée</span>
+        <span class="gradient">
+            une annonce optimisée
+        </span>
     </h1>
 
     <p>
-        Ajoute les photos de ton article. L'IA détecte les informations
-        utiles et prépare une annonce Vinted ou eBay prête à copier.
+        Ajoute les photos de ton article.
+        L'IA détecte les informations utiles et prépare
+        une annonce Vinted ou eBay prête à copier.
     </p>
 
 </section>
 
 
+<!-- ======================================================
+     ÉTAPES
+====================================================== -->
+
 <section class="steps">
 
-    <div class="step active" id="step1">
-        <strong>📸 1. Photos</strong>
+    <div
+        class="step active"
+        id="step1"
+    >
+        <strong>
+            📸 1. Photos
+        </strong>
+
         Ajoute jusqu'à 4 vues
     </div>
 
-    <div class="step" id="step2">
-        <strong>🔍 2. Analyse IA</strong>
+
+    <div
+        class="step"
+        id="step2"
+    >
+        <strong>
+            🔍 2. Analyse IA
+        </strong>
+
         Identification de l'article
     </div>
 
-    <div class="step" id="step3">
-        <strong>✨ 3. Annonce</strong>
+
+    <div
+        class="step"
+        id="step3"
+    >
+        <strong>
+            ✨ 3. Annonce
+        </strong>
+
         Génération et copie
     </div>
 
 </section>
 
 
+<!-- ======================================================
+     FORMULAIRE PRINCIPAL
+====================================================== -->
+
 <main class="container">
 
 <div class="card">
 
+
 <h2 class="section-title">
     Créer une annonce
 </h2>
+
 
 <p class="subtitle">
     Pour une meilleure analyse, ajoute une photo de face,
@@ -1149,7 +1542,10 @@ footer{
     class="photo-zone"
     onclick="document.getElementById('photos').click()"
 >
-    <div class="photo-icon">📸</div>
+
+    <div class="photo-icon">
+        📸
+    </div>
 
     <strong>
         Ajouter des photos
@@ -1167,6 +1563,7 @@ footer{
         hidden
         onchange="selectionPhotos()"
     >
+
 </div>
 
 
@@ -1174,6 +1571,7 @@ footer{
     id="previews"
     class="previews"
 ></div>
+
 
 <div
     id="photoCounter"
@@ -1205,9 +1603,11 @@ footer{
     Plateforme
 </div>
 
+
 <div class="choices">
 
     <div class="choice">
+
         <input
             type="radio"
             id="vinted"
@@ -1215,21 +1615,27 @@ footer{
             value="vinted"
             checked
         >
+
         <label for="vinted">
             👕 Vinted
         </label>
+
     </div>
 
+
     <div class="choice">
+
         <input
             type="radio"
             id="ebay"
             name="plateforme"
             value="ebay"
         >
+
         <label for="ebay">
             🛒 eBay
         </label>
+
     </div>
 
 </div>
@@ -1238,6 +1644,7 @@ footer{
 <div class="row">
 
     <div>
+
         <label class="field-label">
             Type d'article *
         </label>
@@ -1247,9 +1654,12 @@ footer{
             placeholder="Ex : Pull demi-zip"
             oninput="updateScore()"
         >
+
     </div>
 
+
     <div>
+
         <label class="field-label">
             Marque
         </label>
@@ -1259,6 +1669,7 @@ footer{
             placeholder="Ex : Stone Island"
             oninput="updateScore()"
         >
+
     </div>
 
 </div>
@@ -1276,7 +1687,11 @@ footer{
             id="categorie"
             onchange="updateScore()"
         >
-            <option value="">Choisir</option>
+
+            <option value="">
+                Choisir
+            </option>
+
             <option>Veste</option>
             <option>Pull</option>
             <option>Sweat</option>
@@ -1289,6 +1704,7 @@ footer{
             <option>Chaussures</option>
             <option>Accessoire</option>
             <option>Autre</option>
+
         </select>
 
     </div>
@@ -1338,12 +1754,31 @@ footer{
             id="etat"
             onchange="updateScore()"
         >
-            <option value="">Choisir</option>
-            <option>Neuf avec étiquette</option>
-            <option>Neuf sans étiquette</option>
-            <option>Très bon état</option>
-            <option>Bon état</option>
-            <option>État satisfaisant</option>
+
+            <option value="">
+                Choisir
+            </option>
+
+            <option>
+                Neuf avec étiquette
+            </option>
+
+            <option>
+                Neuf sans étiquette
+            </option>
+
+            <option>
+                Très bon état
+            </option>
+
+            <option>
+                Bon état
+            </option>
+
+            <option>
+                État satisfaisant
+            </option>
+
         </select>
 
     </div>
@@ -1390,9 +1825,11 @@ footer{
     Style de l'annonce
 </div>
 
+
 <div class="styles">
 
     <div class="choice">
+
         <input
             type="radio"
             name="style"
@@ -1400,45 +1837,59 @@ footer{
             value="naturel"
             checked
         >
+
         <label for="naturel">
             🙂 Naturel
         </label>
+
     </div>
 
+
     <div class="choice">
+
         <input
             type="radio"
             name="style"
             id="court"
             value="court"
         >
+
         <label for="court">
             ⚡ Court
         </label>
+
     </div>
 
+
     <div class="choice">
+
         <input
             type="radio"
             name="style"
             id="vendeur"
             value="vendeur"
         >
+
         <label for="vendeur">
             🔥 Vendeur
         </label>
+
     </div>
 
+
     <div class="choice">
+
         <input
             type="radio"
             name="style"
             id="premium"
             value="premium"
         >
+
         <label for="premium">
             💎 Premium
         </label>
+
     </div>
 
 </div>
@@ -1447,16 +1898,27 @@ footer{
 <div class="score">
 
     <div class="score-header">
-        <span>Qualité des informations</span>
-        <span id="scoreText">0 %</span>
+
+        <span>
+            Qualité des informations
+        </span>
+
+        <span id="scoreText">
+            0 %
+        </span>
+
     </div>
 
+
     <div class="score-bar">
+
         <div
             id="scoreProgress"
             class="score-progress"
         ></div>
+
     </div>
+
 
     <div
         id="scoreHelp"
@@ -1479,41 +1941,52 @@ footer{
 
 <div id="resultat"></div>
 
+
 </div>
 
 </main>
 
 
+<!-- ======================================================
+     HISTORIQUE
+====================================================== -->
+
 <section class="history">
 
-<div class="history-card">
+    <div class="history-card">
 
-    <h2>🕘 Mes dernières annonces</h2>
+        <h2>
+            🕘 Mes dernières annonces
+        </h2>
 
-    <p class="history-description">
-        Les 10 dernières annonces sont conservées uniquement
-        sur cet appareil.
-    </p>
+        <p class="history-description">
+            Les 10 dernières annonces sont conservées uniquement
+            sur cet appareil.
+        </p>
 
-    <div id="historyList"></div>
+        <div id="historyList"></div>
 
-</div>
+    </div>
 
 </section>
 
 
 <footer>
-    VintedBoost V7 • Assistant IA pour tes annonces
+    VintedBoost V8 • Comptes + IA
 </footer>
 
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 
 let photosBase64 = [];
 let derniereAnnonce = null;
-/* ============================
+
+
+/* ======================================================
    AUTHENTIFICATION V8
-============================ */
+====================================================== */
 
 let supabaseClient = null;
 let modeAuth = "login";
@@ -1527,9 +2000,11 @@ async function initialiserSupabase(){
             await fetch("/supabase-config");
 
         if(!response.ok){
+
             throw new Error(
                 "Configuration Supabase indisponible."
             );
+
         }
 
         const config =
@@ -1539,9 +2014,11 @@ async function initialiserSupabase(){
             !config.url ||
             !config.publishableKey
         ){
+
             throw new Error(
                 "Configuration Supabase incomplète."
             );
+
         }
 
 
@@ -1593,6 +2070,7 @@ async function initialiserSupabase(){
             "Erreur Supabase :",
             error
         );
+
     }
 }
 
@@ -1606,6 +2084,7 @@ function ouvrirAuth(){
         );
 
         return;
+
     }
 
 
@@ -1618,6 +2097,7 @@ function ouvrirAuth(){
     document
         .getElementById("authEmail")
         .focus();
+
 }
 
 
@@ -1628,8 +2108,8 @@ function fermerAuth(){
         .classList
         .remove("open");
 
-
     cacherMessageAuth();
+
 }
 
 
@@ -1684,7 +2164,6 @@ function changerModeAuth(){
         switchButton.textContent =
             "Se connecter";
 
-
         document
             .getElementById(
                 "authPassword"
@@ -1693,7 +2172,6 @@ function changerModeAuth(){
                 "autocomplete",
                 "new-password"
             );
-
 
     }else{
 
@@ -1712,7 +2190,6 @@ function changerModeAuth(){
         switchButton.textContent =
             "Créer un compte";
 
-
         document
             .getElementById(
                 "authPassword"
@@ -1721,70 +2198,46 @@ function changerModeAuth(){
                 "autocomplete",
                 "current-password"
             );
+
     }
 
 
     cacherMessageAuth();
-}
 
-
-async function envoyerAuth(){
+}async function envoyerAuth(){
 
     if(!supabaseClient){
-
         afficherMessageAuth(
             "Service utilisateur indisponible.",
             "error"
         );
-
         return;
     }
 
-
     const email =
-        document
-            .getElementById(
-                "authEmail"
-            )
-            .value
-            .trim();
-
+        document.getElementById("authEmail").value.trim();
 
     const password =
-        document
-            .getElementById(
-                "authPassword"
-            )
-            .value;
-
+        document.getElementById("authPassword").value;
 
     if(!email){
-
         afficherMessageAuth(
             "Entre ton adresse email.",
             "error"
         );
-
         return;
     }
 
-
     if(password.length < 6){
-
         afficherMessageAuth(
             "Le mot de passe doit contenir au moins 6 caractères.",
             "error"
         );
-
         return;
     }
 
-
     const button =
-        document.getElementById(
-            "authSubmit"
-        );
-
+        document.getElementById("authSubmit");
 
     button.disabled = true;
 
@@ -1793,30 +2246,21 @@ async function envoyerAuth(){
         ? "Création du compte..."
         : "Connexion...";
 
-
     cacherMessageAuth();
-
 
     try{
 
         if(modeAuth === "signup"){
 
-            const {
-                data,
-                error
-            } =
-                await supabaseClient
-                    .auth
-                    .signUp({
-                        email,
-                        password
-                    });
-
+            const {data,error} =
+                await supabaseClient.auth.signUp({
+                    email,
+                    password
+                });
 
             if(error){
                 throw error;
             }
-
 
             if(data.session){
 
@@ -1825,12 +2269,10 @@ async function envoyerAuth(){
                     "success"
                 );
 
-
                 setTimeout(
                     fermerAuth,
                     900
                 );
-
 
             }else{
 
@@ -1840,25 +2282,17 @@ async function envoyerAuth(){
                 );
             }
 
-
         }else{
 
-            const {
-                data,
-                error
-            } =
-                await supabaseClient
-                    .auth
-                    .signInWithPassword({
-                        email,
-                        password
-                    });
-
+            const {data,error} =
+                await supabaseClient.auth.signInWithPassword({
+                    email,
+                    password
+                });
 
             if(error){
                 throw error;
             }
-
 
             if(data.user){
 
@@ -1867,14 +2301,12 @@ async function envoyerAuth(){
                     "success"
                 );
 
-
                 setTimeout(
                     fermerAuth,
                     700
                 );
             }
         }
-
 
     }catch(error){
 
@@ -1883,14 +2315,10 @@ async function envoyerAuth(){
             error
         );
 
-
         afficherMessageAuth(
-            traduireErreurAuth(
-                error.message
-            ),
+            traduireErreurAuth(error.message),
             "error"
         );
-
 
     }finally{
 
@@ -1910,14 +2338,8 @@ async function deconnexion(){
         return;
     }
 
-
-    const {
-        error
-    } =
-        await supabaseClient
-            .auth
-            .signOut();
-
+    const {error} =
+        await supabaseClient.auth.signOut();
 
     if(error){
 
@@ -1928,7 +2350,6 @@ async function deconnexion(){
         return;
     }
 
-
     mettreAJourUtilisateur(null);
 }
 
@@ -1936,60 +2357,37 @@ async function deconnexion(){
 function mettreAJourUtilisateur(user){
 
     const authButton =
-        document.getElementById(
-            "authButton"
-        );
+        document.getElementById("authButton");
 
     const userZone =
-        document.getElementById(
-            "userZone"
-        );
+        document.getElementById("userZone");
 
     const userEmail =
-        document.getElementById(
-            "userEmail"
-        );
-
+        document.getElementById("userEmail");
 
     if(user){
 
-        authButton.style.display =
-            "none";
-
-        userZone.style.display =
-            "flex";
+        authButton.style.display = "none";
+        userZone.style.display = "flex";
 
         userEmail.textContent =
             user.email || "Mon compte";
 
-
     }else{
 
-        authButton.style.display =
-            "block";
-
-        userZone.style.display =
-            "none";
-
-        userEmail.textContent =
-            "";
+        authButton.style.display = "block";
+        userZone.style.display = "none";
+        userEmail.textContent = "";
     }
 }
 
 
-function afficherMessageAuth(
-    message,
-    type
-){
+function afficherMessageAuth(message,type){
 
     const zone =
-        document.getElementById(
-            "authMessage"
-        );
+        document.getElementById("authMessage");
 
-
-    zone.textContent =
-        message;
+    zone.textContent = message;
 
     zone.className =
         "auth-message " + type;
@@ -1999,10 +2397,7 @@ function afficherMessageAuth(
 function cacherMessageAuth(){
 
     const zone =
-        document.getElementById(
-            "authMessage"
-        );
-
+        document.getElementById("authMessage");
 
     zone.textContent = "";
 
@@ -2014,130 +2409,102 @@ function cacherMessageAuth(){
 function traduireErreurAuth(message){
 
     const texte =
-        String(message || "")
-        .toLowerCase();
-
+        String(message || "").toLowerCase();
 
     if(
         texte.includes(
             "invalid login credentials"
         )
     ){
-
         return "Email ou mot de passe incorrect.";
     }
-
 
     if(
         texte.includes(
             "email not confirmed"
         )
     ){
-
         return "Confirme d'abord ton adresse email.";
     }
-
 
     if(
         texte.includes(
             "user already registered"
         )
     ){
-
         return "Un compte existe déjà avec cette adresse email.";
     }
 
-
     if(
-        texte.includes(
-            "password"
-        )
+        texte.includes("password")
     ){
-
         return "Le mot de passe n'est pas valide.";
     }
 
-
     if(
-        texte.includes(
-            "rate limit"
-        )
+        texte.includes("rate limit")
     ){
-
         return "Trop de tentatives. Attends quelques minutes avant de réessayer.";
     }
-
 
     return message ||
         "Une erreur est survenue.";
 }
 
 
-/* Fermer la fenêtre en cliquant
-   sur le fond */
+/* FERMETURE MODAL */
 
 document.addEventListener(
     "click",
     event=>{
 
         const modal =
-            document.getElementById(
-                "authModal"
-            );
-
+            document.getElementById("authModal");
 
         if(
             modal &&
             event.target === modal
         ){
-
             fermerAuth();
         }
     }
 );
 
-
-/* Entrée = connexion / inscription */
 
 document.addEventListener(
     "keydown",
     event=>{
 
         const modal =
-            document.getElementById(
-                "authModal"
-            );
-
+            document.getElementById("authModal");
 
         if(
             event.key === "Enter" &&
-            modal?.classList.contains(
-                "open"
-            )
+            modal?.classList.contains("open")
         ){
-
             envoyerAuth();
         }
 
-
         if(
             event.key === "Escape" &&
-            modal?.classList.contains(
-                "open"
-            )
+            modal?.classList.contains("open")
         ){
-
             fermerAuth();
         }
     }
 );
 
-/* ============================
+
+/* ======================================================
    OUTILS
-============================ */
+====================================================== */
 
 function value(id){
-    return document.getElementById(id)?.value?.trim() || "";
+
+    return document
+        .getElementById(id)
+        ?.value
+        ?.trim() || "";
 }
 
 
@@ -2157,7 +2524,9 @@ function setStep(numero){
     for(let i=1;i<=3;i++){
 
         const step =
-            document.getElementById("step"+i);
+            document.getElementById(
+                "step"+i
+            );
 
         step.classList.remove(
             "active",
@@ -2207,9 +2576,9 @@ async function fetchTimeout(
 }
 
 
-/* ============================
-   COMPRESSION IMAGE V7
-============================ */
+/* ======================================================
+   COMPRESSION DES PHOTOS
+====================================================== */
 
 function compresserImage(file){
 
@@ -2225,15 +2594,6 @@ function compresserImage(file){
                     new Image();
 
                 img.onload = ()=>{
-
-                    /*
-                    V7 :
-                    640px au lieu de 800px.
-
-                    Moins de données envoyées
-                    au serveur = transfert
-                    généralement plus rapide.
-                    */
 
                     const MAX = 640;
 
@@ -2265,18 +2625,13 @@ function compresserImage(file){
                             );
                     }
 
-
                     const canvas =
                         document.createElement(
                             "canvas"
                         );
 
-                    canvas.width =
-                        width;
-
-                    canvas.height =
-                        height;
-
+                    canvas.width = width;
+                    canvas.height = height;
 
                     const ctx =
                         canvas.getContext(
@@ -2286,7 +2641,6 @@ function compresserImage(file){
                             }
                         );
 
-
                     ctx.drawImage(
                         img,
                         0,
@@ -2294,7 +2648,6 @@ function compresserImage(file){
                         width,
                         height
                     );
-
 
                     const data =
                         canvas.toDataURL(
@@ -2312,21 +2665,18 @@ function compresserImage(file){
                     e.target.result;
             };
 
-
             reader.onerror =
                 reject;
 
-            reader.readAsDataURL(
-                file
-            );
+            reader.readAsDataURL(file);
         }
     );
 }
 
 
-/* ============================
+/* ======================================================
    PHOTOS
-============================ */
+====================================================== */
 
 async function selectionPhotos(){
 
@@ -2340,10 +2690,8 @@ async function selectionPhotos(){
             input.files || []
         );
 
-
     const places =
         4 - photosBase64.length;
-
 
     if(places <= 0){
 
@@ -2355,10 +2703,8 @@ async function selectionPhotos(){
         return;
     }
 
-
     const selected =
         files.slice(0,places);
-
 
     if(files.length > places){
 
@@ -2366,7 +2712,6 @@ async function selectionPhotos(){
             "Maximum 4 photos."
         );
     }
-
 
     for(const file of selected){
 
@@ -2377,21 +2722,15 @@ async function selectionPhotos(){
                 "image/webp"
             ].includes(file.type)
         ){
-
             continue;
         }
-
 
         try{
 
             const image =
-                await compresserImage(
-                    file
-                );
+                await compresserImage(file);
 
-            photosBase64.push(
-                image
-            );
+            photosBase64.push(image);
 
         }catch(error){
 
@@ -2401,7 +2740,6 @@ async function selectionPhotos(){
             );
         }
     }
-
 
     input.value="";
 
@@ -2418,7 +2756,6 @@ function afficherPhotos(){
 
     previews.innerHTML="";
 
-
     photosBase64.forEach(
         (photo,index)=>{
 
@@ -2430,18 +2767,15 @@ function afficherPhotos(){
             container.className =
                 "preview";
 
-
             const img =
                 document.createElement(
                     "img"
                 );
 
-            img.src =
-                photo;
+            img.src = photo;
 
             img.alt =
                 "Photo article";
-
 
             const number =
                 document.createElement(
@@ -2453,7 +2787,6 @@ function afficherPhotos(){
 
             number.textContent =
                 `Photo ${index+1}`;
-
 
             const remove =
                 document.createElement(
@@ -2469,7 +2802,6 @@ function afficherPhotos(){
             remove.textContent =
                 "×";
 
-
             remove.onclick =
                 e=>{
 
@@ -2483,7 +2815,6 @@ function afficherPhotos(){
                     afficherPhotos();
                 };
 
-
             container.append(
                 img,
                 number,
@@ -2496,12 +2827,10 @@ function afficherPhotos(){
         }
     );
 
-
     document.getElementById(
         "photoCounter"
     ).textContent =
         `${photosBase64.length} / 4 photos`;
-
 
     document.getElementById(
         "analyseButton"
@@ -2509,7 +2838,6 @@ function afficherPhotos(){
         photosBase64.length
         ? "block"
         : "none";
-
 
     if(photosBase64.length){
 
@@ -2520,14 +2848,13 @@ function afficherPhotos(){
         setStep(1);
     }
 
-
     updateScore();
 }
 
 
-/* ============================
+/* ======================================================
    ANALYSE IA
-============================ */
+====================================================== */
 
 async function analyserPhotos(){
 
@@ -2540,7 +2867,6 @@ async function analyserPhotos(){
         return;
     }
 
-
     const button =
         document.getElementById(
             "analyseButton"
@@ -2551,12 +2877,10 @@ async function analyserPhotos(){
             "analyseStatus"
         );
 
-
     button.disabled=true;
 
     button.textContent =
         "Analyse en cours...";
-
 
     status.className =
         "status loading";
@@ -2565,9 +2889,7 @@ async function analyserPhotos(){
         `<span class="spinner"></span>
         Analyse des photos par l'IA...`;
 
-
     setStep(2);
-
 
     try{
 
@@ -2579,16 +2901,14 @@ async function analyserPhotos(){
 
                     headers:{
                         "Content-Type":
-                        "application/json"
+                            "application/json"
                     },
 
                     body:JSON.stringify({
-                        images:
-                            photosBase64
+                        images:photosBase64
                     })
                 }
             );
-
 
         let data;
 
@@ -2604,7 +2924,6 @@ async function analyserPhotos(){
             );
         }
 
-
         if(!response.ok){
 
             throw new Error(
@@ -2612,7 +2931,6 @@ async function analyserPhotos(){
                 "Impossible d'analyser les photos."
             );
         }
-
 
         remplirChamp(
             "article",
@@ -2644,7 +2962,6 @@ async function analyserPhotos(){
             data.defauts
         );
 
-
         remplirSelect(
             "categorie",
             data.categorie
@@ -2655,48 +2972,39 @@ async function analyserPhotos(){
             data.etat
         );
 
-
         status.className =
             "status success";
 
         status.innerHTML =
             "✅ Analyse terminée. Vérifie les informations détectées avant de générer l'annonce.";
 
-
         button.textContent =
             "🔄 Analyser de nouveau";
-
 
         setStep(3);
 
         updateScore();
 
-
     }catch(error){
 
         console.error(error);
 
-
         let message =
             error.message;
 
-
         if(
-            error.name ===
-            "AbortError"
+            error.name === "AbortError"
         ){
 
             message =
                 "L'IA met trop de temps à répondre. Réessaie.";
         }
 
-
         status.className =
             "status error";
 
         status.textContent =
             "❌ " + message;
-
 
         button.textContent =
             "🤖 Réessayer l'analyse";
@@ -2714,25 +3022,20 @@ function remplirChamp(
 ){
 
     if(
-        nouvelleValeur ===
-        undefined ||
-        nouvelleValeur ===
-        null
+        nouvelleValeur === undefined ||
+        nouvelleValeur === null
     ){
         return;
     }
-
 
     const texte =
         String(
             nouvelleValeur
         ).trim();
 
-
     if(!texte){
         return;
     }
-
 
     document.getElementById(
         id
@@ -2750,12 +3053,8 @@ function remplirSelect(
         return;
     }
 
-
     const select =
-        document.getElementById(
-            id
-        );
-
+        document.getElementById(id);
 
     const recherche =
         String(
@@ -2764,18 +3063,15 @@ function remplirSelect(
         .trim()
         .toLowerCase();
 
-
     const option =
         Array.from(
             select.options
         )
         .find(
             o =>
-            o.value
-            .toLowerCase()
+            o.value.toLowerCase()
             === recherche
         );
-
 
     if(option){
 
@@ -2785,14 +3081,13 @@ function remplirSelect(
 }
 
 
-/* ============================
+/* ======================================================
    SCORE
-============================ */
+====================================================== */
 
 function updateScore(){
 
     let score=0;
-
 
     if(photosBase64.length)
         score+=15;
@@ -2821,29 +3116,24 @@ function updateScore(){
     if(value("details"))
         score+=10;
 
-
     score =
         Math.min(
             score,
             100
         );
 
-
     document.getElementById(
         "scoreText"
     ).textContent =
         score+" %";
-
 
     document.getElementById(
         "scoreProgress"
     ).style.width =
         score+"%";
 
-
     let text =
         "Ajoute quelques informations pour obtenir une meilleure annonce.";
-
 
     if(score >= 85){
 
@@ -2861,7 +3151,6 @@ function updateScore(){
             "Continue à compléter les caractéristiques de ton article.";
     }
 
-
     document.getElementById(
         "scoreHelp"
     ).textContent =
@@ -2869,15 +3158,14 @@ function updateScore(){
 }
 
 
-/* ============================
-   GENERATION
-============================ */
+/* ======================================================
+   GÉNÉRATION DE L'ANNONCE
+====================================================== */
 
 async function genererAnnonce(){
 
     const article =
         value("article");
-
 
     if(!article){
 
@@ -2892,11 +3180,9 @@ async function genererAnnonce(){
         return;
     }
 
-
     const payload={
 
-        article:
-            article,
+        article:article,
 
         marque:
             value("marque"),
@@ -2933,7 +3219,6 @@ async function genererAnnonce(){
             ).value
     };
 
-
     const button =
         document.getElementById(
             "generateButton"
@@ -2944,17 +3229,14 @@ async function genererAnnonce(){
             "resultat"
         );
 
-
     button.disabled=true;
 
     button.innerHTML =
         `<span class="spinner"></span>
         Création de l'annonce...`;
 
-
     result.style.display =
         "block";
-
 
     result.innerHTML=`
 
@@ -2973,9 +3255,7 @@ async function genererAnnonce(){
         </div>
     `;
 
-
     setStep(3);
-
 
     try{
 
@@ -2987,7 +3267,7 @@ async function genererAnnonce(){
 
                     headers:{
                         "Content-Type":
-                        "application/json"
+                            "application/json"
                     },
 
                     body:
@@ -2997,9 +3277,7 @@ async function genererAnnonce(){
                 }
             );
 
-
         let data;
-
 
         try{
 
@@ -3013,7 +3291,6 @@ async function genererAnnonce(){
             );
         }
 
-
         if(!response.ok){
 
             throw new Error(
@@ -3021,7 +3298,6 @@ async function genererAnnonce(){
                 "Impossible de générer l'annonce."
             );
         }
-
 
         if(
             !data.titre ||
@@ -3033,7 +3309,6 @@ async function genererAnnonce(){
             );
         }
 
-
         derniereAnnonce={
             ...data,
 
@@ -3042,36 +3317,29 @@ async function genererAnnonce(){
 
             date:
                 new Date()
-                .toISOString()
+                    .toISOString()
         };
-
 
         afficherAnnonce(
             derniereAnnonce
         );
 
-
         enregistrerHistorique(
             derniereAnnonce
         );
 
-
         setStep(3);
-
 
     }catch(error){
 
         console.error(error);
 
-
         const message =
-            error.name ===
-            "AbortError"
+            error.name === "AbortError"
 
             ? "L'IA met trop de temps à répondre. Réessaie."
 
             : error.message;
-
 
         result.innerHTML=`
 
@@ -3098,9 +3366,9 @@ async function genererAnnonce(){
 }
 
 
-/* ============================
-   RESULTAT
-============================ */
+/* ======================================================
+   AFFICHAGE DU RÉSULTAT
+====================================================== */
 
 function formatPrix(prix){
 
@@ -3109,16 +3377,13 @@ function formatPrix(prix){
         prix === null ||
         String(prix).trim()===""
     ){
-
         return "—";
     }
-
 
     let texte =
         String(prix)
         .replace("€","")
         .trim();
-
 
     return texte+" €";
 }
@@ -3131,14 +3396,12 @@ function afficherAnnonce(data){
             "resultat"
         );
 
-
     const mots =
         Array.isArray(
             data.motsCles
         )
         ? data.motsCles
         : [];
-
 
     result.innerHTML=`
 
@@ -3287,24 +3550,20 @@ function afficherAnnonce(data){
         </div>
     `;
 
-
     document.getElementById(
         "resultTitle"
     ).textContent =
         data.titre || "";
-
 
     document.getElementById(
         "resultDescription"
     ).textContent =
         data.description || "";
 
-
     const keywordZone =
         document.getElementById(
             "keywords"
         );
-
 
     mots.forEach(mot=>{
 
@@ -3324,7 +3583,6 @@ function afficherAnnonce(data){
         );
     });
 
-
     result.scrollIntoView({
         behavior:"smooth",
         block:"start"
@@ -3332,9 +3590,9 @@ function afficherAnnonce(data){
 }
 
 
-/* ============================
-   COPIER
-============================ */
+/* ======================================================
+   COPIE
+====================================================== */
 
 async function copierTexte(text){
 
@@ -3380,12 +3638,11 @@ async function copierTexte(text){
 function copierElement(id){
 
     const element =
-        document.getElementById(
-            id
-        );
+        document.getElementById(id);
 
-    if(!element)
+    if(!element){
         return;
+    }
 
     copierTexte(
         element.innerText
@@ -3395,9 +3652,9 @@ function copierElement(id){
 
 function copierTout(){
 
-    if(!derniereAnnonce)
+    if(!derniereAnnonce){
         return;
-
+    }
 
     const mots =
         Array.isArray(
@@ -3410,7 +3667,6 @@ function copierTout(){
 
         : "";
 
-
     const texte=`
 ${derniereAnnonce.titre}
 
@@ -3421,16 +3677,15 @@ ${derniereAnnonce.description}
 🏷️ ${mots}
 `.trim();
 
-
     copierTexte(
         texte
     );
 }
 
 
-/* ============================
+/* ======================================================
    HISTORIQUE
-============================ */
+====================================================== */
 
 function getHistory(){
 
@@ -3443,12 +3698,9 @@ function getHistory(){
                 ) || "[]"
             );
 
-
-        return Array.isArray(
-            history
-        )
-        ? history
-        : [];
+        return Array.isArray(history)
+            ? history
+            : [];
 
     }catch{
 
@@ -3464,11 +3716,9 @@ function enregistrerHistorique(
     let history =
         getHistory();
 
-
     history.unshift(
         annonce
     );
-
 
     history =
         history.slice(
@@ -3476,14 +3726,10 @@ function enregistrerHistorique(
             10
         );
 
-
     localStorage.setItem(
         "vintedboost_history",
-        JSON.stringify(
-            history
-        )
+        JSON.stringify(history)
     );
-
 
     afficherHistorique();
 }
@@ -3496,10 +3742,8 @@ function afficherHistorique(){
             "historyList"
         );
 
-
     const history =
         getHistory();
-
 
     if(!history.length){
 
@@ -3514,9 +3758,7 @@ function afficherHistorique(){
         return;
     }
 
-
     zone.innerHTML="";
-
 
     history.forEach(
         annonce=>{
@@ -3529,12 +3771,10 @@ function afficherHistorique(){
             item.className =
                 "history-item";
 
-
             const left =
                 document.createElement(
                     "div"
                 );
-
 
             const title =
                 document.createElement(
@@ -3548,7 +3788,6 @@ function afficherHistorique(){
                 annonce.titre ||
                 "Annonce";
 
-
             const meta =
                 document.createElement(
                     "div"
@@ -3557,10 +3796,8 @@ function afficherHistorique(){
             meta.className =
                 "history-meta";
 
-
             let date =
                 "Date inconnue";
-
 
             if(annonce.date){
 
@@ -3582,21 +3819,17 @@ function afficherHistorique(){
                 }
             }
 
-
             meta.textContent =
                 `${
-                    annonce.plateforme
-                    === "ebay"
+                    annonce.plateforme === "ebay"
                     ? "eBay"
                     : "Vinted"
                 } • ${date}`;
-
 
             left.append(
                 title,
                 meta
             );
-
 
             const price =
                 document.createElement(
@@ -3611,12 +3844,10 @@ function afficherHistorique(){
                     annonce.prixConseille
                 );
 
-
             item.append(
                 left,
                 price
             );
-
 
             zone.appendChild(
                 item
@@ -3626,15 +3857,14 @@ function afficherHistorique(){
 }
 
 
-/* ============================
+/* ======================================================
    NOUVELLE ANNONCE
-============================ */
+====================================================== */
 
 function nouvelleAnnonce(){
 
     photosBase64=[];
     derniereAnnonce=null;
-
 
     [
         "article",
@@ -3649,25 +3879,20 @@ function nouvelleAnnonce(){
     ].forEach(id=>{
 
         const el =
-            document.getElementById(
-                id
-            );
+            document.getElementById(id);
 
         if(el){
             el.value="";
         }
     });
 
-
     document.getElementById(
         "naturel"
     ).checked=true;
 
-
     document.getElementById(
         "vinted"
     ).checked=true;
-
 
     const status =
         document.getElementById(
@@ -3679,19 +3904,16 @@ function nouvelleAnnonce(){
 
     status.innerHTML="";
 
-
     document.getElementById(
         "resultat"
     ).style.display =
         "none";
-
 
     afficherPhotos();
 
     updateScore();
 
     setStep(1);
-
 
     window.scrollTo({
         top:0,
@@ -3700,9 +3922,9 @@ function nouvelleAnnonce(){
 }
 
 
-/* ============================
+/* ======================================================
    INITIALISATION
-============================ */
+====================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
