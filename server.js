@@ -1,10 +1,12 @@
 const express = require("express");
 require("dotenv").config();
 
+const { createClient } = require("@supabase/supabase-js");
+
 const app = express();
 
 /* ======================================================
-   VINTEDBOOST V7
+   VINTEDBOOST V9
 ====================================================== */
 
 app.set("trust proxy", 1);
@@ -22,55 +24,32 @@ app.use(express.static(__dirname));
    CONFIGURATION
 ====================================================== */
 
-const PORT =
-    process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 const MAX_PHOTOS = 4;
 
-/*
-2 tentatives au lieu de 3.
-
-Si l'IA répond correctement :
-1 seul appel.
-
-Si le routeur gratuit renvoie une
-réponse vide/invalide :
-1 nouvelle tentative.
-*/
 const MAX_TENTATIVES = 2;
 
-const MODELE =
-    "openrouter/free";
+const MODELE = "openrouter/free";
 
-const limites =
-    new Map();
+const limites = new Map();
 
 
 /* ======================================================
    RATE LIMIT
 ====================================================== */
 
-function limiterRequetes(
-    req,
-    res,
-    next
-) {
+function limiterRequetes(req, res, next) {
 
-    const ip =
-        req.ip || "inconnue";
+    const ip = req.ip || "inconnue";
 
-    const maintenant =
-        Date.now();
+    const maintenant = Date.now();
 
-    const duree =
-        60 * 60 * 1000;
+    const duree = 60 * 60 * 1000;
 
-    const maximum =
-        30;
+    const maximum = 30;
 
-
-    let utilisateur =
-        limites.get(ip);
+    let utilisateur = limites.get(ip);
 
 
     if (
@@ -79,32 +58,22 @@ function limiterRequetes(
     ) {
 
         utilisateur = {
-
             nombre: 0,
-
-            reset:
-                maintenant + duree
+            reset: maintenant + duree
         };
     }
 
 
     utilisateur.nombre++;
 
-    limites.set(
-        ip,
-        utilisateur
-    );
+    limites.set(ip, utilisateur);
 
 
-    if (
-        utilisateur.nombre >
-        maximum
-    ) {
+    if (utilisateur.nombre > maximum) {
 
         return res
             .status(429)
             .json({
-
                 error:
                     "Trop de requêtes. Réessaie un peu plus tard."
             });
@@ -147,10 +116,7 @@ function attendre(ms) {
 
     return new Promise(
         resolve =>
-            setTimeout(
-                resolve,
-                ms
-            )
+            setTimeout(resolve, ms)
     );
 }
 
@@ -213,26 +179,15 @@ function extraireJSON(texte) {
     }
 
 
-    /*
-    1 - JSON direct
-    */
-
     try {
 
-        return JSON.parse(
-            propre
-        );
+        return JSON.parse(propre);
 
     } catch {
 
         // On continue.
     }
 
-
-    /*
-    2 - Recherche du premier {
-        et du dernier }
-    */
 
     const debut =
         propre.indexOf("{");
@@ -288,7 +243,7 @@ function extraireJSON(texte) {
 
 
 /* ======================================================
-   CONTENU DE LA REPONSE OPENROUTER
+   CONTENU REPONSE OPENROUTER
 ====================================================== */
 
 function recupererTexteIA(data) {
@@ -306,21 +261,13 @@ function recupererTexteIA(data) {
     }
 
 
-    /*
-    Certains modèles renvoient
-    plusieurs parties.
-    */
-
-    if (
-        Array.isArray(content)
-    ) {
+    if (Array.isArray(content)) {
 
         return content
             .map(partie => {
 
                 if (
-                    typeof partie ===
-                    "string"
+                    typeof partie === "string"
                 ) {
 
                     return partie;
@@ -329,8 +276,7 @@ function recupererTexteIA(data) {
 
                 if (
                     partie &&
-                    typeof partie.text ===
-                    "string"
+                    typeof partie.text === "string"
                 ) {
 
                     return partie.text;
@@ -350,7 +296,7 @@ function recupererTexteIA(data) {
 
 
 /* ======================================================
-   APPEL OPENROUTER
+   OPENROUTER
 ====================================================== */
 
 async function appelerOpenRouter(
@@ -359,8 +305,7 @@ async function appelerOpenRouter(
 ) {
 
     if (
-        !process.env
-            .OPENROUTER_API_KEY
+        !process.env.OPENROUTER_API_KEY
     ) {
 
         throw new Error(
@@ -373,26 +318,18 @@ async function appelerOpenRouter(
         options.maxTokens || 1800;
 
 
-    /*
-    Timeout serveur.
-
-    On évite qu'un appel IA reste
-    bloqué indéfiniment.
-    */
-
     const controller =
         new AbortController();
 
+
     const timeout =
         setTimeout(
-            () =>
-                controller.abort(),
+            () => controller.abort(),
             70000
         );
 
 
-    const debut =
-        Date.now();
+    const debut = Date.now();
 
 
     try {
@@ -401,7 +338,6 @@ async function appelerOpenRouter(
             await fetch(
                 "https://openrouter.ai/api/v1/chat/completions",
                 {
-
                     method: "POST",
 
                     signal:
@@ -418,7 +354,6 @@ async function appelerOpenRouter(
                         "X-Title":
                             "VintedBoost"
                     },
-
 
                     body:
                         JSON.stringify({
@@ -480,9 +415,7 @@ async function appelerOpenRouter(
 
 
         const texte =
-            recupererTexteIA(
-                data
-            );
+            recupererTexteIA(data);
 
 
         const temps =
@@ -513,8 +446,7 @@ async function appelerOpenRouter(
     } catch (error) {
 
         if (
-            error.name ===
-            "AbortError"
+            error.name === "AbortError"
         ) {
 
             throw new Error(
@@ -528,9 +460,7 @@ async function appelerOpenRouter(
 
     } finally {
 
-        clearTimeout(
-            timeout
-        );
+        clearTimeout(timeout);
     }
 }
 
@@ -568,9 +498,7 @@ async function appelerIAJSON(
 
 
             const resultat =
-                extraireJSON(
-                    texte
-                );
+                extraireJSON(texte);
 
 
             console.log(
@@ -583,8 +511,7 @@ async function appelerIAJSON(
 
         } catch (error) {
 
-            derniereErreur =
-                error;
+            derniereErreur = error;
 
 
             console.error(
@@ -592,11 +519,6 @@ async function appelerIAJSON(
                 error.message
             );
 
-
-            /*
-            Erreurs où refaire la même
-            requête n'est pas utile.
-            */
 
             if (
                 error.status === 401 ||
@@ -613,16 +535,7 @@ async function appelerIAJSON(
                 MAX_TENTATIVES
             ) {
 
-                /*
-                Seulement 350 ms.
-
-                Ancienne version :
-                800 ms.
-                */
-
-                await attendre(
-                    350
-                );
+                await attendre(350);
             }
         }
     }
@@ -636,12 +549,10 @@ async function appelerIAJSON(
 
 
 /* ======================================================
-   VALIDATION ANALYSE
+   VALIDATION ANALYSE PHOTO
 ====================================================== */
 
-function normaliserAnalyse(
-    analyse
-) {
+function normaliserAnalyse(analyse) {
 
     return {
 
@@ -716,15 +627,12 @@ app.post(
 
 
             if (
-                !Array.isArray(
-                    images
-                )
+                !Array.isArray(images)
             ) {
 
                 return res
                     .status(400)
                     .json({
-
                         error:
                             "Format des photos incorrect."
                     });
@@ -755,18 +663,11 @@ app.post(
                 return res
                     .status(400)
                     .json({
-
                         error:
                             "Ajoute au moins une photo valide."
                     });
             }
 
-
-            /*
-            Prompt V7 plus court.
-
-            Moins de texte à traiter.
-            */
 
             const prompt = `
 Analyse ces photos du même vêtement ou article d'occasion.
@@ -827,14 +728,6 @@ Aucun Markdown. Aucune explication.
             }
 
 
-            /*
-            Analyse photo :
-            on laisse assez de tokens
-            pour les modèles gratuits
-            qui peuvent utiliser des
-            tokens de raisonnement.
-            */
-
             const analyse =
                 await appelerIAJSON(
                     [
@@ -858,11 +751,6 @@ Aucun Markdown. Aucune explication.
                     analyse
                 );
 
-
-            /*
-            Au minimum, on veut
-            quelque chose d'exploitable.
-            */
 
             if (
                 !resultat.article &&
@@ -897,7 +785,6 @@ Aucun Markdown. Aucune explication.
             return res
                 .status(500)
                 .json({
-
                     error:
                         "L'analyse IA a échoué. Réessaie dans quelques secondes."
                 });
@@ -969,6 +856,196 @@ function obtenirPlateforme(
 
 
 /* ======================================================
+   SUPABASE UTILISATEUR
+====================================================== */
+
+function creerClientSupabaseUtilisateur(
+    accessToken
+) {
+
+    const url =
+        process.env.SUPABASE_URL;
+
+    const publishableKey =
+        process.env.SUPABASE_PUBLISHABLE_KEY;
+
+
+    if (
+        !url ||
+        !publishableKey
+    ) {
+
+        throw new Error(
+            "Supabase n'est pas configuré."
+        );
+    }
+
+
+    return createClient(
+        url,
+        publishableKey,
+        {
+            global: {
+
+                headers: {
+
+                    Authorization:
+                        `Bearer ${accessToken}`
+                }
+            },
+
+            auth: {
+
+                persistSession:
+                    false,
+
+                autoRefreshToken:
+                    false
+            }
+        }
+    );
+}
+
+
+/* ======================================================
+   VERIFICATION COMPTE + QUOTA
+====================================================== */
+
+async function verifierUtilisateurEtQuota(
+    req
+) {
+
+    const authorization =
+        req.headers.authorization || "";
+
+
+    if (
+        !authorization.startsWith(
+            "Bearer "
+        )
+    ) {
+
+        const erreur =
+            new Error(
+                "Connecte-toi pour générer une annonce."
+            );
+
+        erreur.status = 401;
+
+        throw erreur;
+    }
+
+
+    const accessToken =
+        authorization
+            .slice(7)
+            .trim();
+
+
+    if (!accessToken) {
+
+        const erreur =
+            new Error(
+                "Session invalide."
+            );
+
+        erreur.status = 401;
+
+        throw erreur;
+    }
+
+
+    const supabase =
+        creerClientSupabaseUtilisateur(
+            accessToken
+        );
+
+
+    const {
+        data: userData,
+        error: userError
+    } =
+        await supabase.auth.getUser(
+            accessToken
+        );
+
+
+    if (
+        userError ||
+        !userData?.user
+    ) {
+
+        const erreur =
+            new Error(
+                "Session expirée. Reconnecte-toi."
+            );
+
+        erreur.status = 401;
+
+        throw erreur;
+    }
+
+
+    const {
+        data: quota,
+        error: quotaError
+    } =
+        await supabase.rpc(
+            "use_generation"
+        );
+
+
+    if (quotaError) {
+
+        console.error(
+            "❌ QUOTA :",
+            quotaError.message
+        );
+
+
+        const erreur =
+            new Error(
+                "Impossible de vérifier ton quota."
+            );
+
+        erreur.status = 500;
+
+        throw erreur;
+    }
+
+
+    if (!quota?.allowed) {
+
+        const erreur =
+            new Error(
+                "Tu as utilisé tes 5 générations gratuites ce mois-ci. Passe à Premium pour continuer."
+            );
+
+
+        erreur.status = 403;
+
+        erreur.code =
+            "QUOTA_REACHED";
+
+        erreur.quota =
+            quota;
+
+
+        throw erreur;
+    }
+
+
+    return {
+
+        user:
+            userData.user,
+
+        quota
+    };
+}
+
+
+/* ======================================================
    GENERATION ANNONCE
 ====================================================== */
 
@@ -982,6 +1059,18 @@ app.post(
 
 
         try {
+
+            /*
+            V9 :
+            vérifie le compte Supabase
+            et consomme 1 génération.
+            */
+
+            const sessionQuota =
+                await verifierUtilisateurEtQuota(
+                    req
+                );
+
 
             const article =
                 nettoyerTexte(
@@ -1055,7 +1144,6 @@ app.post(
                 return res
                     .status(400)
                     .json({
-
                         error:
                             "Indique au minimum le type d'article."
                     });
@@ -1063,9 +1151,7 @@ app.post(
 
 
             const consigneStyle =
-                obtenirStyle(
-                    style
-                );
+                obtenirStyle(style);
 
 
             const consignePlateforme =
@@ -1073,12 +1159,6 @@ app.post(
                     plateforme
                 );
 
-
-            /*
-            Prompt génération V7.
-
-            Plus court et plus structuré.
-            */
 
             const prompt = `
 Crée une annonce de seconde main.
@@ -1149,8 +1229,8 @@ Règles :
                 Array.isArray(
                     annonce?.motsCles
                 )
-                ? annonce.motsCles
-                : [];
+                    ? annonce.motsCles
+                    : [];
 
 
             motsCles =
@@ -1218,9 +1298,13 @@ Règles :
             );
 
 
-            return res.json(
-                resultat
-            );
+            return res.json({
+
+                ...resultat,
+
+                quota:
+                    sessionQuota.quota
+            });
 
 
         } catch (error) {
@@ -1232,43 +1316,69 @@ Règles :
 
 
             return res
-                .status(500)
+                .status(
+                    error.status || 500
+                )
                 .json({
 
                     error:
-                        "La génération a échoué. Réessaie dans quelques secondes."
+                        error.status
+                            ? error.message
+                            : "La génération a échoué. Réessaie dans quelques secondes.",
+
+                    code:
+                        error.code ||
+                        undefined,
+
+                    quota:
+                        error.quota ||
+                        undefined
                 });
         }
     }
 );
 
+
 /* ======================================================
    CONFIGURATION PUBLIQUE SUPABASE
 ====================================================== */
 
-app.get("/supabase-config", (req, res) => {
+app.get(
+    "/supabase-config",
+    (req, res) => {
 
-    const url =
-        process.env.SUPABASE_URL;
+        const url =
+            process.env.SUPABASE_URL;
 
-    const publishableKey =
-        process.env.SUPABASE_PUBLISHABLE_KEY;
+        const publishableKey =
+            process.env
+                .SUPABASE_PUBLISHABLE_KEY;
 
 
-    if (!url || !publishableKey) {
+        if (
+            !url ||
+            !publishableKey
+        ) {
 
-        return res.status(500).json({
-            error:
-                "Supabase n'est pas configuré."
+            return res
+                .status(500)
+                .json({
+                    error:
+                        "Supabase n'est pas configuré."
+                });
+        }
+
+
+        res.json({
+
+            url,
+
+            publishableKey
         });
     }
+);
 
 
-    res.json({
-        url,
-        publishableKey
-    });
-});
 /* ======================================================
    HEALTH
 ====================================================== */
@@ -1286,7 +1396,7 @@ app.get(
                 "VintedBoost",
 
             version:
-                "7"
+                "9"
         });
     }
 );
@@ -1303,7 +1413,6 @@ app.use(
         res
             .status(404)
             .json({
-
                 error:
                     "Route inconnue."
             });
@@ -1320,7 +1429,7 @@ app.listen(
     () => {
 
         console.log(
-            `🚀 VintedBoost V7 fonctionne sur le port ${PORT}`
+            `🚀 VintedBoost V9 fonctionne sur le port ${PORT}`
         );
 
         console.log(

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="VintedBoost transforme les photos de tes vêtements en annonces optimisées grâce à l'IA.">
 
-<title>VintedBoost V8 — Comptes + IA</title>
+<title>VintedBoost V9 — Free + Premium</title>
 
 <style>
 :root{
@@ -49,7 +49,7 @@ button{
 
 
 /* ======================================================
-   HEADER V8
+   HEADER V9
 ====================================================== */
 
 header{
@@ -103,25 +103,45 @@ header{
     background:var(--violetLight);
     color:var(--violet);
     border:1px solid var(--violetBorder);
-
     padding:7px 12px;
-
     border-radius:999px;
-
     font-size:12px;
     font-weight:800;
-
     white-space:nowrap;
 }
 
 
 /* ======================================================
-   AUTHENTIFICATION V8
+   COMPTE / QUOTA V9
+====================================================== */
+
+.quota-badge{
+    display:none;
+    align-items:center;
+    gap:5px;
+    padding:7px 10px;
+    border-radius:999px;
+    border:1px solid var(--violetBorder);
+    background:var(--violetLight);
+    color:var(--violet);
+    font-size:12px;
+    font-weight:850;
+    white-space:nowrap;
+}
+
+.quota-badge.premium{
+    background:#fffbeb;
+    border-color:#fde68a;
+    color:#92400e;
+}
+
+
+/* ======================================================
+   AUTHENTIFICATION
 ====================================================== */
 
 .auth-button{
     border:0;
-
     background:
         linear-gradient(
             90deg,
@@ -130,24 +150,17 @@ header{
         );
 
     color:white;
-
     padding:9px 15px;
-
     border-radius:10px;
-
     font-size:13px;
     font-weight:800;
-
     cursor:pointer;
-
     transition:.2s;
-
     white-space:nowrap;
 }
 
 .auth-button:hover{
     transform:translateY(-1px);
-
     box-shadow:
         0 7px 18px
         rgba(124,58,237,.2);
@@ -161,29 +174,20 @@ header{
 
 #userEmail{
     max-width:180px;
-
     overflow:hidden;
-
     text-overflow:ellipsis;
-
     white-space:nowrap;
-
     font-size:12px;
     font-weight:700;
 }
 
 .logout-button{
     border:1px solid var(--border);
-
     background:white;
-
     padding:8px 11px;
-
     border-radius:9px;
-
     font-size:12px;
     font-weight:750;
-
     cursor:pointer;
 }
 
@@ -198,23 +202,13 @@ header{
 
 .auth-modal{
     display:none;
-
     position:fixed;
-
     inset:0;
-
     z-index:1000;
-
-    background:
-        rgba(24,24,27,.55);
-
-    backdrop-filter:
-        blur(5px);
-
+    background:rgba(24,24,27,.55);
+    backdrop-filter:blur(5px);
     align-items:center;
-
     justify-content:center;
-
     padding:20px;
 }
 
@@ -224,20 +218,12 @@ header{
 
 .auth-card{
     position:relative;
-
     width:100%;
-
     max-width:430px;
-
     background:white;
-
-    border:
-        1px solid #ebe7f1;
-
+    border:1px solid #ebe7f1;
     border-radius:24px;
-
     padding:32px;
-
     box-shadow:
         0 30px 80px
         rgba(0,0,0,.2);
@@ -245,23 +231,15 @@ header{
 
 .auth-close{
     position:absolute;
-
     top:15px;
     right:15px;
-
     width:34px;
     height:34px;
-
     border:0;
-
     border-radius:50%;
-
     background:#f4f4f5;
-
     font-size:22px;
-
     line-height:1;
-
     cursor:pointer;
 }
 
@@ -271,9 +249,7 @@ header{
 
 .auth-logo{
     margin-bottom:22px;
-
     font-size:21px;
-
     font-weight:900;
 }
 
@@ -283,48 +259,34 @@ header{
 
 .auth-card h2{
     margin:0;
-
     font-size:28px;
 }
 
 .auth-subtitle{
     margin:8px 0 22px;
-
     color:var(--muted);
-
     font-size:14px;
-
     line-height:1.5;
 }
 
 .auth-label{
     display:block;
-
     margin:14px 0 7px;
-
     font-size:13px;
-
     font-weight:800;
 }
 
 .auth-input{
     width:100%;
-
     padding:14px;
-
-    border:
-        1px solid var(--border);
-
+    border:1px solid var(--border);
     border-radius:11px;
-
     outline:none;
-
     background:white;
 }
 
 .auth-input:focus{
     border-color:var(--violet);
-
     box-shadow:
         0 0 0 3px
         rgba(124,58,237,.08);
@@ -332,90 +294,62 @@ header{
 
 .auth-submit{
     width:100%;
-
     margin-top:20px;
-
     padding:14px;
-
     border:0;
-
     border-radius:11px;
-
     color:white;
-
     background:
         linear-gradient(
             90deg,
             var(--violet),
             var(--violet2)
         );
-
     font-weight:850;
-
     cursor:pointer;
 }
 
 .auth-submit:disabled{
     opacity:.6;
-
     cursor:not-allowed;
 }
 
 .auth-switch{
     margin:19px 0 0;
-
     text-align:center;
-
     color:var(--muted);
-
     font-size:13px;
 }
 
 .auth-switch button{
     border:0;
-
     padding:3px;
-
     background:transparent;
-
     color:var(--violet);
-
     font-weight:850;
-
     cursor:pointer;
 }
 
 .auth-message{
     display:none;
-
     margin-bottom:14px;
-
     padding:11px 13px;
-
     border-radius:10px;
-
     font-size:13px;
-
     line-height:1.45;
 }
 
 .auth-message.error{
     display:block;
-
     color:#991b1b;
-
     background:#fef2f2;
-
     border:1px solid #fecaca;
 }
 
 .auth-message.success{
     display:block;
-
     color:#166534;
-
     background:#f0fdf4;
-
     border:1px solid #bbf7d0;
 }
 
@@ -426,46 +360,28 @@ header{
 
 .hero{
     max-width:900px;
-
     margin:auto;
-
     text-align:center;
-
     padding:60px 20px 32px;
 }
 
 .hero-badge{
     display:inline-flex;
-
     align-items:center;
-
     gap:6px;
-
     padding:8px 14px;
-
-    border:
-        1px solid var(--violetBorder);
-
-    background:
-        rgba(255,255,255,.65);
-
+    border:1px solid var(--violetBorder);
+    background:rgba(255,255,255,.65);
     border-radius:999px;
-
     color:var(--violet);
-
     font-weight:800;
-
     font-size:14px;
 }
 
 .hero h1{
     margin:20px 0 15px;
-
-    font-size:
-        clamp(40px,6vw,64px);
-
+    font-size:clamp(40px,6vw,64px);
     line-height:1.02;
-
     letter-spacing:-2.7px;
 }
 
@@ -476,23 +392,16 @@ header{
             var(--violet),
             #a855f7
         );
-
     -webkit-background-clip:text;
-
     background-clip:text;
-
     color:transparent;
 }
 
 .hero p{
     max-width:690px;
-
     margin:auto;
-
     color:var(--muted);
-
     font-size:18px;
-
     line-height:1.65;
 }
 
@@ -503,56 +412,35 @@ header{
 
 .steps{
     max-width:900px;
-
     margin:0 auto 35px;
-
     padding:0 20px;
-
     display:grid;
-
-    grid-template-columns:
-        repeat(3,1fr);
-
+    grid-template-columns:repeat(3,1fr);
     gap:12px;
 }
 
 .step{
     position:relative;
-
     padding:17px;
-
     border-radius:16px;
-
-    border:
-        1px solid var(--border);
-
-    background:
-        rgba(255,255,255,.8);
-
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.8);
     text-align:center;
-
     font-size:13px;
-
     color:var(--muted);
-
     transition:.2s;
 }
 
 .step strong{
     display:block;
-
     color:var(--text);
-
     font-size:14px;
-
     margin-bottom:4px;
 }
 
 .step.active{
     border-color:var(--violet);
-
     background:var(--violetLight);
-
     box-shadow:
         0 8px 30px
         rgba(124,58,237,.08);
@@ -560,7 +448,6 @@ header{
 
 .step.done{
     border-color:#bbf7d0;
-
     background:#f0fdf4;
 }
 
@@ -571,22 +458,15 @@ header{
 
 .container{
     max-width:900px;
-
     margin:auto;
-
     padding:0 20px 55px;
 }
 
 .card{
     background:#fff;
-
-    border:
-        1px solid #ebe7f1;
-
+    border:1px solid #ebe7f1;
     border-radius:25px;
-
     padding:32px;
-
     box-shadow:
         0 25px 65px
         rgba(63,30,100,.08);
@@ -594,15 +474,12 @@ header{
 
 .section-title{
     margin:0;
-
     font-size:25px;
 }
 
 .subtitle{
     margin:7px 0 24px;
-
     color:var(--muted);
-
     line-height:1.55;
 }
 
@@ -612,29 +489,19 @@ header{
 ====================================================== */
 
 .photo-zone{
-    border:
-        2px dashed #c4b5fd;
-
+    border:2px dashed #c4b5fd;
     border-radius:18px;
-
     padding:30px 20px;
-
     background:#fcfbff;
-
     text-align:center;
-
     cursor:pointer;
-
     transition:.2s;
 }
 
 .photo-zone:hover{
     background:var(--violetLight);
-
     border-color:var(--violet);
-
-    transform:
-        translateY(-1px);
+    transform:translateY(-1px);
 }
 
 .photo-icon{
@@ -643,131 +510,83 @@ header{
 
 .photo-zone strong{
     display:block;
-
     margin-top:7px;
-
     font-size:16px;
 }
 
 .photo-zone span{
     display:block;
-
     margin-top:5px;
-
     color:var(--muted);
-
     font-size:13px;
 }
 
 .previews{
     display:grid;
-
-    grid-template-columns:
-        repeat(4,1fr);
-
+    grid-template-columns:repeat(4,1fr);
     gap:10px;
-
     margin-top:14px;
 }
 
 .preview{
     position:relative;
-
     aspect-ratio:1;
-
     overflow:hidden;
-
-    border:
-        1px solid var(--border);
-
+    border:1px solid var(--border);
     border-radius:14px;
-
     background:#f4f4f5;
 }
 
 .preview img{
     width:100%;
-
     height:100%;
-
     object-fit:cover;
 }
 
 .preview-number{
     position:absolute;
-
     bottom:6px;
     left:6px;
-
-    background:
-        rgba(0,0,0,.7);
-
+    background:rgba(0,0,0,.7);
     color:#fff;
-
     border-radius:20px;
-
     padding:4px 8px;
-
     font-size:11px;
-
     font-weight:700;
 }
 
 .remove-photo{
     position:absolute;
-
     right:6px;
     top:6px;
-
     width:29px;
     height:29px;
-
     border:0;
-
     border-radius:50%;
-
-    background:
-        rgba(0,0,0,.75);
-
+    background:rgba(0,0,0,.75);
     color:white;
-
     cursor:pointer;
-
     font-size:18px;
 }
 
 .photo-counter{
     margin-top:10px;
-
     color:var(--muted);
-
     font-size:12px;
-
     text-align:right;
 }
 
 .analyse-button{
     display:none;
-
     width:100%;
-
     margin-top:13px;
-
     padding:15px;
-
-    border:
-        1px solid var(--violet);
-
+    border:1px solid var(--violet);
     border-radius:12px;
-
     background:white;
-
     color:var(--violet);
-
     font-weight:850;
-
     cursor:pointer;
-
     transition:.2s;
 }
 
@@ -777,72 +596,44 @@ header{
 
 .status{
     display:none;
-
     margin-top:13px;
-
     padding:13px 15px;
-
     border-radius:12px;
-
     font-size:13px;
-
     line-height:1.5;
 }
 
 .status.loading{
     display:block;
-
     background:#faf5ff;
-
-    border:
-        1px solid #e9d5ff;
-
+    border:1px solid #e9d5ff;
     color:#6b21a8;
 }
 
 .status.success{
     display:block;
-
     background:#f0fdf4;
-
-    border:
-        1px solid #bbf7d0;
-
+    border:1px solid #bbf7d0;
     color:#166534;
 }
 
 .status.error{
     display:block;
-
     background:#fef2f2;
-
-    border:
-        1px solid #fecaca;
-
+    border:1px solid #fecaca;
     color:#991b1b;
 }
 
 .spinner{
     width:14px;
-
     height:14px;
-
     display:inline-block;
-
-    border:
-        2px solid currentColor;
-
-    border-right-color:
-        transparent;
-
+    border:2px solid currentColor;
+    border-right-color:transparent;
     border-radius:50%;
-
     vertical-align:-2px;
-
     margin-right:6px;
-
-    animation:
-        spin .7s linear infinite;
+    animation:spin .7s linear infinite;
 }
 
 @keyframes spin{
@@ -853,11 +644,12 @@ header{
 
 .separator{
     height:1px;
-
     background:#f0edf4;
-
     margin:30px 0;
-}/* ======================================================
+}
+
+
+/* ======================================================
    FORMULAIRE
 ====================================================== */
 
@@ -1232,6 +1024,11 @@ footer{
         display:none;
     }
 
+    .quota-badge{
+        padding:5px 7px;
+        font-size:10px;
+    }
+
     .auth-button{
         padding:8px 9px;
         font-size:11px;
@@ -1283,12 +1080,10 @@ footer{
 
 </style>
 </head>
-
 <body>
 
-
 <!-- ======================================================
-     HEADER V8
+     HEADER V9
 ====================================================== -->
 
 <header>
@@ -1301,7 +1096,7 @@ footer{
         </div>
 
         <div class="version">
-            V8 • Comptes + IA
+            V9 • Free + Premium
         </div>
 
     </div>
@@ -1309,10 +1104,17 @@ footer{
 
     <div class="header-right">
 
+        <div
+            id="quotaBadge"
+            class="quota-badge"
+        >
+            🎁 Free • 0/5
+        </div>
+
+
         <button
             id="authButton"
             class="auth-button"
-            type="button"
             onclick="ouvrirAuth()"
         >
             👤 Se connecter
@@ -1322,13 +1124,12 @@ footer{
         <div
             id="userZone"
             class="user-zone"
-            style="display:none;"
+            style="display:none"
         >
 
             <span id="userEmail"></span>
 
             <button
-                type="button"
                 class="logout-button"
                 onclick="deconnexion()"
             >
@@ -1343,17 +1144,21 @@ footer{
 
 
 <!-- ======================================================
-     AUTHENTIFICATION V8
+     FENÊTRE CONNEXION
 ====================================================== -->
 
-<div id="authModal" class="auth-modal">
+<div
+    id="authModal"
+    class="auth-modal"
+    onclick="fermerAuthSiFond(event)"
+>
 
     <div class="auth-card">
 
         <button
-            type="button"
             class="auth-close"
             onclick="fermerAuth()"
+            aria-label="Fermer"
         >
             ×
         </button>
@@ -1390,7 +1195,6 @@ footer{
             Adresse email
         </label>
 
-
         <input
             id="authEmail"
             class="auth-input"
@@ -1407,19 +1211,17 @@ footer{
             Mot de passe
         </label>
 
-
         <input
             id="authPassword"
             class="auth-input"
             type="password"
             autocomplete="current-password"
-            placeholder="Minimum 6 caractères"
+            placeholder="6 caractères minimum"
         >
 
 
         <button
             id="authSubmit"
-            type="button"
             class="auth-submit"
             onclick="envoyerAuth()"
         >
@@ -1435,7 +1237,6 @@ footer{
 
             <button
                 id="authSwitchButton"
-                type="button"
                 onclick="changerModeAuth()"
             >
                 Créer un compte
@@ -1455,20 +1256,24 @@ footer{
 <section class="hero">
 
     <div class="hero-badge">
-        ✨ Générateur d'annonces avec IA
+        ✨ Assistant IA pour tes annonces
     </div>
 
+
     <h1>
-        Vends plus facilement avec
+        Vends mieux avec
         <span class="gradient">
-            une annonce optimisée
+            VintedBoost
         </span>
     </h1>
 
+
     <p>
-        Ajoute les photos de ton article.
-        L'IA détecte les informations utiles et prépare
-        une annonce Vinted ou eBay prête à copier.
+        Ajoute les photos de ton article,
+        complète quelques informations et
+        laisse l'intelligence artificielle
+        créer une annonce optimisée pour
+        Vinted ou eBay.
     </p>
 
 </section>
@@ -1481,45 +1286,45 @@ footer{
 <section class="steps">
 
     <div
-        class="step active"
         id="step1"
+        class="step active"
     >
         <strong>
-            📸 1. Photos
+            1. Photos
         </strong>
 
-        Ajoute jusqu'à 4 vues
+        Ajoute ton article
     </div>
 
 
     <div
-        class="step"
         id="step2"
+        class="step"
     >
         <strong>
-            🔍 2. Analyse IA
+            2. Informations
         </strong>
 
-        Identification de l'article
+        Complète l'annonce
     </div>
 
 
     <div
-        class="step"
         id="step3"
+        class="step"
     >
         <strong>
-            ✨ 3. Annonce
+            3. Génération
         </strong>
 
-        Génération et copie
+        L'IA crée ton annonce
     </div>
 
 </section>
 
 
 <!-- ======================================================
-     FORMULAIRE PRINCIPAL
+     CONTENU
 ====================================================== -->
 
 <main class="container">
@@ -1528,15 +1333,19 @@ footer{
 
 
 <h2 class="section-title">
-    Créer une annonce
+    📸 Ajoute tes photos
 </h2>
 
-
 <p class="subtitle">
-    Pour une meilleure analyse, ajoute une photo de face,
-    une photo de l'étiquette et une photo des éventuels défauts.
+    Jusqu'à 4 photos du même article.
+    VintedBoost peut les analyser automatiquement
+    pour t'aider à remplir les informations.
 </p>
 
+
+<!-- ======================================================
+     PHOTOS
+====================================================== -->
 
 <div
     class="photo-zone"
@@ -1544,7 +1353,7 @@ footer{
 >
 
     <div class="photo-icon">
-        📸
+        📷
     </div>
 
     <strong>
@@ -1552,19 +1361,20 @@ footer{
     </strong>
 
     <span>
-        Jusqu'à 4 photos • JPEG, PNG ou WebP
+        JPG, PNG ou WEBP • 4 photos maximum
     </span>
 
-    <input
-        type="file"
-        id="photos"
-        accept="image/jpeg,image/png,image/webp"
-        multiple
-        hidden
-        onchange="selectionPhotos()"
-    >
-
 </div>
+
+
+<input
+    id="photos"
+    type="file"
+    accept="image/jpeg,image/png,image/webp"
+    multiple
+    hidden
+    onchange="ajouterPhotos(event)"
+>
 
 
 <div
@@ -1586,7 +1396,7 @@ footer{
     class="analyse-button"
     onclick="analyserPhotos()"
 >
-    🤖 Analyser mes photos
+    🔎 Analyser mes photos avec l'IA
 </button>
 
 
@@ -1599,8 +1409,272 @@ footer{
 <div class="separator"></div>
 
 
+<!-- ======================================================
+     INFORMATIONS
+====================================================== -->
+
+<h2 class="section-title">
+    📝 Informations de l'article
+</h2>
+
+<p class="subtitle">
+    Vérifie les informations détectées et
+    complète celles qui manquent.
+</p>
+
+
+<label
+    class="field-label"
+    for="article"
+>
+    Type d'article *
+</label>
+
+<input
+    id="article"
+    type="text"
+    placeholder="Ex : veste Nike Tech"
+    oninput="updateScore()"
+>
+
+
+<div class="row">
+
+    <div>
+
+        <label
+            class="field-label"
+            for="marque"
+        >
+            Marque
+        </label>
+
+        <input
+            id="marque"
+            type="text"
+            placeholder="Ex : Nike"
+            oninput="updateScore()"
+        >
+
+    </div>
+
+
+    <div>
+
+        <label
+            class="field-label"
+            for="categorie"
+        >
+            Catégorie
+        </label>
+
+        <select
+            id="categorie"
+            onchange="updateScore()"
+        >
+
+            <option value="">
+                Sélectionner
+            </option>
+
+            <option value="Veste">
+                Veste
+            </option>
+
+            <option value="Sweat">
+                Sweat
+            </option>
+
+            <option value="T-shirt">
+                T-shirt
+            </option>
+
+            <option value="Pantalon">
+                Pantalon
+            </option>
+
+            <option value="Jean">
+                Jean
+            </option>
+
+            <option value="Chaussures">
+                Chaussures
+            </option>
+
+            <option value="Accessoire">
+                Accessoire
+            </option>
+
+            <option value="Robe">
+                Robe
+            </option>
+
+            <option value="Chemise">
+                Chemise
+            </option>
+
+            <option value="Pull">
+                Pull
+            </option>
+
+            <option value="Short">
+                Short
+            </option>
+
+            <option value="Autre">
+                Autre
+            </option>
+
+        </select>
+
+    </div>
+
+</div>
+
+
+<div class="row">
+
+    <div>
+
+        <label
+            class="field-label"
+            for="taille"
+        >
+            Taille
+        </label>
+
+        <input
+            id="taille"
+            type="text"
+            placeholder="Ex : M, 42, 38..."
+            oninput="updateScore()"
+        >
+
+    </div>
+
+
+    <div>
+
+        <label
+            class="field-label"
+            for="couleur"
+        >
+            Couleur
+        </label>
+
+        <input
+            id="couleur"
+            type="text"
+            placeholder="Ex : Noir"
+            oninput="updateScore()"
+        >
+
+    </div>
+
+</div>
+
+
+<div class="row">
+
+    <div>
+
+        <label
+            class="field-label"
+            for="etat"
+        >
+            État
+        </label>
+
+        <select
+            id="etat"
+            onchange="updateScore()"
+        >
+
+            <option value="">
+                Sélectionner
+            </option>
+
+            <option value="Neuf avec étiquette">
+                Neuf avec étiquette
+            </option>
+
+            <option value="Neuf sans étiquette">
+                Neuf sans étiquette
+            </option>
+
+            <option value="Très bon état">
+                Très bon état
+            </option>
+
+            <option value="Bon état">
+                Bon état
+            </option>
+
+            <option value="État satisfaisant">
+                État satisfaisant
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div>
+
+        <label
+            class="field-label"
+            for="prix"
+        >
+            Prix envisagé (€)
+        </label>
+
+        <input
+            id="prix"
+            type="number"
+            min="0"
+            step="1"
+            placeholder="Ex : 35"
+            oninput="updateScore()"
+        >
+
+    </div>
+
+</div>
+
+
+<label
+    class="field-label"
+    for="details"
+>
+    Détails
+</label>
+
+<textarea
+    id="details"
+    placeholder="Ex : logo brodé, fermeture éclair, poches..."
+    oninput="updateScore()"
+></textarea>
+
+
+<label
+    class="field-label"
+    for="defauts"
+>
+    Défauts éventuels
+</label>
+
+<textarea
+    id="defauts"
+    placeholder="Ex : petite trace sur la manche..."
+></textarea>
+
+
+<!-- ======================================================
+     PLATEFORME
+====================================================== -->
+
 <div class="choice-title">
-    Plateforme
+    Où souhaites-tu vendre ?
 </div>
 
 
@@ -1610,8 +1684,8 @@ footer{
 
         <input
             type="radio"
-            id="vinted"
             name="plateforme"
+            id="vinted"
             value="vinted"
             checked
         >
@@ -1627,8 +1701,8 @@ footer{
 
         <input
             type="radio"
-            id="ebay"
             name="plateforme"
+            id="ebay"
             value="ebay"
         >
 
@@ -1641,185 +1715,9 @@ footer{
 </div>
 
 
-<div class="row">
-
-    <div>
-
-        <label class="field-label">
-            Type d'article *
-        </label>
-
-        <input
-            id="article"
-            placeholder="Ex : Pull demi-zip"
-            oninput="updateScore()"
-        >
-
-    </div>
-
-
-    <div>
-
-        <label class="field-label">
-            Marque
-        </label>
-
-        <input
-            id="marque"
-            placeholder="Ex : Stone Island"
-            oninput="updateScore()"
-        >
-
-    </div>
-
-</div>
-
-
-<div class="row">
-
-    <div>
-
-        <label class="field-label">
-            Catégorie
-        </label>
-
-        <select
-            id="categorie"
-            onchange="updateScore()"
-        >
-
-            <option value="">
-                Choisir
-            </option>
-
-            <option>Veste</option>
-            <option>Pull</option>
-            <option>Sweat</option>
-            <option>T-shirt</option>
-            <option>Chemise</option>
-            <option>Pantalon</option>
-            <option>Jean</option>
-            <option>Short</option>
-            <option>Robe</option>
-            <option>Chaussures</option>
-            <option>Accessoire</option>
-            <option>Autre</option>
-
-        </select>
-
-    </div>
-
-
-    <div>
-
-        <label class="field-label">
-            Taille
-        </label>
-
-        <input
-            id="taille"
-            placeholder="Ex : M"
-            oninput="updateScore()"
-        >
-
-    </div>
-
-</div>
-
-
-<div class="row">
-
-    <div>
-
-        <label class="field-label">
-            Couleur
-        </label>
-
-        <input
-            id="couleur"
-            placeholder="Ex : Bleu marine"
-            oninput="updateScore()"
-        >
-
-    </div>
-
-
-    <div>
-
-        <label class="field-label">
-            État
-        </label>
-
-        <select
-            id="etat"
-            onchange="updateScore()"
-        >
-
-            <option value="">
-                Choisir
-            </option>
-
-            <option>
-                Neuf avec étiquette
-            </option>
-
-            <option>
-                Neuf sans étiquette
-            </option>
-
-            <option>
-                Très bon état
-            </option>
-
-            <option>
-                Bon état
-            </option>
-
-            <option>
-                État satisfaisant
-            </option>
-
-        </select>
-
-    </div>
-
-</div>
-
-
-<label class="field-label">
-    Prix envisagé (€)
-</label>
-
-<input
-    id="prix"
-    type="number"
-    min="1"
-    placeholder="Ex : 45"
-    oninput="updateScore()"
->
-
-
-<label class="field-label">
-    Détails supplémentaires
-</label>
-
-<textarea
-    id="details"
-    placeholder="Ex : coupe oversize, logo brodé, matière épaisse..."
-    oninput="updateScore()"
-></textarea>
-
-
-<label class="field-label">
-    Défauts éventuels
-</label>
-
-<textarea
-    id="defauts"
-    placeholder="Ex : légère trace sur la manche gauche..."
-    oninput="updateScore()"
-></textarea>
-
+<!-- ======================================================
+     STYLE
+====================================================== -->
 
 <div class="choice-title">
     Style de l'annonce
@@ -1895,6 +1793,10 @@ footer{
 </div>
 
 
+<!-- ======================================================
+     SCORE
+====================================================== -->
+
 <div class="score">
 
     <div class="score-header">
@@ -1924,11 +1826,16 @@ footer{
         id="scoreHelp"
         class="score-help"
     >
-        Ajoute quelques informations pour obtenir une meilleure annonce.
+        Ajoute quelques informations pour obtenir
+        une meilleure annonce.
     </div>
 
 </div>
 
+
+<!-- ======================================================
+     GENERATION
+====================================================== -->
 
 <button
     id="generateButton"
@@ -1960,8 +1867,8 @@ footer{
         </h2>
 
         <p class="history-description">
-            Les 10 dernières annonces sont conservées uniquement
-            sur cet appareil.
+            Les 10 dernières annonces sont conservées
+            uniquement sur cet appareil.
         </p>
 
         <div id="historyList"></div>
@@ -1972,7 +1879,7 @@ footer{
 
 
 <footer>
-    VintedBoost V8 • Comptes + IA
+    VintedBoost V9 • Free + Premium
 </footer>
 
 
@@ -1985,12 +1892,14 @@ let derniereAnnonce = null;
 
 
 /* ======================================================
-   AUTHENTIFICATION V8
+   AUTHENTIFICATION V9
 ====================================================== */
 
 let supabaseClient = null;
 let modeAuth = "login";
-
+/* ======================================================
+   INITIALISATION SUPABASE
+====================================================== */
 
 async function initialiserSupabase(){
 
@@ -1999,16 +1908,18 @@ async function initialiserSupabase(){
         const response =
             await fetch("/supabase-config");
 
+
         if(!response.ok){
 
             throw new Error(
                 "Configuration Supabase indisponible."
             );
-
         }
+
 
         const config =
             await response.json();
+
 
         if(
             !config.url ||
@@ -2018,7 +1929,6 @@ async function initialiserSupabase(){
             throw new Error(
                 "Configuration Supabase incomplète."
             );
-
         }
 
 
@@ -2059,7 +1969,6 @@ async function initialiserSupabase(){
                     mettreAJourUtilisateur(
                         session?.user || null
                     );
-
                 }
             );
 
@@ -2070,10 +1979,13 @@ async function initialiserSupabase(){
             "Erreur Supabase :",
             error
         );
-
     }
 }
 
+
+/* ======================================================
+   FENETRE CONNEXION
+====================================================== */
 
 function ouvrirAuth(){
 
@@ -2084,7 +1996,6 @@ function ouvrirAuth(){
         );
 
         return;
-
     }
 
 
@@ -2097,7 +2008,6 @@ function ouvrirAuth(){
     document
         .getElementById("authEmail")
         .focus();
-
 }
 
 
@@ -2109,9 +2019,24 @@ function fermerAuth(){
         .remove("open");
 
     cacherMessageAuth();
-
 }
 
+
+function fermerAuthSiFond(event){
+
+    if(
+        event.target.id ===
+        "authModal"
+    ){
+
+        fermerAuth();
+    }
+}
+
+
+/* ======================================================
+   MODE CONNEXION / INSCRIPTION
+====================================================== */
 
 function changerModeAuth(){
 
@@ -2153,7 +2078,7 @@ function changerModeAuth(){
             "Créer un compte";
 
         subtitle.textContent =
-            "Crée ton compte VintedBoost gratuitement.";
+            "Crée ton compte VintedBoost et profite de 5 générations gratuites par mois.";
 
         submit.textContent =
             "Créer mon compte";
@@ -2163,6 +2088,7 @@ function changerModeAuth(){
 
         switchButton.textContent =
             "Se connecter";
+
 
         document
             .getElementById(
@@ -2190,6 +2116,7 @@ function changerModeAuth(){
         switchButton.textContent =
             "Créer un compte";
 
+
         document
             .getElementById(
                 "authPassword"
@@ -2198,69 +2125,107 @@ function changerModeAuth(){
                 "autocomplete",
                 "current-password"
             );
-
     }
 
 
     cacherMessageAuth();
+}
 
-}async function envoyerAuth(){
+
+/* ======================================================
+   CONNEXION / CREATION COMPTE
+====================================================== */
+
+async function envoyerAuth(){
 
     if(!supabaseClient){
+
         afficherMessageAuth(
             "Service utilisateur indisponible.",
             "error"
         );
+
         return;
     }
 
+
     const email =
-        document.getElementById("authEmail").value.trim();
+        document
+            .getElementById(
+                "authEmail"
+            )
+            .value
+            .trim();
+
 
     const password =
-        document.getElementById("authPassword").value;
+        document
+            .getElementById(
+                "authPassword"
+            )
+            .value;
+
 
     if(!email){
+
         afficherMessageAuth(
             "Entre ton adresse email.",
             "error"
         );
+
         return;
     }
 
+
     if(password.length < 6){
+
         afficherMessageAuth(
             "Le mot de passe doit contenir au moins 6 caractères.",
             "error"
         );
+
         return;
     }
 
+
     const button =
-        document.getElementById("authSubmit");
+        document.getElementById(
+            "authSubmit"
+        );
+
 
     button.disabled = true;
+
 
     button.textContent =
         modeAuth === "signup"
         ? "Création du compte..."
         : "Connexion...";
 
+
     cacherMessageAuth();
+
 
     try{
 
         if(modeAuth === "signup"){
 
-            const {data,error} =
-                await supabaseClient.auth.signUp({
-                    email,
-                    password
-                });
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .auth
+                    .signUp({
+                        email,
+                        password
+                    });
+
 
             if(error){
                 throw error;
             }
+
 
             if(data.session){
 
@@ -2268,6 +2233,7 @@ function changerModeAuth(){
                     "✅ Compte créé et connecté !",
                     "success"
                 );
+
 
                 setTimeout(
                     fermerAuth,
@@ -2284,15 +2250,22 @@ function changerModeAuth(){
 
         }else{
 
-            const {data,error} =
-                await supabaseClient.auth.signInWithPassword({
-                    email,
-                    password
-                });
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .auth
+                    .signInWithPassword({
+                        email,
+                        password
+                    });
+
 
             if(error){
                 throw error;
             }
+
 
             if(data.user){
 
@@ -2301,12 +2274,14 @@ function changerModeAuth(){
                     "success"
                 );
 
+
                 setTimeout(
                     fermerAuth,
                     700
                 );
             }
         }
+
 
     }catch(error){
 
@@ -2315,14 +2290,19 @@ function changerModeAuth(){
             error
         );
 
+
         afficherMessageAuth(
-            traduireErreurAuth(error.message),
+            traduireErreurAuth(
+                error.message
+            ),
             "error"
         );
+
 
     }finally{
 
         button.disabled = false;
+
 
         button.textContent =
             modeAuth === "signup"
@@ -2332,14 +2312,24 @@ function changerModeAuth(){
 }
 
 
+/* ======================================================
+   DECONNEXION
+====================================================== */
+
 async function deconnexion(){
 
     if(!supabaseClient){
         return;
     }
 
-    const {error} =
-        await supabaseClient.auth.signOut();
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .auth
+            .signOut();
+
 
     if(error){
 
@@ -2350,54 +2340,207 @@ async function deconnexion(){
         return;
     }
 
-    mettreAJourUtilisateur(null);
+
+    mettreAJourUtilisateur(
+        null
+    );
 }
 
 
+/* ======================================================
+   AFFICHAGE UTILISATEUR
+====================================================== */
+async function chargerQuota() {
+    if (!supabaseClient) return;
+
+    const { data: { session } } =
+        await supabaseClient.auth.getSession();
+
+    if (!session?.user) return;
+
+    const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("plan, generations_used, generations_limit")
+        .eq("id", session.user.id)
+        .single();
+
+    if (error) {
+        console.error("Erreur chargement quota :", error);
+        return;
+    }
+
+    mettreAJourQuota({
+        plan: data.plan,
+        used: data.generations_used,
+        limit: data.generations_limit
+    });
+}
 function mettreAJourUtilisateur(user){
 
     const authButton =
-        document.getElementById("authButton");
+        document.getElementById(
+            "authButton"
+        );
 
     const userZone =
-        document.getElementById("userZone");
+        document.getElementById(
+            "userZone"
+        );
 
     const userEmail =
-        document.getElementById("userEmail");
+        document.getElementById(
+            "userEmail"
+        );
+
+    const quotaBadge =
+        document.getElementById(
+            "quotaBadge"
+        );
+
 
     if(user){
 
-        authButton.style.display = "none";
-        userZone.style.display = "flex";
+        authButton.style.display =
+            "none";
+
+        userZone.style.display =
+            "flex";
 
         userEmail.textContent =
             user.email || "Mon compte";
 
+
+        quotaBadge.style.display =
+            "inline-flex";
+
+
+        /*
+        Au chargement nous affichons Free.
+        Le compteur exact sera actualisé
+        après une génération.
+        */
+
+        chargerQuota();
+
+        quotaBadge.classList.remove(
+            "premium"
+        );
+
+
     }else{
 
-        authButton.style.display = "block";
-        userZone.style.display = "none";
-        userEmail.textContent = "";
+        authButton.style.display =
+            "block";
+
+        userZone.style.display =
+            "none";
+
+        userEmail.textContent =
+            "";
+
+        quotaBadge.style.display =
+            "none";
     }
 }
 
 
-function afficherMessageAuth(message,type){
+/* ======================================================
+   AFFICHAGE DU QUOTA
+====================================================== */
+
+function mettreAJourQuota(quota){
+
+    if(!quota){
+        return;
+    }
+
+
+    const badge =
+        document.getElementById(
+            "quotaBadge"
+        );
+
+
+    if(!badge){
+        return;
+    }
+
+
+    badge.style.display =
+        "inline-flex";
+
+
+    if(quota.plan === "premium"){
+
+        badge.textContent =
+            "💎 Premium • Illimité";
+
+        badge.classList.add(
+            "premium"
+        );
+
+        return;
+    }
+
+
+    const used =
+        Number(
+            quota.used || 0
+        );
+
+
+    const limit =
+        Number(
+            quota.limit || 5
+        );
+
+
+    badge.textContent =
+        `🎁 Free • ${used}/${limit}`;
+
+
+    badge.classList.remove(
+        "premium"
+    );
+}
+
+
+/* ======================================================
+   MESSAGES AUTH
+====================================================== */
+
+function afficherMessageAuth(
+    message,
+    type
+){
 
     const zone =
-        document.getElementById("authMessage");
+        document.getElementById(
+            "authMessage"
+        );
 
-    zone.textContent = message;
+
+    zone.textContent =
+        message;
+
 
     zone.className =
-        "auth-message " + type;
+        "auth-message " +
+        (
+            type === "success"
+            ? "success"
+            : "error"
+        );
 }
 
 
 function cacherMessageAuth(){
 
     const zone =
-        document.getElementById("authMessage");
+        document.getElementById(
+            "authMessage"
+        );
+
 
     zone.textContent = "";
 
@@ -2406,93 +2549,83 @@ function cacherMessageAuth(){
 }
 
 
+/* ======================================================
+   TRADUCTION ERREURS SUPABASE
+====================================================== */
+
 function traduireErreurAuth(message){
 
     const texte =
-        String(message || "").toLowerCase();
+        String(
+            message || ""
+        ).toLowerCase();
+
 
     if(
         texte.includes(
             "invalid login credentials"
         )
     ){
-        return "Email ou mot de passe incorrect.";
+
+        return (
+            "Email ou mot de passe incorrect."
+        );
     }
+
 
     if(
         texte.includes(
             "email not confirmed"
         )
     ){
-        return "Confirme d'abord ton adresse email.";
+
+        return (
+            "Confirme d'abord ton adresse email."
+        );
     }
+
 
     if(
         texte.includes(
             "user already registered"
         )
     ){
-        return "Un compte existe déjà avec cette adresse email.";
+
+        return (
+            "Un compte existe déjà avec cette adresse email."
+        );
     }
+
 
     if(
-        texte.includes("password")
+        texte.includes(
+            "password"
+        )
     ){
-        return "Le mot de passe n'est pas valide.";
+
+        return (
+            "Le mot de passe n'est pas valide."
+        );
     }
+
 
     if(
-        texte.includes("rate limit")
+        texte.includes(
+            "email"
+        )
     ){
-        return "Trop de tentatives. Attends quelques minutes avant de réessayer.";
+
+        return (
+            "L'adresse email n'est pas valide."
+        );
     }
 
-    return message ||
-        "Une erreur est survenue.";
+
+    return (
+        message ||
+        "Une erreur est survenue."
+    );
 }
-
-
-/* FERMETURE MODAL */
-
-document.addEventListener(
-    "click",
-    event=>{
-
-        const modal =
-            document.getElementById("authModal");
-
-        if(
-            modal &&
-            event.target === modal
-        ){
-            fermerAuth();
-        }
-    }
-);
-
-
-document.addEventListener(
-    "keydown",
-    event=>{
-
-        const modal =
-            document.getElementById("authModal");
-
-        if(
-            event.key === "Enter" &&
-            modal?.classList.contains("open")
-        ){
-            envoyerAuth();
-        }
-
-        if(
-            event.key === "Escape" &&
-            modal?.classList.contains("open")
-        ){
-            fermerAuth();
-        }
-    }
-);
 
 
 /* ======================================================
@@ -2501,63 +2634,67 @@ document.addEventListener(
 
 function value(id){
 
-    return document
-        .getElementById(id)
-        ?.value
-        ?.trim() || "";
-}
+    const element =
+        document.getElementById(id);
 
 
-function escapeHTML(text){
-
-    return String(text || "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-}
-
-
-function setStep(numero){
-
-    for(let i=1;i<=3;i++){
-
-        const step =
-            document.getElementById(
-                "step"+i
-            );
-
-        step.classList.remove(
-            "active",
-            "done"
-        );
-
-        if(i < numero){
-            step.classList.add("done");
-        }
-
-        if(i === numero){
-            step.classList.add("active");
-        }
+    if(!element){
+        return "";
     }
+
+
+    return String(
+        element.value || ""
+    ).trim();
+}
+
+
+function escapeHTML(texte){
+
+    return String(
+        texte ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
 }
 
 
 async function fetchTimeout(
     url,
-    options={},
-    timeout=90000
+    options = {},
+    timeout = 80000
 ){
 
     const controller =
         new AbortController();
 
+
     const timer =
         setTimeout(
-            ()=>controller.abort(),
+            ()=>{
+                controller.abort();
+            },
             timeout
         );
+
 
     try{
 
@@ -2565,300 +2702,449 @@ async function fetchTimeout(
             url,
             {
                 ...options,
-                signal:controller.signal
+                signal:
+                    controller.signal
             }
         );
 
+
     }finally{
 
-        clearTimeout(timer);
+        clearTimeout(
+            timer
+        );
     }
 }
 
 
 /* ======================================================
-   COMPRESSION DES PHOTOS
+   ETAPES
 ====================================================== */
 
-function compresserImage(file){
+function setStep(numero){
 
-    return new Promise(
-        (resolve,reject)=>{
+    for(
+        let i=1;
+        i<=3;
+        i++
+    ){
 
-            const reader =
-                new FileReader();
+        const step =
+            document.getElementById(
+                "step"+i
+            );
 
-            reader.onload = e => {
 
-                const img =
-                    new Image();
-
-                img.onload = ()=>{
-
-                    const MAX = 640;
-
-                    let width =
-                        img.width;
-
-                    let height =
-                        img.height;
-
-                    if(
-                        width > MAX ||
-                        height > MAX
-                    ){
-
-                        const ratio =
-                            Math.min(
-                                MAX/width,
-                                MAX/height
-                            );
-
-                        width =
-                            Math.round(
-                                width*ratio
-                            );
-
-                        height =
-                            Math.round(
-                                height*ratio
-                            );
-                    }
-
-                    const canvas =
-                        document.createElement(
-                            "canvas"
-                        );
-
-                    canvas.width = width;
-                    canvas.height = height;
-
-                    const ctx =
-                        canvas.getContext(
-                            "2d",
-                            {
-                                alpha:false
-                            }
-                        );
-
-                    ctx.drawImage(
-                        img,
-                        0,
-                        0,
-                        width,
-                        height
-                    );
-
-                    const data =
-                        canvas.toDataURL(
-                            "image/jpeg",
-                            .65
-                        );
-
-                    resolve(data);
-                };
-
-                img.onerror =
-                    reject;
-
-                img.src =
-                    e.target.result;
-            };
-
-            reader.onerror =
-                reject;
-
-            reader.readAsDataURL(file);
+        if(!step){
+            continue;
         }
-    );
+
+
+        step.classList.remove(
+            "active",
+            "done"
+        );
+
+
+        if(i < numero){
+
+            step.classList.add(
+                "done"
+            );
+
+        }else if(i === numero){
+
+            step.classList.add(
+                "active"
+            );
+        }
+    }
 }
 
 
 /* ======================================================
-   PHOTOS
+   AJOUT PHOTOS
 ====================================================== */
 
-async function selectionPhotos(){
+async function ajouterPhotos(event){
 
-    const input =
-        document.getElementById(
-            "photos"
-        );
-
-    const files =
+    const fichiers =
         Array.from(
-            input.files || []
+            event.target.files || []
         );
 
-    const places =
-        4 - photosBase64.length;
 
-    if(places <= 0){
+    if(!fichiers.length){
+        return;
+    }
+
+
+    const placesRestantes =
+        4 -
+        photosBase64.length;
+
+
+    if(placesRestantes <= 0){
 
         alert(
             "Tu as déjà ajouté 4 photos."
         );
 
-        input.value="";
+        event.target.value = "";
+
         return;
     }
 
-    const selected =
-        files.slice(0,places);
 
-    if(files.length > places){
-
-        alert(
-            "Maximum 4 photos."
+    const fichiersAcceptes =
+        fichiers.slice(
+            0,
+            placesRestantes
         );
-    }
 
-    for(const file of selected){
+
+    for(
+        const fichier of
+        fichiersAcceptes
+    ){
 
         if(
             ![
                 "image/jpeg",
                 "image/png",
                 "image/webp"
-            ].includes(file.type)
+            ].includes(
+                fichier.type
+            )
         ){
+
             continue;
         }
+
 
         try{
 
             const image =
-                await compresserImage(file);
+                await convertirImage(
+                    fichier
+                );
 
-            photosBase64.push(image);
+
+            photosBase64.push(
+                image
+            );
+
 
         }catch(error){
 
             console.error(
-                "Erreur image:",
+                "Erreur photo :",
                 error
             );
         }
     }
 
-    input.value="";
+
+    event.target.value = "";
+
 
     afficherPhotos();
-}
-
-
-function afficherPhotos(){
-
-    const previews =
-        document.getElementById(
-            "previews"
-        );
-
-    previews.innerHTML="";
-
-    photosBase64.forEach(
-        (photo,index)=>{
-
-            const container =
-                document.createElement(
-                    "div"
-                );
-
-            container.className =
-                "preview";
-
-            const img =
-                document.createElement(
-                    "img"
-                );
-
-            img.src = photo;
-
-            img.alt =
-                "Photo article";
-
-            const number =
-                document.createElement(
-                    "div"
-                );
-
-            number.className =
-                "preview-number";
-
-            number.textContent =
-                `Photo ${index+1}`;
-
-            const remove =
-                document.createElement(
-                    "button"
-                );
-
-            remove.className =
-                "remove-photo";
-
-            remove.type =
-                "button";
-
-            remove.textContent =
-                "×";
-
-            remove.onclick =
-                e=>{
-
-                    e.stopPropagation();
-
-                    photosBase64.splice(
-                        index,
-                        1
-                    );
-
-                    afficherPhotos();
-                };
-
-            container.append(
-                img,
-                number,
-                remove
-            );
-
-            previews.appendChild(
-                container
-            );
-        }
-    );
-
-    document.getElementById(
-        "photoCounter"
-    ).textContent =
-        `${photosBase64.length} / 4 photos`;
-
-    document.getElementById(
-        "analyseButton"
-    ).style.display =
-        photosBase64.length
-        ? "block"
-        : "none";
-
-    if(photosBase64.length){
-
-        setStep(2);
-
-    }else{
-
-        setStep(1);
-    }
 
     updateScore();
+
+
+    if(
+        photosBase64.length > 0
+    ){
+
+        setStep(2);
+    }
 }
 
 
 /* ======================================================
-   ANALYSE IA
+   CONVERSION / COMPRESSION IMAGE
+====================================================== */
+
+function convertirImage(fichier){
+
+    return new Promise(
+        (
+            resolve,
+            reject
+        )=>{
+
+            const reader =
+                new FileReader();
+
+
+            reader.onerror =
+                ()=>reject(
+                    new Error(
+                        "Impossible de lire la photo."
+                    )
+                );
+
+
+            reader.onload =
+                ()=>{
+
+                    const image =
+                        new Image();
+
+
+                    image.onerror =
+                        ()=>reject(
+                            new Error(
+                                "Image invalide."
+                            )
+                        );
+
+
+                    image.onload =
+                        ()=>{
+
+                            const max =
+                                1200;
+
+
+                            let largeur =
+                                image.width;
+
+                            let hauteur =
+                                image.height;
+
+
+                            if(
+                                largeur > max ||
+                                hauteur > max
+                            ){
+
+                                const ratio =
+                                    Math.min(
+                                        max / largeur,
+                                        max / hauteur
+                                    );
+
+
+                                largeur =
+                                    Math.round(
+                                        largeur *
+                                        ratio
+                                    );
+
+                                hauteur =
+                                    Math.round(
+                                        hauteur *
+                                        ratio
+                                    );
+                            }
+
+
+                            const canvas =
+                                document.createElement(
+                                    "canvas"
+                                );
+
+
+                            canvas.width =
+                                largeur;
+
+                            canvas.height =
+                                hauteur;
+
+
+                            const context =
+                                canvas.getContext(
+                                    "2d"
+                                );
+
+
+                            context.drawImage(
+                                image,
+                                0,
+                                0,
+                                largeur,
+                                hauteur
+                            );
+
+
+                            resolve(
+                                canvas.toDataURL(
+                                    "image/jpeg",
+                                    .82
+                                )
+                            );
+                        };
+
+
+                    image.src =
+                        reader.result;
+                };
+
+
+            reader.readAsDataURL(
+                fichier
+            );
+        }
+    );
+}
+
+
+/* ======================================================
+   AFFICHAGE PHOTOS
+====================================================== */
+
+function afficherPhotos(){
+
+    const zone =
+        document.getElementById(
+            "previews"
+        );
+
+    const compteur =
+        document.getElementById(
+            "photoCounter"
+        );
+
+    const analyseButton =
+        document.getElementById(
+            "analyseButton"
+        );
+
+
+    zone.innerHTML = "";
+
+
+    photosBase64.forEach(
+        (
+            photo,
+            index
+        )=>{
+
+            const preview =
+                document.createElement(
+                    "div"
+                );
+
+
+            preview.className =
+                "preview";
+
+
+            const image =
+                document.createElement(
+                    "img"
+                );
+
+
+            image.src =
+                photo;
+
+            image.alt =
+                `Photo ${index + 1}`;
+
+
+            const numero =
+                document.createElement(
+                    "div"
+                );
+
+
+            numero.className =
+                "preview-number";
+
+            numero.textContent =
+                `Photo ${index + 1}`;
+
+
+            const supprimer =
+                document.createElement(
+                    "button"
+                );
+
+
+            supprimer.className =
+                "remove-photo";
+
+            supprimer.type =
+                "button";
+
+            supprimer.textContent =
+                "×";
+
+
+            supprimer.onclick =
+                event=>{
+
+                    event.stopPropagation();
+
+                    supprimerPhoto(
+                        index
+                    );
+                };
+
+
+            preview.append(
+                image,
+                numero,
+                supprimer
+            );
+
+
+            zone.appendChild(
+                preview
+            );
+        }
+    );
+
+
+    compteur.textContent =
+        `${photosBase64.length} / 4 photos`;
+
+
+    analyseButton.style.display =
+        photosBase64.length
+        ? "block"
+        : "none";
+}
+
+
+/* ======================================================
+   SUPPRESSION PHOTO
+====================================================== */
+
+function supprimerPhoto(index){
+
+    photosBase64.splice(
+        index,
+        1
+    );
+
+
+    afficherPhotos();
+
+    updateScore();
+
+
+    if(
+        photosBase64.length === 0
+    ){
+
+        setStep(1);
+    }
+}
+
+
+/* ======================================================
+   ANALYSE PHOTOS IA
 ====================================================== */
 
 async function analyserPhotos(){
 
-    if(!photosBase64.length){
+    if(
+        !photosBase64.length
+    ){
 
         alert(
             "Ajoute au moins une photo."
@@ -2866,6 +3152,7 @@ async function analyserPhotos(){
 
         return;
     }
+
 
     const button =
         document.getElementById(
@@ -2877,19 +3164,24 @@ async function analyserPhotos(){
             "analyseStatus"
         );
 
-    button.disabled=true;
 
-    button.textContent =
-        "Analyse en cours...";
+    button.disabled =
+        true;
+
+
+    button.innerHTML =
+        `<span class="spinner"></span>
+        Analyse des photos...`;
+
 
     status.className =
         "status loading";
 
+
     status.innerHTML =
         `<span class="spinner"></span>
-        Analyse des photos par l'IA...`;
+        L'IA analyse ton article...`;
 
-    setStep(2);
 
     try{
 
@@ -2904,13 +3196,17 @@ async function analyserPhotos(){
                             "application/json"
                     },
 
-                    body:JSON.stringify({
-                        images:photosBase64
-                    })
+                    body:
+                        JSON.stringify({
+                            images:
+                                photosBase64
+                        })
                 }
             );
 
+
         let data;
+
 
         try{
 
@@ -2924,6 +3220,7 @@ async function analyserPhotos(){
             );
         }
 
+
         if(!response.ok){
 
             throw new Error(
@@ -2931,6 +3228,7 @@ async function analyserPhotos(){
                 "Impossible d'analyser les photos."
             );
         }
+
 
         remplirChamp(
             "article",
@@ -2940,6 +3238,11 @@ async function analyserPhotos(){
         remplirChamp(
             "marque",
             data.marque
+        );
+
+        remplirSelect(
+            "categorie",
+            data.categorie
         );
 
         remplirChamp(
@@ -2952,6 +3255,11 @@ async function analyserPhotos(){
             data.tailleVisible
         );
 
+        remplirSelect(
+            "etat",
+            data.etat
+        );
+
         remplirChamp(
             "details",
             data.details
@@ -2962,85 +3270,85 @@ async function analyserPhotos(){
             data.defauts
         );
 
-        remplirSelect(
-            "categorie",
-            data.categorie
-        );
-
-        remplirSelect(
-            "etat",
-            data.etat
-        );
 
         status.className =
             "status success";
 
-        status.innerHTML =
+
+        status.textContent =
             "✅ Analyse terminée. Vérifie les informations détectées avant de générer l'annonce.";
 
-        button.textContent =
-            "🔄 Analyser de nouveau";
-
-        setStep(3);
 
         updateScore();
 
+        setStep(2);
+
+
     }catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
 
-        let message =
-            error.message;
 
-        if(
-            error.name === "AbortError"
-        ){
+        const message =
+            error.name ===
+            "AbortError"
 
-            message =
-                "L'IA met trop de temps à répondre. Réessaie.";
-        }
+            ? "L'analyse met trop de temps. Réessaie."
+
+            : error.message;
+
 
         status.className =
             "status error";
 
+
         status.textContent =
             "❌ " + message;
 
-        button.textContent =
-            "🤖 Réessayer l'analyse";
 
     }finally{
 
-        button.disabled=false;
+        button.disabled =
+            false;
+
+
+        button.textContent =
+            "🔎 Analyser mes photos avec l'IA";
     }
 }
 
+
+/* ======================================================
+   REMPLISSAGE AUTOMATIQUE
+====================================================== */
 
 function remplirChamp(
     id,
     nouvelleValeur
 ){
 
-    if(
-        nouvelleValeur === undefined ||
-        nouvelleValeur === null
-    ){
+    if(!nouvelleValeur){
         return;
     }
+
 
     const texte =
         String(
             nouvelleValeur
         ).trim();
 
+
     if(!texte){
         return;
     }
 
-    document.getElementById(
-        id
-    ).value =
-        texte;
+
+    document
+        .getElementById(id)
+        .value =
+            texte;
 }
 
 
@@ -3053,8 +3361,12 @@ function remplirSelect(
         return;
     }
 
+
     const select =
-        document.getElementById(id);
+        document.getElementById(
+            id
+        );
+
 
     const recherche =
         String(
@@ -3063,15 +3375,18 @@ function remplirSelect(
         .trim()
         .toLowerCase();
 
+
     const option =
         Array.from(
             select.options
         )
         .find(
-            o =>
-            o.value.toLowerCase()
-            === recherche
+            option =>
+                option.value
+                    .toLowerCase()
+                === recherche
         );
+
 
     if(option){
 
@@ -3079,42 +3394,41 @@ function remplirSelect(
             option.value;
     }
 }
-
-
 /* ======================================================
-   SCORE
+   SCORE DE QUALITÉ
 ====================================================== */
 
 function updateScore(){
 
-    let score=0;
+    let score = 0;
 
     if(photosBase64.length)
-        score+=15;
+        score += 15;
 
     if(value("article"))
-        score+=20;
+        score += 20;
 
     if(value("marque"))
-        score+=10;
+        score += 10;
 
     if(value("categorie"))
-        score+=10;
+        score += 10;
 
     if(value("taille"))
-        score+=10;
+        score += 10;
 
     if(value("couleur"))
-        score+=10;
+        score += 10;
 
     if(value("etat"))
-        score+=10;
+        score += 10;
 
     if(value("prix"))
-        score+=5;
+        score += 5;
 
     if(value("details"))
-        score+=10;
+        score += 10;
+
 
     score =
         Math.min(
@@ -3122,18 +3436,22 @@ function updateScore(){
             100
         );
 
+
     document.getElementById(
         "scoreText"
     ).textContent =
-        score+" %";
+        score + " %";
+
 
     document.getElementById(
         "scoreProgress"
     ).style.width =
-        score+"%";
+        score + "%";
+
 
     let text =
         "Ajoute quelques informations pour obtenir une meilleure annonce.";
+
 
     if(score >= 85){
 
@@ -3151,6 +3469,7 @@ function updateScore(){
             "Continue à compléter les caractéristiques de ton article.";
     }
 
+
     document.getElementById(
         "scoreHelp"
     ).textContent =
@@ -3159,7 +3478,7 @@ function updateScore(){
 
 
 /* ======================================================
-   GÉNÉRATION DE L'ANNONCE
+   GÉNÉRATION DE L'ANNONCE V9
 ====================================================== */
 
 async function genererAnnonce(){
@@ -3167,22 +3486,72 @@ async function genererAnnonce(){
     const article =
         value("article");
 
+
     if(!article){
 
         alert(
             "Indique au minimum le type d'article."
         );
 
+
         document.getElementById(
             "article"
         ).focus();
 
+
         return;
     }
 
-    const payload={
 
-        article:article,
+    /*
+    ==========================================
+    Vérification Supabase
+    ==========================================
+    */
+
+    if(!supabaseClient){
+
+        alert(
+            "Le service de connexion est encore en cours de chargement."
+        );
+
+        return;
+    }
+
+
+    const {
+        data:{
+            session
+        }
+    } =
+        await supabaseClient
+            .auth
+            .getSession();
+
+
+    /*
+    L'utilisateur doit être connecté
+    pour utiliser les générations V9.
+    */
+
+    if(!session?.access_token){
+
+        ouvrirAuth();
+
+        return;
+    }
+
+
+    /*
+    ==========================================
+    Création du contenu envoyé à l'IA
+    ==========================================
+    */
+
+    const payload = {
+
+        article:
+            article,
 
         marque:
             value("marque"),
@@ -3219,26 +3588,33 @@ async function genererAnnonce(){
             ).value
     };
 
+
     const button =
         document.getElementById(
             "generateButton"
         );
+
 
     const result =
         document.getElementById(
             "resultat"
         );
 
-    button.disabled=true;
+
+    button.disabled =
+        true;
+
 
     button.innerHTML =
         `<span class="spinner"></span>
         Création de l'annonce...`;
 
+
     result.style.display =
         "block";
 
-    result.innerHTML=`
+
+    result.innerHTML = `
 
         <div class="result">
 
@@ -3255,9 +3631,17 @@ async function genererAnnonce(){
         </div>
     `;
 
+
     setStep(3);
 
+
     try{
+
+        /*
+        ==========================================
+        Appel sécurisé V9
+        ==========================================
+        */
 
         const response =
             await fetchTimeout(
@@ -3266,8 +3650,12 @@ async function genererAnnonce(){
                     method:"POST",
 
                     headers:{
+
                         "Content-Type":
-                            "application/json"
+                            "application/json",
+
+                        "Authorization":
+                            `Bearer ${session.access_token}`
                     },
 
                     body:
@@ -3277,7 +3665,9 @@ async function genererAnnonce(){
                 }
             );
 
+
         let data;
+
 
         try{
 
@@ -3291,6 +3681,83 @@ async function genererAnnonce(){
             );
         }
 
+
+        /*
+        ==========================================
+        Mise à jour quota
+        ==========================================
+        */
+
+        if(data.quota){
+
+            mettreAJourQuota(
+                data.quota
+            );
+        }
+
+
+        /*
+        ==========================================
+        Quota Free atteint
+        ==========================================
+        */
+
+        if(
+            response.status === 403 &&
+            data.code === "QUOTA_REACHED"
+        ){
+
+            const quota =
+                data.quota || {};
+
+
+            mettreAJourQuota(
+                quota
+            );
+
+
+            const used =
+                Number(
+                    quota.used || 5
+                );
+
+
+            const limit =
+                Number(
+                    quota.limit || 5
+                );
+
+
+            throw new Error(
+                `Tu as utilisé tes ${used}/${limit} générations gratuites ce mois-ci. Le Premium arrivera prochainement.`
+            );
+        }
+
+
+        /*
+        ==========================================
+        Session expirée
+        ==========================================
+        */
+
+        if(response.status === 401){
+
+            ouvrirAuth();
+
+
+            throw new Error(
+                data.error ||
+                "Ta session a expiré. Reconnecte-toi."
+            );
+        }
+
+
+        /*
+        ==========================================
+        Autre erreur serveur
+        ==========================================
+        */
+
         if(!response.ok){
 
             throw new Error(
@@ -3298,6 +3765,13 @@ async function genererAnnonce(){
                 "Impossible de générer l'annonce."
             );
         }
+
+
+        /*
+        ==========================================
+        Vérification réponse IA
+        ==========================================
+        */
 
         if(
             !data.titre ||
@@ -3309,7 +3783,15 @@ async function genererAnnonce(){
             );
         }
 
-        derniereAnnonce={
+
+        /*
+        ==========================================
+        Enregistrement résultat
+        ==========================================
+        */
+
+        derniereAnnonce = {
+
             ...data,
 
             plateforme:
@@ -3320,19 +3802,26 @@ async function genererAnnonce(){
                     .toISOString()
         };
 
+
         afficherAnnonce(
             derniereAnnonce
         );
+
 
         enregistrerHistorique(
             derniereAnnonce
         );
 
+
         setStep(3);
+
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
+
 
         const message =
             error.name === "AbortError"
@@ -3341,7 +3830,8 @@ async function genererAnnonce(){
 
             : error.message;
 
-        result.innerHTML=`
+
+        result.innerHTML = `
 
             <div class="result">
 
@@ -3356,9 +3846,12 @@ async function genererAnnonce(){
             </div>
         `;
 
+
     }finally{
 
-        button.disabled=false;
+        button.disabled =
+            false;
+
 
         button.textContent =
             "✨ Générer mon annonce";
@@ -3367,7 +3860,7 @@ async function genererAnnonce(){
 
 
 /* ======================================================
-   AFFICHAGE DU RÉSULTAT
+   FORMAT PRIX
 ====================================================== */
 
 function formatPrix(prix){
@@ -3375,19 +3868,26 @@ function formatPrix(prix){
     if(
         prix === undefined ||
         prix === null ||
-        String(prix).trim()===""
+        String(prix).trim() === ""
     ){
+
         return "—";
     }
 
+
     let texte =
         String(prix)
-        .replace("€","")
-        .trim();
+            .replace("€","")
+            .trim();
 
-    return texte+" €";
+
+    return texte + " €";
 }
 
+
+/* ======================================================
+   AFFICHAGE ANNONCE
+====================================================== */
 
 function afficherAnnonce(data){
 
@@ -3396,14 +3896,22 @@ function afficherAnnonce(data){
             "resultat"
         );
 
+
     const mots =
         Array.isArray(
             data.motsCles
         )
+
         ? data.motsCles
+
         : [];
 
-    result.innerHTML=`
+
+    result.style.display =
+        "block";
+
+
+    result.innerHTML = `
 
         <div class="result">
 
@@ -3411,9 +3919,11 @@ function afficherAnnonce(data){
                 🎉 Ton annonce est prête
             </h2>
 
+
             <p class="result-subtitle">
                 Vérifie toujours les informations
-                et l'état réel de l'article avant publication.
+                et l'état réel de l'article
+                avant publication.
             </p>
 
 
@@ -3469,13 +3979,15 @@ function afficherAnnonce(data){
             <div class="result-section">
 
                 <div class="result-label">
-                    📌 Titre optimisé
+                    🏷️ Titre
                 </div>
+
 
                 <div
                     id="resultTitle"
                     class="result-text"
                 ></div>
+
 
                 <button
                     class="copy"
@@ -3493,10 +4005,12 @@ function afficherAnnonce(data){
                     📝 Description
                 </div>
 
+
                 <div
                     id="resultDescription"
                     class="result-text"
                 ></div>
+
 
                 <button
                     class="copy"
@@ -3511,8 +4025,9 @@ function afficherAnnonce(data){
             <div class="result-section">
 
                 <div class="result-label">
-                    🏷️ Mots-clés
+                    🔎 Mots-clés
                 </div>
+
 
                 <div
                     id="keywords"
@@ -3531,12 +4046,14 @@ function afficherAnnonce(data){
                     📋 Tout copier
                 </button>
 
+
                 <button
                     class="action secondary"
                     onclick="genererAnnonce()"
                 >
                     🔄 Regénérer
                 </button>
+
 
                 <button
                     class="action primary"
@@ -3550,38 +4067,48 @@ function afficherAnnonce(data){
         </div>
     `;
 
+
     document.getElementById(
         "resultTitle"
     ).textContent =
         data.titre || "";
+
 
     document.getElementById(
         "resultDescription"
     ).textContent =
         data.description || "";
 
+
     const keywordZone =
         document.getElementById(
             "keywords"
         );
 
-    mots.forEach(mot=>{
 
-        const span =
-            document.createElement(
-                "span"
+    mots.forEach(
+        mot=>{
+
+            const span =
+                document.createElement(
+                    "span"
+                );
+
+
+            span.className =
+                "keyword";
+
+
+            span.textContent =
+                mot;
+
+
+            keywordZone.appendChild(
+                span
             );
+        }
+    );
 
-        span.className =
-            "keyword";
-
-        span.textContent =
-            mot;
-
-        keywordZone.appendChild(
-            span
-        );
-    });
 
     result.scrollIntoView({
         behavior:"smooth",
@@ -3600,11 +4127,15 @@ async function copierTexte(text){
 
         await navigator
             .clipboard
-            .writeText(text);
+            .writeText(
+                text
+            );
+
 
         alert(
             "✅ Copié dans le presse-papiers."
         );
+
 
     }catch{
 
@@ -3613,20 +4144,26 @@ async function copierTexte(text){
                 "textarea"
             );
 
+
         textarea.value =
             text;
+
 
         document.body.appendChild(
             textarea
         );
 
+
         textarea.select();
+
 
         document.execCommand(
             "copy"
         );
 
+
         textarea.remove();
+
 
         alert(
             "✅ Copié."
@@ -3638,11 +4175,15 @@ async function copierTexte(text){
 function copierElement(id){
 
     const element =
-        document.getElementById(id);
+        document.getElementById(
+            id
+        );
+
 
     if(!element){
         return;
     }
+
 
     copierTexte(
         element.innerText
@@ -3656,6 +4197,7 @@ function copierTout(){
         return;
     }
 
+
     const mots =
         Array.isArray(
             derniereAnnonce.motsCles
@@ -3667,15 +4209,19 @@ function copierTout(){
 
         : "";
 
-    const texte=`
+
+    const texte = `
 ${derniereAnnonce.titre}
 
 ${derniereAnnonce.description}
 
-💰 Prix conseillé : ${formatPrix(derniereAnnonce.prixConseille)}
+💰 Prix conseillé : ${formatPrix(
+    derniereAnnonce.prixConseille
+)}
 
 🏷️ ${mots}
 `.trim();
+
 
     copierTexte(
         texte
@@ -3698,9 +4244,15 @@ function getHistory(){
                 ) || "[]"
             );
 
-        return Array.isArray(history)
-            ? history
-            : [];
+
+        return Array.isArray(
+            history
+        )
+
+        ? history
+
+        : [];
+
 
     }catch{
 
@@ -3716,9 +4268,11 @@ function enregistrerHistorique(
     let history =
         getHistory();
 
+
     history.unshift(
         annonce
     );
+
 
     history =
         history.slice(
@@ -3726,10 +4280,14 @@ function enregistrerHistorique(
             10
         );
 
+
     localStorage.setItem(
         "vintedboost_history",
-        JSON.stringify(history)
+        JSON.stringify(
+            history
+        )
     );
+
 
     afficherHistorique();
 }
@@ -3742,23 +4300,29 @@ function afficherHistorique(){
             "historyList"
         );
 
+
     const history =
         getHistory();
 
+
     if(!history.length){
 
-        zone.innerHTML=`
+        zone.innerHTML = `
 
             <p class="history-description">
+
                 Aucune annonce générée
                 pour le moment.
+
             </p>
         `;
 
         return;
     }
 
-    zone.innerHTML="";
+
+    zone.innerHTML = "";
+
 
     history.forEach(
         annonce=>{
@@ -3768,36 +4332,45 @@ function afficherHistorique(){
                     "div"
                 );
 
+
             item.className =
                 "history-item";
+
 
             const left =
                 document.createElement(
                     "div"
                 );
 
+
             const title =
                 document.createElement(
                     "div"
                 );
 
+
             title.className =
                 "history-title";
+
 
             title.textContent =
                 annonce.titre ||
                 "Annonce";
+
 
             const meta =
                 document.createElement(
                     "div"
                 );
 
+
             meta.className =
                 "history-meta";
 
+
             let date =
                 "Date inconnue";
+
 
             if(annonce.date){
 
@@ -3805,6 +4378,7 @@ function afficherHistorique(){
                     new Date(
                         annonce.date
                     );
+
 
                 if(
                     !Number.isNaN(
@@ -3819,35 +4393,46 @@ function afficherHistorique(){
                 }
             }
 
+
             meta.textContent =
                 `${
-                    annonce.plateforme === "ebay"
+                    annonce.plateforme ===
+                    "ebay"
+
                     ? "eBay"
+
                     : "Vinted"
+
                 } • ${date}`;
+
 
             left.append(
                 title,
                 meta
             );
 
+
             const price =
                 document.createElement(
                     "div"
                 );
 
+
             price.className =
                 "history-price";
+
 
             price.textContent =
                 formatPrix(
                     annonce.prixConseille
                 );
 
+
             item.append(
                 left,
                 price
             );
+
 
             zone.appendChild(
                 item
@@ -3863,8 +4448,10 @@ function afficherHistorique(){
 
 function nouvelleAnnonce(){
 
-    photosBase64=[];
-    derniereAnnonce=null;
+    photosBase64 = [];
+
+    derniereAnnonce = null;
+
 
     [
         "article",
@@ -3876,44 +4463,62 @@ function nouvelleAnnonce(){
         "prix",
         "details",
         "defauts"
-    ].forEach(id=>{
+    ].forEach(
+        id=>{
 
-        const el =
-            document.getElementById(id);
+            const element =
+                document.getElementById(
+                    id
+                );
 
-        if(el){
-            el.value="";
+
+            if(element){
+
+                element.value =
+                    "";
+            }
         }
-    });
+    );
+
 
     document.getElementById(
         "naturel"
-    ).checked=true;
+    ).checked =
+        true;
+
 
     document.getElementById(
         "vinted"
-    ).checked=true;
+    ).checked =
+        true;
+
 
     const status =
         document.getElementById(
             "analyseStatus"
         );
 
+
     status.className =
         "status";
 
-    status.innerHTML="";
+
+    status.innerHTML =
+        "";
+
 
     document.getElementById(
         "resultat"
     ).style.display =
         "none";
 
+
     afficherPhotos();
 
     updateScore();
 
     setStep(1);
+
 
     window.scrollTo({
         top:0,
@@ -3931,6 +4536,8 @@ document.addEventListener(
     ()=>{
 
         afficherHistorique();
+
+        afficherPhotos();
 
         updateScore();
 
