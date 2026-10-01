@@ -1912,6 +1912,31 @@ let derniereAnnonce = null;
 
 let supabaseClient = null;
 let modeAuth = "login";
+
+/* ======================================================
+   PUBLICITÉ — FREE AVEC PUBS / PREMIUM SANS PUBS
+====================================================== */
+
+function mettreAJourPublicite(plan){
+    const premium = plan === "premium";
+
+    // Google AdSense Auto Ads: on demande à masquer les annonces
+    // lorsqu'un utilisateur Premium est connecté.
+    window.adsbygoogle = window.adsbygoogle || [];
+
+    try{
+        window.adsbygoogle.push({
+            google_ad_client: "ca-pub-4366370542755594",
+            enable_page_level_ads: !premium,
+            overlays: {bottom: !premium}
+        });
+    }catch(error){
+        console.warn("AdSense :", error);
+    }
+
+    document.documentElement.dataset.plan = premium ? "premium" : "free";
+}
+
 /* ======================================================
    INITIALISATION SUPABASE
 ====================================================== */
@@ -2455,6 +2480,22 @@ function mettreAJourUtilisateur(user){
 
         quotaBadge.style.display =
             "none";
+
+        const premiumButton =
+            document.getElementById("premiumButton");
+
+        const manageButton =
+            document.getElementById("manageSubscriptionButton");
+
+        if(premiumButton){
+            premiumButton.style.display = "none";
+        }
+
+        if(manageButton){
+            manageButton.style.display = "none";
+        }
+
+        mettreAJourPublicite("free");
     }
 }
 
@@ -2482,6 +2523,8 @@ function mettreAJourQuota(quota){
     badge.style.display = "inline-flex";
 if(quota.plan === "premium"){
 
+    mettreAJourPublicite("premium");
+
     const manageButton =
         document.getElementById("manageSubscriptionButton");
 
@@ -2501,6 +2544,8 @@ if(quota.plan === "premium"){
     return;
 }
     
+
+    mettreAJourPublicite("free");
 
     const used = Number(quota.used || 0);
     const limit = Number(quota.limit || 5);
