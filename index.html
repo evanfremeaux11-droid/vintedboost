@@ -1119,7 +1119,14 @@ footer{
 >
     💎 Passer Premium
 </button>
-
+<button
+    id="manageSubscriptionButton"
+    class="logout-button"
+    onclick="gererAbonnement()"
+    style="display:none;"
+>
+    ⚙️ Gérer mon abonnement
+</button>
         <button
             id="authButton"
             class="auth-button"
@@ -2473,19 +2480,26 @@ function mettreAJourQuota(quota){
     }
 
     badge.style.display = "inline-flex";
+if(quota.plan === "premium"){
 
-    if(quota.plan === "premium"){
+    const manageButton =
+        document.getElementById("manageSubscriptionButton");
 
-        badge.textContent =
-            "💎 Premium • Illimité";
+    badge.textContent =
+        "💎 Premium • Illimité";
 
-        badge.classList.add("premium");
+    badge.classList.add("premium");
 
-        if(premiumButton){
-            premiumButton.style.display = "none";
-        }
+    if(premiumButton){
+        premiumButton.style.display = "none";
+    }
 
-        return;
+    if(manageButton){
+        manageButton.style.display = "inline-block";
+    }
+
+    return;
+}
     }
 
     const used = Number(quota.used || 0);
@@ -2494,16 +2508,52 @@ function mettreAJourQuota(quota){
     badge.textContent =
         `🎁 Free • ${used}/${limit}`;
 
-    badge.classList.remove("premium");
+  badge.classList.remove("premium");
 
-    if(premiumButton){
-        premiumButton.style.display = "inline-block";
-    }
+if(premiumButton){
+    premiumButton.style.display = "inline-block";
 }
+
+const manageButton =
+    document.getElementById("manageSubscriptionButton");
+
+if(manageButton){
+    manageButton.style.display = "none";
+}
+
 /* ======================================================
    STRIPE PREMIUM
 ====================================================== */
+async function gererAbonnement() {
+    try {
+        const { data: { session } } =
+            await supabaseClient.auth.getSession();
 
+        if (!session) {
+            alert("Connecte-toi d'abord.");
+            return;
+        }
+
+        const response = await fetch("/create-customer-portal", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${session.access_token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Erreur Stripe");
+        }
+
+        window.location.href = data.url;
+
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
+    }
+}
 async function passerPremium(){
 
     try{
