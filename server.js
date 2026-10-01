@@ -37,13 +37,14 @@ app.post(
                 const userId = session.metadata?.supabase_user_id;
 
                 if (userId) {
-                    const { error } = await supabaseAdmin
-                        .from("profiles")
-                       .update({
-    plan: "premium",
-    stripe_subscription_id: session.subscription
-})
-                        .eq("id", userId);
+       const { error } = await supabaseAdmin
+    .from("profiles")
+    .update({
+        plan: "premium",
+        stripe_subscription_id: session.subscription,
+        stripe_customer_id: session.customer
+    })
+    .eq("id", userId);
 
                     if (error) {
                         throw error;
@@ -1496,6 +1497,62 @@ app.post("/create-checkout-session", async (req, res) => {
 
         res.status(500).json({
             error: "Impossible de démarrer le paiement."
+        });
+    }
+});
+app.post("/create-customer-portal", async (req, res) => {
+    try {
+        const authorization = req.headers.authorization || "";
+
+        if (!authorization.startsWith("Bearer ")) {
+            return res.status(401).json({
+                error: "Connecte-toi pour gérer ton abonnement."
+            });
+        }
+
+        const accessToken = authorization.slice(7).trim();
+
+        const supabase =
+            creerClientSupabaseUtilisateur(accessToken);
+
+        const { data: userData, error: userError } =
+            await supabase.auth.getUser(accessToken);
+
+        if (userError || !userData?.user) {
+            return res.status(401).json({
+                error: "Session invalide."
+            });
+        }
+
+        const { data: profil, error: profilError } =
+            await supabaseAdmin
+                .from("profiles")
+                .select("stripe_customer_id")
+                .eq("id", userData.user.id)
+                .single();
+
+        if (profilError || !profil?.stripe_customer_id) {
+            return res.status(400).json({
+                error: "Aucun abonnement Stripe trouvé."
+            });
+        }
+
+        const portalSession =
+            await stripe.billingPortal.sessions.create({
+                customer: profil.stripe_customer_id,
+                return_url:
+                    `${req.protocol}://${req.get("host")}/`
+            });
+
+        return res.json({
+            url: portalSession.url
+        });
+
+    } catch (error) {
+        console.error("❌ PORTAIL STRIPE :", error.message);
+
+        return res.status(500).json({
+            error: "Impossible d'ouvrir la gestion de l'abonnement."
         });
     }
 });
