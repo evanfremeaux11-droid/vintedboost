@@ -2,7 +2,11 @@ const express = require("express");
 require("dotenv").config();
 
 const { createClient } = require("@supabase/supabase-js");
-
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const supabaseAdmin = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 const app = express();
 
 /* ======================================================
@@ -10,7 +14,54 @@ const app = express();
 ====================================================== */
 
 app.set("trust proxy", 1);
+app.post(
+    "/stripe-webhook",
+    express.raw({ type: "application/json" }),
+    async (req, res) => {
+        let event;
 
+        try {
+            event = stripe.webhooks.constructEvent(
+                req.body,
+                req.headers["stripe-signature"],
+                process.env.STRIPE_WEBHOOK_SECRET
+            );
+        } catch (error) {
+            console.error("❌ WEBHOOK STRIPE :", error.message);
+            return res.status(400).send("Webhook invalide");
+        }
+
+        try {
+            if (event.type === "checkout.session.completed") {
+                const session = event.data.object;
+                const userId = session.metadata?.supabase_user_id;
+
+                if (userId) {
+                    const { error } = await supabaseAdmin
+                        .from("profiles")
+                        .update({
+                            plan: "premium"
+                        })
+                        .eq("id", userId);
+
+                    if (error) {
+                        throw error;
+                    }
+
+                    console.log("⭐ Compte Premium activé :", userId);
+                }
+            }
+
+            return res.json({ received: true });
+
+        } catch (error) {
+            console.error("❌ ACTIVATION PREMIUM :", error.message);
+            return res.status(500).json({
+                error: "Erreur activation Premium"
+            });
+        }
+    }
+);
 app.use(
     express.json({
         limit: "15mb"
@@ -1363,7 +1414,71 @@ try {
     }
 );
 
+/* ======================================================
+   STRIPE CHECKOUT PREMIUM
+====================================================== */
 
+app.post("/create-checkout-session", async (req, res) => {
+    try {
+        const authorization = req.headers.authorization || "";
+
+        if (!authorization.startsWith("Bearer ")) {
+            return res.status(401).json({
+                error: "Connecte-toi pour passer Premium."
+            });
+        }
+
+        const accessToken = authorization.slice(7).trim();
+
+        const supabase =
+            creerClientSupabaseUtilisateur(accessToken);
+
+        const { data: userData, error: userError } =
+            await supabase.auth.getUser(accessToken);
+
+        if (userError || !userData?.user) {
+            return res.status(401).json({
+                error: "Session invalide."
+            });
+        }
+
+        const session = await stripe.checkout.sessions.create({
+            mode: "subscription",
+
+            line_items: [
+                {
+                    price: process.env.STRIPE_PRICE_ID,
+                    quantity: 1
+                }
+            ],
+
+            customer_email: userData.user.email,
+
+            client_reference_id: userData.user.id,
+
+            metadata: {
+                supabase_user_id: userData.user.id
+            },
+
+            success_url:
+                `${req.protocol}://${req.get("host")}/?premium=success`,
+
+            cancel_url:
+                `${req.protocol}://${req.get("host")}/?premium=cancel`
+        });
+
+        res.json({
+            url: session.url
+        });
+
+    } catch (error) {
+        console.error("❌ STRIPE :", error.message);
+
+        res.status(500).json({
+            error: "Impossible de démarrer le paiement."
+        });
+    }
+});
 /* ======================================================
    CONFIGURATION PUBLIQUE SUPABASE
 ====================================================== */
