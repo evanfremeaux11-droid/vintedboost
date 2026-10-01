@@ -39,9 +39,10 @@ app.post(
                 if (userId) {
                     const { error } = await supabaseAdmin
                         .from("profiles")
-                        .update({
-                            plan: "premium"
-                        })
+                       .update({
+    plan: "premium",
+    stripe_subscription_id: session.subscription
+})
                         .eq("id", userId);
 
                     if (error) {
@@ -51,7 +52,26 @@ app.post(
                     console.log("⭐ Compte Premium activé :", userId);
                 }
             }
+if (event.type === "customer.subscription.deleted") {
+    const subscription = event.data.object;
 
+    const { error } = await supabaseAdmin
+        .from("profiles")
+        .update({
+            plan: "free",
+            stripe_subscription_id: null
+        })
+        .eq("stripe_subscription_id", subscription.id);
+
+    if (error) {
+        throw error;
+    }
+
+    console.log(
+        "🔒 Abonnement résilié, compte repassé Free :",
+        subscription.id
+    );
+}
             return res.json({ received: true });
 
         } catch (error) {
