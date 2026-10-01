@@ -1969,7 +1969,13 @@ async function initialiserSupabase(){
                     mettreAJourUtilisateur(
                         session?.user || null
                     );
-                }
+                try {
+    await supabaseClient.rpc("track_event", {
+        event_name_input: "site_visit"
+    });
+} catch(error) {
+    console.error("Erreur analytics :", error);
+}
             );
 
 
