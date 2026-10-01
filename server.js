@@ -1040,8 +1040,10 @@ async function verifierUtilisateurEtQuota(
         user:
             userData.user,
 
-        quota
-    };
+         quota,
+
+    supabase
+};
 }
 
 
@@ -1296,7 +1298,30 @@ Règles :
             console.log(
                 `✨ Annonce générée en ${((Date.now() - debut) / 1000).toFixed(1)}s`
             );
+try {
 
+    const { error: analyticsError } =
+        await sessionQuota.supabase.rpc(
+            "track_event",
+            {
+                event_name_input: "generation"
+            }
+        );
+
+    if (analyticsError) {
+        console.error(
+            "Erreur analytics generation :",
+            analyticsError.message
+        );
+    }
+
+} catch (analyticsError) {
+
+    console.error(
+        "Erreur analytics generation :",
+        analyticsError.message
+    );
+}
 
             return res.json({
 
