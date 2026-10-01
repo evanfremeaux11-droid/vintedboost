@@ -1368,6 +1368,12 @@ try {
    CONFIGURATION PUBLIQUE SUPABASE
 ====================================================== */
 
+app.get("/analytics.html", (req, res) => {
+    res.sendFile(
+        __dirname + "/analytics.html"
+    );
+});
+
 app.get(
     "/supabase-config",
     (req, res) => {
