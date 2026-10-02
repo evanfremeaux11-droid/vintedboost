@@ -1937,6 +1937,35 @@ function mettreAJourPublicite(plan){
     document.documentElement.dataset.plan = premium ? "premium" : "free";
 }
 
+
+/* ======================================================
+   ANALYTICS — VISITE
+====================================================== */
+
+async function enregistrerVisite(){
+    try{
+        let visitorId = localStorage.getItem("vintedboost_visitor_id");
+
+        if(!visitorId){
+            visitorId = crypto.randomUUID
+                ? crypto.randomUUID()
+                : "vb_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+
+            localStorage.setItem("vintedboost_visitor_id", visitorId);
+        }
+
+        await fetch("/track-visit", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({visitorId})
+        });
+
+    }catch(error){
+        console.warn("Analytics visite :", error);
+    }
+}
+
+
 /* ======================================================
    INITIALISATION SUPABASE
 ====================================================== */
@@ -4695,6 +4724,8 @@ document.addEventListener(
         updateScore();
 
         setStep(1);
+
+        enregistrerVisite();
 
         initialiserSupabase();
     }
