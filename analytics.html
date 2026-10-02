@@ -32,6 +32,30 @@ button{width:100%;border:0;border-radius:12px;padding:14px;font:inherit;font-wei
 .updated{text-align:center;color:var(--muted);font-size:11px;margin-top:14px}
 .hidden{display:none!important}
 @media(max-width:370px){.grid{grid-template-columns:1fr}.hero h1{font-size:28px}}
+.periods{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+  margin-bottom:16px;
+  padding:5px;
+  background:#f4f4f5;
+  border-radius:14px;
+}
+
+.period{
+  padding:10px 5px;
+  border-radius:10px;
+  background:transparent;
+  color:#71717a;
+  font-size:11px;
+  font-weight:800;
+}
+
+.period.active{
+  background:#fff;
+  color:#7c3aed;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
 </style>
 </head>
 <body>
@@ -58,6 +82,14 @@ button{width:100%;border:0;border-radius:12px;padding:14px;font:inherit;font-wei
   </section>
 
   <section id="dashboard" class="dashboard hidden">
+
+    <div class="periods">
+      <button class="period active" data-period="today">Aujourd'hui</button>
+      <button class="period" data-period="7d">7 jours</button>
+      <button class="period" data-period="30d">30 jours</button>
+      <button class="period" data-period="total">Total</button>
+    </div>
+
     <div class="grid">
       <div class="stat"><div class="icon">👀</div><div id="visits" class="number">—</div><div class="label">Visites</div></div>
       <div class="stat"><div class="icon">👤</div><div id="signups" class="number">—</div><div class="label">Inscriptions</div></div>
@@ -79,7 +111,7 @@ button{width:100%;border:0;border-radius:12px;padding:14px;font:inherit;font-wei
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 let supabaseClient = null;
-
+let currentPeriod = "today";
 async function init(){
   try{
     const response = await fetch("/supabase-config");
@@ -131,7 +163,9 @@ function showLogin(){
 }
 
 async function loadStats(){
-  const {data,error}=await supabaseClient.rpc("get_analytics_summary");
+  const {data,error}=await supabaseClient.rpc("get_analytics_summary",{
+  period_input: currentPeriod
+});
   if(error){
     alert(error.message.includes("Accès interdit") ? "Ce compte n'est pas autorisé à voir les statistiques." : "Impossible de charger les statistiques.");
     return;
@@ -166,7 +200,18 @@ function demarrerActualisationLive(){
     }
   }, 5000);
 }
+document.querySelectorAll(".period").forEach(btn=>{
+  btn.addEventListener("click",async ()=>{
+    currentPeriod=btn.dataset.period;
 
+    document.querySelectorAll(".period").forEach(b=>{
+      b.classList.remove("active");
+    });
+
+    btn.classList.add("active");
+    await loadStats();
+  });
+});
 init().then(()=>{
   demarrerActualisationLive();
 });
