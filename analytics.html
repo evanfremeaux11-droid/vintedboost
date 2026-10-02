@@ -150,7 +150,26 @@ document.getElementById("loginBtn").addEventListener("click",login);
 document.getElementById("refreshBtn").addEventListener("click",loadStats);
 document.getElementById("logoutBtn").addEventListener("click",()=>supabaseClient.auth.signOut());
 document.getElementById("password").addEventListener("keydown",e=>{if(e.key==="Enter")login();});
-init();
+// Actualisation automatique des statistiques
+let analyticsInterval = null;
+
+function demarrerActualisationLive(){
+  if(analyticsInterval){
+    clearInterval(analyticsInterval);
+  }
+
+  analyticsInterval = setInterval(async ()=>{
+    const {data:{session}} = await supabaseClient.auth.getSession();
+
+    if(session){
+      await loadStats();
+    }
+  }, 5000);
+}
+
+init().then(()=>{
+  demarrerActualisationLive();
+});
 </script>
 </body>
 </html>
