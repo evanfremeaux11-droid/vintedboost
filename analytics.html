@@ -96,6 +96,24 @@ button{width:100%;border:0;border-radius:12px;padding:14px;font:inherit;font-wei
       <div class="stat"><div class="icon">✨</div><div id="generations" class="number">—</div><div class="label">Générations</div></div>
       <div class="stat"><div class="icon">⚡</div><div id="genPerSignup" class="number">—</div><div class="label">Générations / inscrit</div></div>
     </div>
+    <div class="grid" style="margin-top:12px">
+  <div class="stat">
+    <div class="icon">🆓</div>
+    <div id="freeUsers" class="number">—</div>
+    <div class="label">Comptes Free</div>
+  </div>
+
+  <div class="stat">
+    <div class="icon">💎</div>
+    <div id="premiumUsers" class="number">—</div>
+    <div class="label">Comptes Premium</div>
+  </div>
+</div>
+
+<div class="conversion">
+  <small>💰 Revenu mensuel Premium estimé</small>
+  <strong id="estimatedMrr">—</strong>
+</div>
     <div class="conversion">
       <small>Taux visite → inscription</small>
       <strong id="conversion">—</strong>
@@ -155,8 +173,27 @@ async function showDashboard(){
   document.getElementById("loginCard").classList.add("hidden");
   document.getElementById("dashboard").classList.remove("hidden");
   await loadStats();
+await loadPlanStats();
 }
+async function loadPlanStats(){
+  const {data,error}=await supabaseClient.rpc("get_plan_stats");
 
+  if(error){
+    console.error("Erreur statistiques abonnements :",error);
+    return;
+  }
+
+  const s = typeof data === "string" ? JSON.parse(data) : data;
+
+  const freeUsers=Number(s?.free_users||0);
+  const premiumUsers=Number(s?.premium_users||0);
+  const estimatedMrr=Number(s?.estimated_mrr||0);
+
+  document.getElementById("freeUsers").textContent=freeUsers;
+  document.getElementById("premiumUsers").textContent=premiumUsers;
+  document.getElementById("estimatedMrr").textContent=
+    estimatedMrr.toFixed(2).replace(".",",")+" €";
+}
 function showLogin(){
   document.getElementById("dashboard").classList.add("hidden");
   document.getElementById("loginCard").classList.remove("hidden");
@@ -169,7 +206,25 @@ async function loadStats(){
   if(error){
     alert(error.message.includes("Accès interdit") ? "Ce compte n'est pas autorisé à voir les statistiques." : "Impossible de charger les statistiques.");
     return;
+  }async function loadPlanStats(){
+  const {data,error}=await supabaseClient.rpc("get_plan_stats");
+
+  if(error){
+    console.error("Erreur statistiques abonnements :",error);
+    return;
   }
+
+  const s = typeof data === "string" ? JSON.parse(data) : data;
+
+  const freeUsers=Number(s?.free_users||0);
+  const premiumUsers=Number(s?.premium_users||0);
+  const estimatedMrr=Number(s?.estimated_mrr||0);
+
+  document.getElementById("freeUsers").textContent=freeUsers;
+  document.getElementById("premiumUsers").textContent=premiumUsers;
+  document.getElementById("estimatedMrr").textContent=
+    estimatedMrr.toFixed(2).replace(".",",")+" €";
+}
   const s = typeof data === "string" ? JSON.parse(data) : data;
   const visits=Number(s?.visits||0), signups=Number(s?.signups||0), generations=Number(s?.generations||0);
   document.getElementById("visits").textContent=visits;
@@ -198,6 +253,7 @@ function demarrerActualisationLive(){
     if(session){
       await loadStats();
     }
+    await loadPlanStats();
   }, 5000);
 }
 document.querySelectorAll(".period").forEach(btn=>{
