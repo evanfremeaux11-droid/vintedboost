@@ -76,6 +76,11 @@ button{width:100%;border:0;border-radius:12px;padding:14px;font:inherit;font-wei
       <div class="stat"><div class="icon">💎</div><div id="premiumUsers" class="number">—</div><div class="label">Comptes Premium</div></div>
     </div>
 
+    <div class="grid" style="margin-top:12px">
+      <div class="stat"><div class="icon">🆕</div><div id="newPremiumMonth" class="number">—</div><div class="label">Nouveaux Premium ce mois</div></div>
+      <div class="stat"><div class="icon">📊</div><div id="premiumRate" class="number">—</div><div class="label">Taux Free → Premium</div></div>
+    </div>
+
     <div class="conversion"><small>💰 Revenu mensuel Premium estimé</small><strong id="estimatedMrr">—</strong></div>
     <div class="conversion"><small>Taux visite → inscription</small><strong id="conversion">—</strong></div>
 
@@ -127,6 +132,7 @@ async function showDashboard(){
   document.getElementById("dashboard").classList.remove("hidden");
   await loadStats();
   await loadPlanStats();
+  await loadPremiumAnalytics();
   await loadChart();
 }
 
@@ -155,6 +161,22 @@ async function loadPlanStats(){
   document.getElementById("freeUsers").textContent=Number(s?.free_users||0);
   document.getElementById("premiumUsers").textContent=Number(s?.premium_users||0);
   document.getElementById("estimatedMrr").textContent=Number(s?.estimated_mrr||0).toFixed(2).replace(".",",")+" €";
+}
+
+async function loadPremiumAnalytics(){
+  const {data,error}=await supabaseClient.rpc("get_premium_analytics");
+  if(error){
+    console.error("Premium Analytics:",error);
+    return;
+  }
+
+  const s=typeof data==="string"?JSON.parse(data):data;
+  document.getElementById("newPremiumMonth").textContent=Number(s?.new_premium_this_month||0);
+  document.getElementById("premiumRate").textContent=Number(s?.free_to_premium_rate||0).toFixed(1).replace(".",",")+" %";
+
+  // Utilise aussi la valeur MRR renvoyée par la nouvelle fonction.
+  document.getElementById("estimatedMrr").textContent=
+    Number(s?.estimated_mrr||0).toFixed(2).replace(".",",")+" €";
 }
 
 async function loadChart(){
@@ -192,12 +214,12 @@ function startLive(){
   if(analyticsInterval)clearInterval(analyticsInterval);
   analyticsInterval=setInterval(async()=>{
     const {data:{session}}=await supabaseClient.auth.getSession();
-    if(session){await loadStats();await loadPlanStats();}
+    if(session){await loadStats();await loadPlanStats();await loadPremiumAnalytics();}
   },5000);
 }
 
 document.getElementById("loginBtn").addEventListener("click",login);
-document.getElementById("refreshBtn").addEventListener("click",async()=>{await loadStats();await loadPlanStats();await loadChart();});
+document.getElementById("refreshBtn").addEventListener("click",async()=>{await loadStats();await loadPlanStats();await loadPremiumAnalytics();await loadChart();});
 document.getElementById("logoutBtn").addEventListener("click",()=>supabaseClient.auth.signOut());
 document.getElementById("password").addEventListener("keydown",e=>{if(e.key==="Enter")login();});
 document.querySelectorAll(".period").forEach(btn=>btn.addEventListener("click",async()=>{
