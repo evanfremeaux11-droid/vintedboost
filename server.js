@@ -2,7 +2,19 @@ const express = require("express");
 
 
 
+
+
+
+
 require("dotenv").config();
+
+
+
+
+
+
+
+
 
 
 
@@ -14,7 +26,15 @@ const { createClient } = require("@supabase/supabase-js");
 
 
 
+
+
+
+
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
+
+
+
 
 
 
@@ -22,7 +42,15 @@ const supabaseAdmin = createClient(
 
 
 
+
+
+
+
     process.env.SUPABASE_URL,
+
+
+
+
 
 
 
@@ -30,7 +58,15 @@ const supabaseAdmin = createClient(
 
 
 
+
+
+
+
 );
+
+
+
+
 
 
 
@@ -42,7 +78,19 @@ const app = express();
 
 
 
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -50,7 +98,19 @@ const app = express();
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -62,7 +122,15 @@ app.set("trust proxy", 1);
 
 
 
+
+
+
+
 app.post(
+
+
+
+
 
 
 
@@ -70,11 +138,23 @@ app.post(
 
 
 
+
+
+
+
     express.raw({ type: "application/json" }),
 
 
 
+
+
+
+
     async (req, res) => {
+
+
+
+
 
 
 
@@ -86,7 +166,19 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
         try {
+
+
+
+
 
 
 
@@ -94,7 +186,15 @@ app.post(
 
 
 
+
+
+
+
                 req.body,
+
+
+
+
 
 
 
@@ -102,7 +202,15 @@ app.post(
 
 
 
+
+
+
+
                 process.env.STRIPE_WEBHOOK_SECRET
+
+
+
+
 
 
 
@@ -110,7 +218,15 @@ app.post(
 
 
 
+
+
+
+
         } catch (error) {
+
+
+
+
 
 
 
@@ -118,7 +234,15 @@ app.post(
 
 
 
+
+
+
+
             return res.status(400).send("Webhook invalide");
+
+
+
+
 
 
 
@@ -130,7 +254,19 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
         try {
+
+
+
+
 
 
 
@@ -138,7 +274,15 @@ app.post(
 
 
 
+
+
+
+
                 const session = event.data.object;
+
+
+
+
 
 
 
@@ -150,7 +294,19 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
                 if (userId) {
+
+
+
+
 
 
 
@@ -158,7 +314,15 @@ app.post(
 
 
 
+
+
+
+
     .from("profiles")
+
+
+
+
 
 
 
@@ -166,7 +330,15 @@ app.post(
 
 
 
+
+
+
+
         plan: "premium",
+
+
+
+
 
 
 
@@ -174,11 +346,23 @@ app.post(
 
 
 
+
+
+
+
         stripe_customer_id: session.customer
 
 
 
+
+
+
+
     })
+
+
+
+
 
 
 
@@ -190,7 +374,19 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
                     if (error) {
+
+
+
+
 
 
 
@@ -198,7 +394,19 @@ app.post(
 
 
 
+
+
+
+
                     }
+
+
+
+
+
+
+
+
 
 
 
@@ -207,36 +415,70 @@ app.post(
 
 
 // Analytics : mémorise le passage Premium une seule fois par abonnement Stripe
+
                     try {
+
                         const premiumEventId = "stripe:" + String(session.subscription || "");
 
+
+
                         const { data: premiumExisting, error: premiumReadError } =
+
                             await supabaseAdmin
+
                                 .from("analytics_events")
+
                                 .select("visitor_id")
+
                                 .eq("event_name", "premium")
+
                                 .eq("visitor_id", premiumEventId)
+
                                 .limit(1);
+
+
 
                         if (premiumReadError) throw premiumReadError;
 
+
+
                         if (!premiumExisting || premiumExisting.length === 0) {
+
                             const { error: premiumInsertError } =
+
                                 await supabaseAdmin
+
                                     .from("analytics_events")
+
                                     .insert({
+
                                         event_name: "premium",
+
                                         visitor_id: premiumEventId
+
                                     });
 
+
+
                             if (premiumInsertError) throw premiumInsertError;
+
                         }
+
                     } catch (analyticsError) {
+
                         // Les statistiques ne doivent jamais empêcher l'activation Premium.
+
                         console.error("Erreur analytics Premium :", analyticsError.message);
+
                     }
 
+
+
                     console.log("⭐ Compte Premium activé :", userId);
+
+
+
+
 
 
 
@@ -244,11 +486,23 @@ app.post(
 
 
 
+
+
+
+
             }
 
 
 
+
+
+
+
 if (event.type === "customer.subscription.deleted") {
+
+
+
+
 
 
 
@@ -260,7 +514,19 @@ if (event.type === "customer.subscription.deleted") {
 
 
 
+
+
+
+
+
+
+
+
     const { error } = await supabaseAdmin
+
+
+
+
 
 
 
@@ -268,7 +534,15 @@ if (event.type === "customer.subscription.deleted") {
 
 
 
+
+
+
+
         .update({
+
+
+
+
 
 
 
@@ -276,11 +550,23 @@ if (event.type === "customer.subscription.deleted") {
 
 
 
+
+
+
+
             stripe_subscription_id: null
 
 
 
+
+
+
+
         })
+
+
+
+
 
 
 
@@ -292,11 +578,27 @@ if (event.type === "customer.subscription.deleted") {
 
 
 
+
+
+
+
+
+
+
+
     if (error) {
 
 
 
+
+
+
+
         throw error;
+
+
+
+
 
 
 
@@ -308,7 +610,47 @@ if (event.type === "customer.subscription.deleted") {
 
 
 
+
+
+
+
+
+
+
+
+    // Analytics : mémorise la résiliation une seule fois par abonnement Stripe
+    try {
+        const cancellationEventId = "stripe_cancelled:" + String(subscription.id || "");
+        const { data: cancellationExisting, error: cancellationReadError } =
+            await supabaseAdmin
+                .from("analytics_events")
+                .select("visitor_id")
+                .eq("event_name", "premium_cancelled")
+                .eq("visitor_id", cancellationEventId)
+                .limit(1);
+
+        if (cancellationReadError) throw cancellationReadError;
+
+        if (!cancellationExisting || cancellationExisting.length === 0) {
+            const { error: cancellationInsertError } =
+                await supabaseAdmin
+                    .from("analytics_events")
+                    .insert({
+                        event_name: "premium_cancelled",
+                        visitor_id: cancellationEventId
+                    });
+            if (cancellationInsertError) throw cancellationInsertError;
+        }
+    } catch (analyticsError) {
+        // Les statistiques ne doivent jamais empêcher la résiliation.
+        console.error("Erreur analytics résiliation Premium :", analyticsError.message);
+    }
+
     console.log(
+
+
+
+
 
 
 
@@ -316,7 +658,15 @@ if (event.type === "customer.subscription.deleted") {
 
 
 
+
+
+
+
         subscription.id
+
+
+
+
 
 
 
@@ -324,7 +674,15 @@ if (event.type === "customer.subscription.deleted") {
 
 
 
+
+
+
+
 }
+
+
+
+
 
 
 
@@ -336,7 +694,19 @@ if (event.type === "customer.subscription.deleted") {
 
 
 
+
+
+
+
+
+
+
+
         } catch (error) {
+
+
+
+
 
 
 
@@ -344,7 +714,15 @@ if (event.type === "customer.subscription.deleted") {
 
 
 
+
+
+
+
             return res.status(500).json({
+
+
+
+
 
 
 
@@ -352,7 +730,15 @@ if (event.type === "customer.subscription.deleted") {
 
 
 
+
+
+
+
             });
+
+
+
+
 
 
 
@@ -360,11 +746,23 @@ if (event.type === "customer.subscription.deleted") {
 
 
 
+
+
+
+
     }
 
 
 
+
+
+
+
 );
+
+
+
+
 
 
 
@@ -372,7 +770,15 @@ app.use(
 
 
 
+
+
+
+
     express.json({
+
+
+
+
 
 
 
@@ -380,11 +786,27 @@ app.use(
 
 
 
+
+
+
+
     })
 
 
 
+
+
+
+
 );
+
+
+
+
+
+
+
+
 
 
 
@@ -404,7 +826,23 @@ app.use(express.static(__dirname));
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -412,7 +850,19 @@ app.use(express.static(__dirname));
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -428,7 +878,23 @@ const PORT = process.env.PORT || 3000;
 
 
 
+
+
+
+
+
+
+
+
 const MAX_PHOTOS = 4;
+
+
+
+
+
+
+
+
 
 
 
@@ -444,7 +910,23 @@ const MAX_TENTATIVES = 2;
 
 
 
+
+
+
+
+
+
+
+
 const MODELE = "openrouter/free";
+
+
+
+
+
+
+
+
 
 
 
@@ -464,7 +946,23 @@ const limites = new Map();
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -472,7 +970,19 @@ const limites = new Map();
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -488,7 +998,23 @@ function limiterRequetes(req, res, next) {
 
 
 
+
+
+
+
+
+
+
+
     const ip = req.ip || "inconnue";
+
+
+
+
+
+
+
+
 
 
 
@@ -504,6 +1030,14 @@ function limiterRequetes(req, res, next) {
 
 
 
+
+
+
+
+
+
+
+
     const duree = 60 * 60 * 1000;
 
 
@@ -512,7 +1046,23 @@ function limiterRequetes(req, res, next) {
 
 
 
+
+
+
+
+
+
+
+
     const maximum = 30;
+
+
+
+
+
+
+
+
 
 
 
@@ -532,7 +1082,23 @@ function limiterRequetes(req, res, next) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     if (
+
+
+
+
 
 
 
@@ -540,7 +1106,15 @@ function limiterRequetes(req, res, next) {
 
 
 
+
+
+
+
         maintenant > utilisateur.reset
+
+
+
+
 
 
 
@@ -552,7 +1126,19 @@ function limiterRequetes(req, res, next) {
 
 
 
+
+
+
+
+
+
+
+
         utilisateur = {
+
+
+
+
 
 
 
@@ -560,7 +1146,15 @@ function limiterRequetes(req, res, next) {
 
 
 
+
+
+
+
             reset: maintenant + duree
+
+
+
+
 
 
 
@@ -568,7 +1162,23 @@ function limiterRequetes(req, res, next) {
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -588,7 +1198,27 @@ function limiterRequetes(req, res, next) {
 
 
 
+
+
+
+
+
+
+
+
     limites.set(ip, utilisateur);
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -608,7 +1238,19 @@ function limiterRequetes(req, res, next) {
 
 
 
+
+
+
+
+
+
+
+
         return res
+
+
+
+
 
 
 
@@ -616,7 +1258,15 @@ function limiterRequetes(req, res, next) {
 
 
 
+
+
+
+
             .json({
+
+
+
+
 
 
 
@@ -624,7 +1274,15 @@ function limiterRequetes(req, res, next) {
 
 
 
+
+
+
+
                     "Trop de requêtes. Réessaie un peu plus tard."
+
+
+
+
 
 
 
@@ -632,7 +1290,23 @@ function limiterRequetes(req, res, next) {
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -648,7 +1322,23 @@ function limiterRequetes(req, res, next) {
 
 
 
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -664,11 +1354,27 @@ function limiterRequetes(req, res, next) {
 
 
 
+
+
+
+
    NETTOYAGE
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -680,11 +1386,23 @@ function nettoyerTexte(
 
 
 
+
+
+
+
     valeur,
 
 
 
+
+
+
+
     longueur = 500
+
+
+
+
 
 
 
@@ -696,7 +1414,19 @@ function nettoyerTexte(
 
 
 
+
+
+
+
+
+
+
+
     if (
+
+
+
+
 
 
 
@@ -704,7 +1434,15 @@ function nettoyerTexte(
 
 
 
+
+
+
+
         valeur === null
+
+
+
+
 
 
 
@@ -716,11 +1454,35 @@ function nettoyerTexte(
 
 
 
+
+
+
+
+
+
+
+
         return "";
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -736,11 +1498,23 @@ function nettoyerTexte(
 
 
 
+
+
+
+
         .trim()
 
 
 
+
+
+
+
         .slice(0, longueur);
+
+
+
+
 
 
 
@@ -756,7 +1530,23 @@ function nettoyerTexte(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -764,7 +1554,19 @@ function nettoyerTexte(
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -780,7 +1582,19 @@ function attendre(ms) {
 
 
 
+
+
+
+
+
+
+
+
     return new Promise(
+
+
+
+
 
 
 
@@ -788,11 +1602,23 @@ function attendre(ms) {
 
 
 
+
+
+
+
             setTimeout(resolve, ms)
 
 
 
+
+
+
+
     );
+
+
+
+
 
 
 
@@ -808,7 +1634,23 @@ function attendre(ms) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -816,7 +1658,19 @@ function attendre(ms) {
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -832,7 +1686,23 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
+
+
+
+
     if (!texte) {
+
+
+
+
+
+
+
+
 
 
 
@@ -844,7 +1714,15 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
             "Réponse IA vide."
+
+
+
+
 
 
 
@@ -852,7 +1730,23 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -868,11 +1762,23 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
         typeof texte === "object" &&
 
 
 
+
+
+
+
         !Array.isArray(texte)
+
+
+
+
 
 
 
@@ -884,11 +1790,35 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
+
+
+
+
         return texte;
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -904,7 +1834,15 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
         String(texte)
+
+
+
+
 
 
 
@@ -912,7 +1850,15 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
             .replace(/**```**javascript/gi, "")
+
+
+
+
 
 
 
@@ -920,7 +1866,15 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
             .replace(/**```**/g, "")
+
+
+
+
 
 
 
@@ -936,7 +1890,23 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     if (
+
+
+
+
 
 
 
@@ -944,7 +1914,15 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
         propre.length < 2
+
+
+
+
 
 
 
@@ -956,7 +1934,19 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
+
+
+
+
         throw new Error(
+
+
+
+
 
 
 
@@ -964,11 +1954,31 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
         );
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -984,7 +1994,23 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
         propre.toLowerCase();
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1000,11 +2026,23 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
         lower === "safe" ||
 
 
 
+
+
+
+
         lower === "user safety: safe"
+
+
+
+
 
 
 
@@ -1016,7 +2054,19 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
+
+
+
+
         throw new Error(
+
+
+
+
 
 
 
@@ -1024,11 +2074,31 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
         );
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1048,7 +2118,23 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
+
+
+
+
         return JSON.parse(propre);
+
+
+
+
+
+
+
+
 
 
 
@@ -1064,7 +2150,19 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
+
+
+
+
         // On continue.
+
+
+
+
 
 
 
@@ -1080,7 +2178,23 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     const debut =
+
+
+
+
 
 
 
@@ -1092,7 +2206,19 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
+
+
+
+
     const fin =
+
+
+
+
 
 
 
@@ -1108,7 +2234,23 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     if (
+
+
+
+
 
 
 
@@ -1116,11 +2258,23 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
         fin !== -1 &&
 
 
 
+
+
+
+
         fin > debut
+
+
+
+
 
 
 
@@ -1132,7 +2286,19 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
+
+
+
+
         let jsonPossible =
+
+
+
+
 
 
 
@@ -1140,11 +2306,23 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
                 debut,
 
 
 
+
+
+
+
                 fin + 1
+
+
+
+
 
 
 
@@ -1160,7 +2338,23 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
         jsonPossible =
+
+
+
+
 
 
 
@@ -1168,7 +2362,15 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
                 .replace(
+
+
+
+
 
 
 
@@ -1176,7 +2378,15 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
                     "}"
+
+
+
+
 
 
 
@@ -1184,7 +2394,15 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
                 .replace(
+
+
+
+
 
 
 
@@ -1192,11 +2410,31 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
                     "]"
 
 
 
+
+
+
+
                 );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1216,7 +2454,19 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
+
+
+
+
             return JSON.parse(
+
+
+
+
 
 
 
@@ -1224,7 +2474,19 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
             );
+
+
+
+
+
+
+
+
 
 
 
@@ -1240,7 +2502,19 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
+
+
+
+
             console.error(
+
+
+
+
 
 
 
@@ -1248,7 +2522,15 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
             );
+
+
+
+
 
 
 
@@ -1256,7 +2538,23 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1272,11 +2570,23 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
         "JSON IA invalide."
 
 
 
+
+
+
+
     );
+
+
+
+
 
 
 
@@ -1292,7 +2602,23 @@ function extraireJSON(texte) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -1300,7 +2626,19 @@ function extraireJSON(texte) {
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -1316,11 +2654,27 @@ function recupererTexteIA(data) {
 
 
 
+
+
+
+
+
+
+
+
     const content =
 
 
 
+
+
+
+
         data?.choices?.[0]
+
+
+
+
 
 
 
@@ -1336,11 +2690,31 @@ function recupererTexteIA(data) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     if (
 
 
 
+
+
+
+
         typeof content === "string"
+
+
+
+
 
 
 
@@ -1352,11 +2726,35 @@ function recupererTexteIA(data) {
 
 
 
+
+
+
+
+
+
+
+
         return content.trim();
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1376,7 +2774,19 @@ function recupererTexteIA(data) {
 
 
 
+
+
+
+
+
+
+
+
         return content
+
+
+
+
 
 
 
@@ -1388,7 +2798,19 @@ function recupererTexteIA(data) {
 
 
 
+
+
+
+
+
+
+
+
                 if (
+
+
+
+
 
 
 
@@ -1396,7 +2818,19 @@ function recupererTexteIA(data) {
 
 
 
+
+
+
+
                 ) {
+
+
+
+
+
+
+
+
 
 
 
@@ -1408,7 +2842,23 @@ function recupererTexteIA(data) {
 
 
 
+
+
+
+
                 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1424,11 +2874,23 @@ function recupererTexteIA(data) {
 
 
 
+
+
+
+
                     partie &&
 
 
 
+
+
+
+
                     typeof partie.text === "string"
+
+
+
+
 
 
 
@@ -1440,11 +2902,35 @@ function recupererTexteIA(data) {
 
 
 
+
+
+
+
+
+
+
+
                     return partie.text;
 
 
 
+
+
+
+
                 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1464,7 +2950,19 @@ function recupererTexteIA(data) {
 
 
 
+
+
+
+
+
+
+
+
             })
+
+
+
+
 
 
 
@@ -1472,11 +2970,31 @@ function recupererTexteIA(data) {
 
 
 
+
+
+
+
             .trim();
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1492,7 +3010,23 @@ function recupererTexteIA(data) {
 
 
 
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1508,11 +3042,27 @@ function recupererTexteIA(data) {
 
 
 
+
+
+
+
    OPENROUTER
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -1524,11 +3074,23 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
     messages,
 
 
 
+
+
+
+
     options = {}
+
+
+
+
 
 
 
@@ -1540,11 +3102,27 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
     if (
 
 
 
+
+
+
+
         !process.env.OPENROUTER_API_KEY
+
+
+
+
 
 
 
@@ -1556,7 +3134,19 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
         throw new Error(
+
+
+
+
 
 
 
@@ -1564,7 +3154,15 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
         );
+
+
+
+
 
 
 
@@ -1580,7 +3178,23 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     const maxTokens =
+
+
+
+
 
 
 
@@ -1596,7 +3210,23 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     const controller =
+
+
+
+
 
 
 
@@ -1612,7 +3242,23 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     const timeout =
+
+
+
+
 
 
 
@@ -1620,7 +3266,15 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
             () => controller.abort(),
+
+
+
+
 
 
 
@@ -1628,7 +3282,23 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
         );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1652,7 +3322,27 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     try {
+
+
+
+
+
+
+
+
 
 
 
@@ -1664,15 +3354,31 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
             await fetch(
 
 
 
-                "https\\://openrouter.ai/api/v1/chat/completions",
+
+
+
+
+                "https\\\\://openrouter.ai/api/v1/chat/completions",
+
+
+
+
 
 
 
                 {
+
+
+
+
 
 
 
@@ -1684,11 +3390,31 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
                     signal:
 
 
 
+
+
+
+
                         controller.signal,
+
+
+
+
+
+
+
+
 
 
 
@@ -1704,7 +3430,19 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
                         "Authorization":
+
+
+
+
 
 
 
@@ -1716,7 +3454,19 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
                         "Content-Type":
+
+
+
+
 
 
 
@@ -1728,11 +3478,27 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
                         "X-Title":
 
 
 
+
+
+
+
                             "VintedBoost"
+
+
+
+
 
 
 
@@ -1744,7 +3510,19 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
                     body:
+
+
+
+
 
 
 
@@ -1756,11 +3534,31 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
                             model:
 
 
 
+
+
+
+
                                 MODELE,
+
+
+
+
+
+
+
+
 
 
 
@@ -1776,7 +3574,19 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
                             temperature:
+
+
+
+
 
 
 
@@ -1788,7 +3598,19 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
                             max_tokens:
+
+
+
+
 
 
 
@@ -1796,7 +3618,15 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
                         })
+
+
+
+
 
 
 
@@ -1804,7 +3634,23 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
             );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1828,7 +3674,27 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
         try {
+
+
+
+
+
+
+
+
 
 
 
@@ -1840,7 +3706,19 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
                 await response.json();
+
+
+
+
+
+
+
+
 
 
 
@@ -1856,7 +3734,19 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
             throw new Error(
+
+
+
+
 
 
 
@@ -1864,11 +3754,31 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
             );
 
 
 
+
+
+
+
         }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1888,7 +3798,19 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
             console.error(
+
+
+
+
 
 
 
@@ -1896,7 +3818,15 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
                 response.status,
+
+
+
+
 
 
 
@@ -1904,7 +3834,15 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
                 "Erreur inconnue"
+
+
+
+
 
 
 
@@ -1920,7 +3858,23 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             const erreur =
+
+
+
+
 
 
 
@@ -1928,11 +3882,23 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
                     data?.error?.message ||
 
 
 
+
+
+
+
                     "Erreur OpenRouter."
+
+
+
+
 
 
 
@@ -1948,7 +3914,23 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             erreur.status =
+
+
+
+
 
 
 
@@ -1964,7 +3946,23 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             throw erreur;
+
+
+
+
 
 
 
@@ -1980,7 +3978,23 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
         const texte =
+
+
+
+
 
 
 
@@ -1996,7 +4010,23 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
         const temps =
+
+
+
+
 
 
 
@@ -2004,7 +4034,15 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
                 (
+
+
+
+
 
 
 
@@ -2012,11 +4050,23 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
                     debut
 
 
 
+
+
+
+
                 ) / 1000
+
+
+
+
 
 
 
@@ -2032,7 +4082,23 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
         console.log(
+
+
+
+
 
 
 
@@ -2040,7 +4106,23 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
         );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2060,7 +4142,19 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
             throw new Error(
+
+
+
+
 
 
 
@@ -2068,11 +4162,31 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
             );
 
 
 
+
+
+
+
         }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2096,7 +4210,27 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     } catch (error) {
+
+
+
+
+
+
+
+
 
 
 
@@ -2108,7 +4242,15 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
             error.name === "AbortError"
+
+
+
+
 
 
 
@@ -2120,7 +4262,19 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
             throw new Error(
+
+
+
+
 
 
 
@@ -2128,11 +4282,31 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
             );
 
 
 
+
+
+
+
         }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2156,7 +4330,27 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     } finally {
+
+
+
+
+
+
+
+
 
 
 
@@ -2168,7 +4362,15 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
     }
+
+
+
+
 
 
 
@@ -2184,7 +4386,23 @@ async function appelerOpenRouter(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -2192,7 +4410,19 @@ async function appelerOpenRouter(
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -2204,7 +4434,15 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
     messages,
+
+
+
+
 
 
 
@@ -2212,7 +4450,19 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
 ) {
+
+
+
+
+
+
+
+
 
 
 
@@ -2232,7 +4482,23 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     for (
+
+
+
+
 
 
 
@@ -2240,7 +4506,15 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
         tentative <= MAX_TENTATIVES;
+
+
+
+
 
 
 
@@ -2248,7 +4522,19 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
     ) {
+
+
+
+
+
+
+
+
 
 
 
@@ -2264,7 +4550,19 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
+
+
+
+
             console.log(
+
+
+
+
 
 
 
@@ -2272,7 +4570,23 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
             );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2288,7 +4602,15 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
                 await appelerOpenRouter(
+
+
+
+
 
 
 
@@ -2296,7 +4618,15 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
                     options
+
+
+
+
 
 
 
@@ -2312,7 +4642,23 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             const resultat =
+
+
+
+
 
 
 
@@ -2328,7 +4674,23 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             console.log(
+
+
+
+
 
 
 
@@ -2336,7 +4698,23 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
             );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2360,7 +4738,27 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
         } catch (error) {
+
+
+
+
+
+
+
+
 
 
 
@@ -2380,7 +4778,23 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             console.error(
+
+
+
+
 
 
 
@@ -2388,7 +4802,15 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
                 error.message
+
+
+
+
 
 
 
@@ -2404,7 +4826,23 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             if (
+
+
+
+
 
 
 
@@ -2412,7 +4850,15 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
                 error.status === 402 ||
+
+
+
+
 
 
 
@@ -2420,7 +4866,19 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
             ) {
+
+
+
+
+
+
+
+
 
 
 
@@ -2432,7 +4890,23 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
             }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2448,11 +4922,23 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
                 tentative <
 
 
 
+
+
+
+
                 MAX_TENTATIVES
+
+
+
+
 
 
 
@@ -2464,7 +4950,19 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
+
+
+
+
                 await attendre(350);
+
+
+
+
 
 
 
@@ -2472,7 +4970,15 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
         }
+
+
+
+
 
 
 
@@ -2488,7 +4994,23 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     throw new Error(
+
+
+
+
 
 
 
@@ -2496,11 +5018,23 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
         "L'IA n'a pas réussi à répondre."
 
 
 
+
+
+
+
     );
+
+
+
+
 
 
 
@@ -2516,7 +5050,23 @@ async function appelerIAJSON(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -2524,7 +5074,19 @@ async function appelerIAJSON(
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -2540,7 +5102,23 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
+
+
+
+
     return {
+
+
+
+
+
+
+
+
 
 
 
@@ -2552,7 +5130,15 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
             nettoyerTexte(
+
+
+
+
 
 
 
@@ -2560,11 +5146,27 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
                 100
 
 
 
+
+
+
+
             ),
+
+
+
+
+
+
+
+
 
 
 
@@ -2576,7 +5178,15 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
             nettoyerTexte(
+
+
+
+
 
 
 
@@ -2584,11 +5194,27 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
                 100
 
 
 
+
+
+
+
             ),
+
+
+
+
+
+
+
+
 
 
 
@@ -2600,7 +5226,15 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
             nettoyerTexte(
+
+
+
+
 
 
 
@@ -2608,11 +5242,27 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
                 100
 
 
 
+
+
+
+
             ),
+
+
+
+
+
+
+
+
 
 
 
@@ -2624,7 +5274,15 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
             nettoyerTexte(
+
+
+
+
 
 
 
@@ -2632,11 +5290,27 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
                 100
 
 
 
+
+
+
+
             ),
+
+
+
+
+
+
+
+
 
 
 
@@ -2648,7 +5322,15 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
             nettoyerTexte(
+
+
+
+
 
 
 
@@ -2656,11 +5338,27 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
                 50
 
 
 
+
+
+
+
             ),
+
+
+
+
+
+
+
+
 
 
 
@@ -2672,7 +5370,15 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
             nettoyerTexte(
+
+
+
+
 
 
 
@@ -2680,11 +5386,27 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
                 50
 
 
 
+
+
+
+
             ),
+
+
+
+
+
+
+
+
 
 
 
@@ -2696,7 +5418,15 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
             nettoyerTexte(
+
+
+
+
 
 
 
@@ -2704,7 +5434,15 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
                 700
+
+
+
+
 
 
 
@@ -2716,7 +5454,19 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
+
+
+
+
         defauts:
+
+
+
+
 
 
 
@@ -2724,7 +5474,15 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
                 analyse?.defauts,
+
+
+
+
 
 
 
@@ -2732,11 +5490,23 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
             )
 
 
 
+
+
+
+
     };
+
+
+
+
 
 
 
@@ -2752,7 +5522,23 @@ function normaliserAnalyse(analyse) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -2760,7 +5546,19 @@ function normaliserAnalyse(analyse) {
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -2772,11 +5570,23 @@ app.post(
 
 
 
+
+
+
+
     "/analyze-photos",
 
 
 
+
+
+
+
     limiterRequetes,
+
+
+
+
 
 
 
@@ -2788,11 +5598,35 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
         const debut =
 
 
 
+
+
+
+
             Date.now();
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2812,7 +5646,19 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
             let images =
+
+
+
+
 
 
 
@@ -2828,11 +5674,31 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             if (
 
 
 
+
+
+
+
                 !Array.isArray(images)
+
+
+
+
 
 
 
@@ -2844,7 +5710,19 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
                 return res
+
+
+
+
 
 
 
@@ -2852,7 +5730,15 @@ app.post(
 
 
 
+
+
+
+
                     .json({
+
+
+
+
 
 
 
@@ -2860,7 +5746,15 @@ app.post(
 
 
 
+
+
+
+
                             "Format des photos incorrect."
+
+
+
+
 
 
 
@@ -2868,7 +5762,23 @@ app.post(
 
 
 
+
+
+
+
             }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2884,7 +5794,15 @@ app.post(
 
 
 
+
+
+
+
                 images
+
+
+
+
 
 
 
@@ -2892,7 +5810,15 @@ app.post(
 
 
 
+
+
+
+
                         0,
+
+
+
+
 
 
 
@@ -2900,11 +5826,23 @@ app.post(
 
 
 
+
+
+
+
                     )
 
 
 
+
+
+
+
                     .filter(
+
+
+
+
 
 
 
@@ -2916,7 +5854,19 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
                             typeof image ===
+
+
+
+
 
 
 
@@ -2928,11 +5878,27 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
                             /^data:image\/(jpeg|jpg|png|webp);base64,/i
 
 
 
+
+
+
+
                                 .test(image)
+
+
+
+
 
 
 
@@ -2948,11 +5914,31 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             if (
 
 
 
+
+
+
+
                 images.length === 0
+
+
+
+
 
 
 
@@ -2964,7 +5950,19 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
                 return res
+
+
+
+
 
 
 
@@ -2972,7 +5970,15 @@ app.post(
 
 
 
+
+
+
+
                     .json({
+
+
+
+
 
 
 
@@ -2980,11 +5986,23 @@ app.post(
 
 
 
+
+
+
+
                             "Ajoute au moins une photo valide."
 
 
 
+
+
+
+
                     });
+
+
+
+
 
 
 
@@ -3000,11 +6018,35 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             const prompt = `
 
 
 
+
+
+
+
 Analyse ces photos du même vêtement ou article d'occasion.
+
+
+
+
+
+
+
+
 
 
 
@@ -3020,7 +6062,19 @@ Retourne UNIQUEMENT un objet JSON valide avec exactement ces clés :
 
 
 
+
+
+
+
+
+
+
+
 {
+
+
+
+
 
 
 
@@ -3028,7 +6082,15 @@ Retourne UNIQUEMENT un objet JSON valide avec exactement ces clés :
 
 
 
+
+
+
+
 "marque":"",
+
+
+
+
 
 
 
@@ -3036,7 +6098,15 @@ Retourne UNIQUEMENT un objet JSON valide avec exactement ces clés :
 
 
 
+
+
+
+
 "couleur":"",
+
+
+
+
 
 
 
@@ -3044,7 +6114,15 @@ Retourne UNIQUEMENT un objet JSON valide avec exactement ces clés :
 
 
 
+
+
+
+
 "etat":"",
+
+
+
+
 
 
 
@@ -3052,7 +6130,15 @@ Retourne UNIQUEMENT un objet JSON valide avec exactement ces clés :
 
 
 
+
+
+
+
 "defauts":""
+
+
+
+
 
 
 
@@ -3064,31 +6150,71 @@ Retourne UNIQUEMENT un objet JSON valide avec exactement ces clés :
 
 
 
+
+
+
+
+
+
+
+
 Règles :
 
 
 
-- utilise uniquement ce qui est visible ;
 
 
 
-- n'invente jamais marque, taille, matière, modèle ou défaut ;
+
+\- utilise uniquement ce qui est visible ;
 
 
 
-- ne confirme jamais l'authenticité ;
 
 
 
-- information inconnue = "";
+
+\- n'invente jamais marque, taille, matière, modèle ou défaut ;
 
 
 
-- details = caractéristiques visibles, texte court ;
 
 
 
-- defauts = uniquement les défauts clairement visibles.
+
+\- ne confirme jamais l'authenticité ;
+
+
+
+
+
+
+
+\- information inconnue = "";
+
+
+
+
+
+
+
+\- details = caractéristiques visibles, texte court ;
+
+
+
+
+
+
+
+\- defauts = uniquement les défauts clairement visibles.
+
+
+
+
+
+
+
+
 
 
 
@@ -3100,7 +6226,19 @@ categorie = uniquement :
 
 
 
+
+
+
+
 Veste, Sweat, T-shirt, Pantalon, Jean, Chaussures, Accessoire, Robe, Chemise, Pull, Short, Autre.
+
+
+
+
+
+
+
+
 
 
 
@@ -3112,7 +6250,19 @@ etat = uniquement :
 
 
 
+
+
+
+
 Neuf avec étiquette, Neuf sans étiquette, Très bon état, Bon état, État satisfaisant, ou "".
+
+
+
+
+
+
+
+
 
 
 
@@ -3124,7 +6274,23 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
 `.trim();
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3144,7 +6310,19 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
+
+
+
+
                 {
+
+
+
+
 
 
 
@@ -3152,11 +6330,23 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                     text: prompt
 
 
 
+
+
+
+
                 }
+
+
+
+
 
 
 
@@ -3172,7 +6362,23 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             for (
+
+
+
+
 
 
 
@@ -3180,7 +6386,19 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
             ) {
+
+
+
+
+
+
+
+
 
 
 
@@ -3196,7 +6414,19 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
+
+
+
+
                     type:
+
+
+
+
 
 
 
@@ -3208,7 +6438,19 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
+
+
+
+
                     image_url: {
+
+
+
+
 
 
 
@@ -3216,7 +6458,15 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                     }
+
+
+
+
 
 
 
@@ -3224,7 +6474,23 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
             }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3240,7 +6506,15 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                 await appelerIAJSON(
+
+
+
+
 
 
 
@@ -3248,11 +6522,23 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                         {
 
 
 
+
+
+
+
                             role:
+
+
+
+
 
 
 
@@ -3264,7 +6550,19 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
+
+
+
+
                             content:
+
+
+
+
 
 
 
@@ -3272,7 +6570,15 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                         }
+
+
+
+
 
 
 
@@ -3280,7 +6586,15 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                     {
+
+
+
+
 
 
 
@@ -3288,7 +6602,15 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                             1800
+
+
+
+
 
 
 
@@ -3296,7 +6618,23 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                 );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3312,7 +6650,15 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                 normaliserAnalyse(
+
+
+
+
 
 
 
@@ -3320,7 +6666,23 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                 );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3336,7 +6698,15 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                 !resultat.article &&
+
+
+
+
 
 
 
@@ -3344,7 +6714,15 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                 !resultat.details
+
+
+
+
 
 
 
@@ -3356,7 +6734,19 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
+
+
+
+
                 throw new Error(
+
+
+
+
 
 
 
@@ -3364,7 +6754,15 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                 );
+
+
+
+
 
 
 
@@ -3380,7 +6778,23 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             console.log(
+
+
+
+
 
 
 
@@ -3388,7 +6802,23 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
             );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3404,11 +6834,31 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                 resultat
 
 
 
+
+
+
+
             );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3428,7 +6878,19 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
+
+
+
+
             console.error(
+
+
+
+
 
 
 
@@ -3436,11 +6898,31 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                 error.message
 
 
 
+
+
+
+
             );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3456,7 +6938,15 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                 .status(500)
+
+
+
+
 
 
 
@@ -3464,7 +6954,15 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                     error:
+
+
+
+
 
 
 
@@ -3472,7 +6970,15 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
                 });
+
+
+
+
 
 
 
@@ -3480,7 +6986,15 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
     }
+
+
+
+
 
 
 
@@ -3496,7 +7010,23 @@ Aucun Markdown. Aucune explication.
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -3504,7 +7034,19 @@ Aucun Markdown. Aucune explication.
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -3520,7 +7062,23 @@ function obtenirStyle(style) {
 
 
 
+
+
+
+
+
+
+
+
     switch (style) {
+
+
+
+
+
+
+
+
 
 
 
@@ -3536,7 +7094,19 @@ function obtenirStyle(style) {
 
 
 
+
+
+
+
+
+
+
+
             return (
+
+
+
+
 
 
 
@@ -3544,7 +7114,23 @@ function obtenirStyle(style) {
 
 
 
+
+
+
+
             );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3564,7 +7150,19 @@ function obtenirStyle(style) {
 
 
 
+
+
+
+
+
+
+
+
             return (
+
+
+
+
 
 
 
@@ -3572,7 +7170,23 @@ function obtenirStyle(style) {
 
 
 
+
+
+
+
             );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3592,7 +7206,19 @@ function obtenirStyle(style) {
 
 
 
+
+
+
+
+
+
+
+
             return (
+
+
+
+
 
 
 
@@ -3600,7 +7226,23 @@ function obtenirStyle(style) {
 
 
 
+
+
+
+
             );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3620,7 +7262,19 @@ function obtenirStyle(style) {
 
 
 
+
+
+
+
+
+
+
+
             return (
+
+
+
+
 
 
 
@@ -3628,11 +7282,23 @@ function obtenirStyle(style) {
 
 
 
+
+
+
+
             );
 
 
 
+
+
+
+
     }
+
+
+
+
 
 
 
@@ -3648,7 +7314,23 @@ function obtenirStyle(style) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -3656,7 +7338,19 @@ function obtenirStyle(style) {
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -3668,7 +7362,15 @@ function obtenirPlateforme(
 
 
 
+
+
+
+
     plateforme
+
+
+
+
 
 
 
@@ -3680,11 +7382,27 @@ function obtenirPlateforme(
 
 
 
+
+
+
+
+
+
+
+
     if (
 
 
 
+
+
+
+
         plateforme === "ebay"
+
+
+
+
 
 
 
@@ -3696,7 +7414,19 @@ function obtenirPlateforme(
 
 
 
+
+
+
+
+
+
+
+
         return (
+
+
+
+
 
 
 
@@ -3704,11 +7434,31 @@ function obtenirPlateforme(
 
 
 
+
+
+
+
         );
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3724,11 +7474,23 @@ function obtenirPlateforme(
 
 
 
+
+
+
+
         "Vinted : titre recherché mais naturel, description simple entre particuliers."
 
 
 
+
+
+
+
     );
+
+
+
+
 
 
 
@@ -3744,7 +7506,23 @@ function obtenirPlateforme(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -3752,7 +7530,19 @@ function obtenirPlateforme(
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -3764,7 +7554,15 @@ function creerClientSupabaseUtilisateur(
 
 
 
+
+
+
+
     accessToken
+
+
+
+
 
 
 
@@ -3776,7 +7574,19 @@ function creerClientSupabaseUtilisateur(
 
 
 
+
+
+
+
+
+
+
+
     const url =
+
+
+
+
 
 
 
@@ -3788,7 +7598,19 @@ function creerClientSupabaseUtilisateur(
 
 
 
+
+
+
+
+
+
+
+
     const publishableKey =
+
+
+
+
 
 
 
@@ -3804,7 +7626,23 @@ function creerClientSupabaseUtilisateur(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     if (
+
+
+
+
 
 
 
@@ -3812,7 +7650,15 @@ function creerClientSupabaseUtilisateur(
 
 
 
+
+
+
+
         !publishableKey
+
+
+
+
 
 
 
@@ -3824,7 +7670,19 @@ function creerClientSupabaseUtilisateur(
 
 
 
+
+
+
+
+
+
+
+
         throw new Error(
+
+
+
+
 
 
 
@@ -3832,11 +7690,31 @@ function creerClientSupabaseUtilisateur(
 
 
 
+
+
+
+
         );
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3852,7 +7730,15 @@ function creerClientSupabaseUtilisateur(
 
 
 
+
+
+
+
         url,
+
+
+
+
 
 
 
@@ -3860,11 +7746,27 @@ function creerClientSupabaseUtilisateur(
 
 
 
+
+
+
+
         {
 
 
 
+
+
+
+
             global: {
+
+
+
+
+
+
+
+
 
 
 
@@ -3880,7 +7782,19 @@ function creerClientSupabaseUtilisateur(
 
 
 
+
+
+
+
+
+
+
+
                     Authorization:
+
+
+
+
 
 
 
@@ -3888,11 +7802,27 @@ function creerClientSupabaseUtilisateur(
 
 
 
+
+
+
+
                 }
 
 
 
+
+
+
+
             },
+
+
+
+
+
+
+
+
 
 
 
@@ -3908,7 +7838,19 @@ function creerClientSupabaseUtilisateur(
 
 
 
+
+
+
+
+
+
+
+
                 persistSession:
+
+
+
+
 
 
 
@@ -3920,7 +7862,19 @@ function creerClientSupabaseUtilisateur(
 
 
 
+
+
+
+
+
+
+
+
                 autoRefreshToken:
+
+
+
+
 
 
 
@@ -3928,7 +7882,15 @@ function creerClientSupabaseUtilisateur(
 
 
 
+
+
+
+
             }
+
+
+
+
 
 
 
@@ -3936,7 +7898,15 @@ function creerClientSupabaseUtilisateur(
 
 
 
+
+
+
+
     );
+
+
+
+
 
 
 
@@ -3952,7 +7922,23 @@ function creerClientSupabaseUtilisateur(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -3960,7 +7946,19 @@ function creerClientSupabaseUtilisateur(
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -3972,7 +7970,15 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
     req
+
+
+
+
 
 
 
@@ -3984,7 +7990,19 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
     const authorization =
+
+
+
+
 
 
 
@@ -4000,7 +8018,23 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     if (
+
+
+
+
 
 
 
@@ -4008,11 +8042,23 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
             "Bearer "
 
 
 
+
+
+
+
         )
+
+
+
+
 
 
 
@@ -4024,7 +8070,19 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
         const erreur =
+
+
+
+
 
 
 
@@ -4032,11 +8090,27 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
                 "Connecte-toi pour générer une annonce."
 
 
 
+
+
+
+
             );
+
+
+
+
+
+
+
+
 
 
 
@@ -4052,7 +8126,19 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
         throw erreur;
+
+
+
+
 
 
 
@@ -4068,7 +8154,23 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     const accessToken =
+
+
+
+
 
 
 
@@ -4076,11 +8178,31 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
             .slice(7)
 
 
 
+
+
+
+
             .trim();
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4100,7 +8222,19 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
         const erreur =
+
+
+
+
 
 
 
@@ -4108,11 +8242,27 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
                 "Session invalide."
 
 
 
+
+
+
+
             );
+
+
+
+
+
+
+
+
 
 
 
@@ -4128,11 +8278,35 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
         throw erreur;
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4148,7 +8322,15 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
         creerClientSupabaseUtilisateur(
+
+
+
+
 
 
 
@@ -4156,7 +8338,23 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
         );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4172,7 +8370,15 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
         data: userData,
+
+
+
+
 
 
 
@@ -4180,7 +8386,15 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
     } =
+
+
+
+
 
 
 
@@ -4188,11 +8402,31 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
             accessToken
 
 
 
+
+
+
+
         );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4208,11 +8442,23 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
         userError ||
 
 
 
+
+
+
+
         !userData?.user
+
+
+
+
 
 
 
@@ -4224,7 +8470,19 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
         const erreur =
+
+
+
+
 
 
 
@@ -4232,11 +8490,27 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
                 "Session expirée. Reconnecte-toi."
 
 
 
+
+
+
+
             );
+
+
+
+
+
+
+
+
 
 
 
@@ -4252,7 +8526,19 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
         throw erreur;
+
+
+
+
 
 
 
@@ -4268,7 +8554,23 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     const {
+
+
+
+
 
 
 
@@ -4276,7 +8578,15 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
         error: quotaError
+
+
+
+
 
 
 
@@ -4284,7 +8594,15 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
         await supabase.rpc(
+
+
+
+
 
 
 
@@ -4292,7 +8610,23 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
         );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4312,7 +8646,19 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
         console.error(
+
+
+
+
 
 
 
@@ -4320,7 +8666,15 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
             quotaError.message
+
+
+
+
 
 
 
@@ -4336,7 +8690,23 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
         const erreur =
+
+
+
+
 
 
 
@@ -4344,11 +8714,27 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
                 "Impossible de vérifier ton quota."
 
 
 
+
+
+
+
             );
+
+
+
+
+
+
+
+
 
 
 
@@ -4364,11 +8750,35 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
         throw erreur;
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4388,7 +8798,19 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
         const erreur =
+
+
+
+
 
 
 
@@ -4396,11 +8818,31 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
                 "Tu as utilisé tes 5 générations gratuites ce mois-ci. Passe à Premium pour continuer."
 
 
 
+
+
+
+
             );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4420,7 +8862,19 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
         erreur.code =
+
+
+
+
 
 
 
@@ -4432,7 +8886,19 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
         erreur.quota =
+
+
+
+
 
 
 
@@ -4448,11 +8914,39 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
         throw erreur;
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4472,11 +8966,31 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
         user:
 
 
 
+
+
+
+
             userData.user,
+
+
+
+
+
+
+
+
 
 
 
@@ -4492,11 +9006,27 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
     supabase
 
 
 
+
+
+
+
 };
+
+
+
+
 
 
 
@@ -4512,7 +9042,23 @@ async function verifierUtilisateurEtQuota(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -4520,7 +9066,19 @@ async function verifierUtilisateurEtQuota(
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -4532,11 +9090,23 @@ app.post(
 
 
 
+
+
+
+
     "/generate",
 
 
 
+
+
+
+
     limiterRequetes,
+
+
+
+
 
 
 
@@ -4548,11 +9118,35 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
         const debut =
 
 
 
+
+
+
+
             Date.now();
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4572,7 +9166,19 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
             /*
+
+
+
+
 
 
 
@@ -4580,11 +9186,23 @@ app.post(
 
 
 
+
+
+
+
             vérifie le compte Supabase
 
 
 
+
+
+
+
             et consomme 1 génération.
+
+
+
+
 
 
 
@@ -4596,7 +9214,19 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
             const sessionQuota =
+
+
+
+
 
 
 
@@ -4604,11 +9234,31 @@ app.post(
 
 
 
+
+
+
+
                     req
 
 
 
+
+
+
+
                 );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4624,7 +9274,15 @@ app.post(
 
 
 
+
+
+
+
                 nettoyerTexte(
+
+
+
+
 
 
 
@@ -4632,11 +9290,27 @@ app.post(
 
 
 
+
+
+
+
                     100
 
 
 
+
+
+
+
                 );
+
+
+
+
+
+
+
+
 
 
 
@@ -4648,7 +9322,15 @@ app.post(
 
 
 
+
+
+
+
                 nettoyerTexte(
+
+
+
+
 
 
 
@@ -4656,11 +9338,27 @@ app.post(
 
 
 
+
+
+
+
                     100
 
 
 
+
+
+
+
                 );
+
+
+
+
+
+
+
+
 
 
 
@@ -4672,7 +9370,15 @@ app.post(
 
 
 
+
+
+
+
                 nettoyerTexte(
+
+
+
+
 
 
 
@@ -4680,11 +9386,27 @@ app.post(
 
 
 
+
+
+
+
                     100
 
 
 
+
+
+
+
                 );
+
+
+
+
+
+
+
+
 
 
 
@@ -4696,7 +9418,15 @@ app.post(
 
 
 
+
+
+
+
                 nettoyerTexte(
+
+
+
+
 
 
 
@@ -4704,11 +9434,27 @@ app.post(
 
 
 
+
+
+
+
                     50
 
 
 
+
+
+
+
                 );
+
+
+
+
+
+
+
+
 
 
 
@@ -4720,7 +9466,15 @@ app.post(
 
 
 
+
+
+
+
                 nettoyerTexte(
+
+
+
+
 
 
 
@@ -4728,11 +9482,27 @@ app.post(
 
 
 
+
+
+
+
                     100
 
 
 
+
+
+
+
                 );
+
+
+
+
+
+
+
+
 
 
 
@@ -4744,7 +9514,15 @@ app.post(
 
 
 
+
+
+
+
                 nettoyerTexte(
+
+
+
+
 
 
 
@@ -4752,11 +9530,27 @@ app.post(
 
 
 
+
+
+
+
                     50
 
 
 
+
+
+
+
                 );
+
+
+
+
+
+
+
+
 
 
 
@@ -4768,7 +9562,15 @@ app.post(
 
 
 
+
+
+
+
                 nettoyerTexte(
+
+
+
+
 
 
 
@@ -4776,11 +9578,27 @@ app.post(
 
 
 
+
+
+
+
                     20
 
 
 
+
+
+
+
                 );
+
+
+
+
+
+
+
+
 
 
 
@@ -4792,7 +9610,15 @@ app.post(
 
 
 
+
+
+
+
                 nettoyerTexte(
+
+
+
+
 
 
 
@@ -4800,11 +9626,27 @@ app.post(
 
 
 
+
+
+
+
                     1000
 
 
 
+
+
+
+
                 );
+
+
+
+
+
+
+
+
 
 
 
@@ -4816,7 +9658,15 @@ app.post(
 
 
 
+
+
+
+
                 nettoyerTexte(
+
+
+
+
 
 
 
@@ -4824,11 +9674,27 @@ app.post(
 
 
 
+
+
+
+
                     500
 
 
 
+
+
+
+
                 );
+
+
+
+
+
+
+
+
 
 
 
@@ -4840,7 +9706,15 @@ app.post(
 
 
 
+
+
+
+
                 nettoyerTexte(
+
+
+
+
 
 
 
@@ -4848,11 +9722,27 @@ app.post(
 
 
 
+
+
+
+
                     30
 
 
 
+
+
+
+
                 );
+
+
+
+
+
+
+
+
 
 
 
@@ -4864,7 +9754,15 @@ app.post(
 
 
 
+
+
+
+
                 nettoyerTexte(
+
+
+
+
 
 
 
@@ -4872,11 +9770,31 @@ app.post(
 
 
 
+
+
+
+
                     30
 
 
 
+
+
+
+
                 );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4896,7 +9814,19 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
                 return res
+
+
+
+
 
 
 
@@ -4904,7 +9834,15 @@ app.post(
 
 
 
+
+
+
+
                     .json({
+
+
+
+
 
 
 
@@ -4912,11 +9850,23 @@ app.post(
 
 
 
+
+
+
+
                             "Indique au minimum le type d'article."
 
 
 
+
+
+
+
                     });
+
+
+
+
 
 
 
@@ -4932,7 +9882,23 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             const consigneStyle =
+
+
+
+
 
 
 
@@ -4948,7 +9914,23 @@ app.post(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             const consignePlateforme =
+
+
+
+
 
 
 
@@ -4956,11 +9938,31 @@ app.post(
 
 
 
+
+
+
+
                     plateforme
 
 
 
+
+
+
+
                 );
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4976,7 +9978,19 @@ app.post(
 
 
 
+
+
+
+
 Crée une annonce de seconde main.
+
+
+
+
+
+
+
+
 
 
 
@@ -4988,7 +10002,19 @@ Plateforme :
 
 
 
+
+
+
+
 ${consignePlateforme}
+
+
+
+
+
+
+
+
 
 
 
@@ -5000,7 +10026,19 @@ Style :
 
 
 
+
+
+
+
 ${consigneStyle}
+
+
+
+
+
+
+
+
 
 
 
@@ -5012,7 +10050,15 @@ Article : ${article}
 
 
 
+
+
+
+
 Marque : ${marque || "inconnue"}
+
+
+
+
 
 
 
@@ -5020,7 +10066,15 @@ Catégorie : ${categorie || "inconnue"}
 
 
 
+
+
+
+
 Taille : ${taille || "inconnue"}
+
+
+
+
 
 
 
@@ -5028,7 +10082,15 @@ Couleur : ${couleur || "inconnue"}
 
 
 
+
+
+
+
 État : ${etat || "inconnu"}
+
+
+
+
 
 
 
@@ -5036,11 +10098,27 @@ Prix envisagé : ${prix ? prix + " €" : "non renseigné"}
 
 
 
+
+
+
+
 Détails : ${details || "aucun"}
 
 
 
+
+
+
+
 Défauts : ${defauts || "aucun renseigné"}
+
+
+
+
+
+
+
+
 
 
 
@@ -5056,7 +10134,19 @@ Retourne UNIQUEMENT :
 
 
 
+
+
+
+
+
+
+
+
 {
+
+
+
+
 
 
 
@@ -5064,7 +10154,15 @@ Retourne UNIQUEMENT :
 
 
 
+
+
+
+
 "description":"",
+
+
+
+
 
 
 
@@ -5072,7 +10170,15 @@ Retourne UNIQUEMENT :
 
 
 
+
+
+
+
 "prixMin":"",
+
+
+
+
 
 
 
@@ -5080,7 +10186,15 @@ Retourne UNIQUEMENT :
 
 
 
+
+
+
+
 "motsCles":[]
+
+
+
+
 
 
 
@@ -5092,59 +10206,123 @@ Retourne UNIQUEMENT :
 
 
 
+
+
+
+
+
+
+
+
 Règles :
 
 
 
-- aucune information inventée ;
 
 
 
-- ne jamais inventer matière ou prix neuf ;
+
+\- aucune information inventée ;
 
 
 
-- ne jamais garantir l'authenticité ;
 
 
 
-- défauts mentionnés honnêtement ;
+
+\- ne jamais inventer matière ou prix neuf ;
 
 
 
-- titre clair avec les informations utiles ;
 
 
 
-- description naturelle et facile à lire ;
+
+\- ne jamais garantir l'authenticité ;
 
 
 
-- maximum 8 mots-clés pertinents ;
 
 
 
-- pas de fausse urgence ;
+
+\- défauts mentionnés honnêtement ;
 
 
 
-- prix = estimation indicative uniquement ;
 
 
 
-- prixConseille, prixMin et prixMax = nombres entiers sous forme de texte ;
+
+\- titre clair avec les informations utiles ;
 
 
 
-- prixMin <= prixConseille <= prixMax ;
 
 
 
-- aucun Markdown ;
+
+\- description naturelle et facile à lire ;
 
 
 
-- aucun texte hors JSON.
+
+
+
+
+\- maximum 8 mots-clés pertinents ;
+
+
+
+
+
+
+
+\- pas de fausse urgence ;
+
+
+
+
+
+
+
+\- prix = estimation indicative uniquement ;
+
+
+
+
+
+
+
+\- prixConseille, prixMin et prixMax = nombres entiers sous forme de texte ;
+
+
+
+
+
+
+
+\- prixMin <= prixConseille <= prixMax ;
+
+
+
+
+
+
+
+\- aucun Markdown ;
+
+
+
+
+
+
+
+\- aucun texte hors JSON.
+
+
+
+
 
 
 
@@ -5160,7 +10338,23 @@ Règles :
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             const annonce =
+
+
+
+
 
 
 
@@ -5168,7 +10362,15 @@ Règles :
 
 
 
+
+
+
+
                     [
+
+
+
+
 
 
 
@@ -5176,7 +10378,15 @@ Règles :
 
 
 
+
+
+
+
                             role:
+
+
+
+
 
 
 
@@ -5188,7 +10398,19 @@ Règles :
 
 
 
+
+
+
+
+
+
+
+
                             content:
+
+
+
+
 
 
 
@@ -5196,7 +10418,15 @@ Règles :
 
 
 
+
+
+
+
                         }
+
+
+
+
 
 
 
@@ -5204,7 +10434,15 @@ Règles :
 
 
 
+
+
+
+
                     {
+
+
+
+
 
 
 
@@ -5212,11 +10450,23 @@ Règles :
 
 
 
+
+
+
+
                             1600
 
 
 
+
+
+
+
                     }
+
+
+
+
 
 
 
@@ -5232,7 +10482,23 @@ Règles :
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             let motsCles =
+
+
+
+
 
 
 
@@ -5240,7 +10506,15 @@ Règles :
 
 
 
+
+
+
+
                     annonce?.motsCles
+
+
+
+
 
 
 
@@ -5248,7 +10522,15 @@ Règles :
 
 
 
+
+
+
+
                     ? annonce.motsCles
+
+
+
+
 
 
 
@@ -5264,7 +10546,23 @@ Règles :
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             motsCles =
+
+
+
+
 
 
 
@@ -5272,7 +10570,15 @@ Règles :
 
 
 
+
+
+
+
                     .slice(0, 8)
+
+
+
+
 
 
 
@@ -5280,7 +10586,15 @@ Règles :
 
 
 
+
+
+
+
                         mot =>
+
+
+
+
 
 
 
@@ -5288,7 +10602,15 @@ Règles :
 
 
 
+
+
+
+
                                 mot,
+
+
+
+
 
 
 
@@ -5296,7 +10618,15 @@ Règles :
 
 
 
+
+
+
+
                             )
+
+
+
+
 
 
 
@@ -5304,7 +10634,23 @@ Règles :
 
 
 
+
+
+
+
                     .filter(Boolean);
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -5324,7 +10670,19 @@ Règles :
 
 
 
+
+
+
+
+
+
+
+
                 titre:
+
+
+
+
 
 
 
@@ -5332,7 +10690,15 @@ Règles :
 
 
 
+
+
+
+
                         annonce?.titre,
+
+
+
+
 
 
 
@@ -5340,7 +10706,19 @@ Règles :
 
 
 
+
+
+
+
                     ),
+
+
+
+
+
+
+
+
 
 
 
@@ -5352,7 +10730,15 @@ Règles :
 
 
 
+
+
+
+
                     nettoyerTexte(
+
+
+
+
 
 
 
@@ -5360,11 +10746,27 @@ Règles :
 
 
 
+
+
+
+
                         2000
 
 
 
+
+
+
+
                     ),
+
+
+
+
+
+
+
+
 
 
 
@@ -5376,7 +10778,15 @@ Règles :
 
 
 
+
+
+
+
                     nettoyerTexte(
+
+
+
+
 
 
 
@@ -5384,11 +10794,27 @@ Règles :
 
 
 
+
+
+
+
                         20
 
 
 
+
+
+
+
                     ),
+
+
+
+
+
+
+
+
 
 
 
@@ -5400,7 +10826,15 @@ Règles :
 
 
 
+
+
+
+
                     nettoyerTexte(
+
+
+
+
 
 
 
@@ -5408,11 +10842,27 @@ Règles :
 
 
 
+
+
+
+
                         20
 
 
 
+
+
+
+
                     ),
+
+
+
+
+
+
+
+
 
 
 
@@ -5424,7 +10874,15 @@ Règles :
 
 
 
+
+
+
+
                     nettoyerTexte(
+
+
+
+
 
 
 
@@ -5432,7 +10890,15 @@ Règles :
 
 
 
+
+
+
+
                         20
+
+
+
+
 
 
 
@@ -5444,7 +10910,19 @@ Règles :
 
 
 
+
+
+
+
+
+
+
+
                 motsCles
+
+
+
+
 
 
 
@@ -5460,7 +10938,23 @@ Règles :
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             if (
+
+
+
+
 
 
 
@@ -5468,7 +10962,15 @@ Règles :
 
 
 
+
+
+
+
                 !resultat.description
+
+
+
+
 
 
 
@@ -5480,7 +10982,19 @@ Règles :
 
 
 
+
+
+
+
+
+
+
+
                 throw new Error(
+
+
+
+
 
 
 
@@ -5488,11 +11002,31 @@ Règles :
 
 
 
+
+
+
+
                 );
 
 
 
+
+
+
+
             }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -5508,11 +11042,23 @@ Règles :
 
 
 
+
+
+
+
                 `✨ Annonce générée en ${((Date.now() - debut) / 1000).toFixed(1)}s`
 
 
 
+
+
+
+
             );
+
+
+
+
 
 
 
@@ -5524,7 +11070,19 @@ try {
 
 
 
+
+
+
+
+
+
+
+
     const { error: analyticsError } =
+
+
+
+
 
 
 
@@ -5532,7 +11090,15 @@ try {
 
 
 
+
+
+
+
             "track_event",
+
+
+
+
 
 
 
@@ -5540,7 +11106,15 @@ try {
 
 
 
+
+
+
+
                 event_name_input: "generation"
+
+
+
+
 
 
 
@@ -5548,7 +11122,19 @@ try {
 
 
 
+
+
+
+
         );
+
+
+
+
+
+
+
+
 
 
 
@@ -5560,7 +11146,15 @@ try {
 
 
 
+
+
+
+
         console.error(
+
+
+
+
 
 
 
@@ -5568,7 +11162,15 @@ try {
 
 
 
+
+
+
+
             analyticsError.message
+
+
+
+
 
 
 
@@ -5576,7 +11178,19 @@ try {
 
 
 
+
+
+
+
     }
+
+
+
+
+
+
+
+
 
 
 
@@ -5592,7 +11206,19 @@ try {
 
 
 
+
+
+
+
+
+
+
+
     console.error(
+
+
+
+
 
 
 
@@ -5600,7 +11226,15 @@ try {
 
 
 
+
+
+
+
         analyticsError.message
+
+
+
+
 
 
 
@@ -5608,7 +11242,19 @@ try {
 
 
 
+
+
+
+
 }
+
+
+
+
+
+
+
+
 
 
 
@@ -5624,7 +11270,23 @@ try {
 
 
 
+
+
+
+
+
+
+
+
                 ...resultat,
+
+
+
+
+
+
+
+
 
 
 
@@ -5636,11 +11298,31 @@ try {
 
 
 
+
+
+
+
                     sessionQuota.quota
 
 
 
+
+
+
+
             });
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -5660,7 +11342,19 @@ try {
 
 
 
+
+
+
+
+
+
+
+
             console.error(
+
+
+
+
 
 
 
@@ -5668,7 +11362,15 @@ try {
 
 
 
+
+
+
+
                 error.message
+
+
+
+
 
 
 
@@ -5684,7 +11386,23 @@ try {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
             return res
+
+
+
+
 
 
 
@@ -5692,11 +11410,23 @@ try {
 
 
 
+
+
+
+
                     error.status || 500
 
 
 
+
+
+
+
                 )
+
+
+
+
 
 
 
@@ -5708,7 +11438,19 @@ try {
 
 
 
+
+
+
+
+
+
+
+
                     error:
+
+
+
+
 
 
 
@@ -5716,7 +11458,15 @@ try {
 
 
 
+
+
+
+
                             ? error.message
+
+
+
+
 
 
 
@@ -5728,11 +11478,27 @@ try {
 
 
 
+
+
+
+
+
+
+
+
                     code:
 
 
 
+
+
+
+
                         error.code ||
+
+
+
+
 
 
 
@@ -5744,7 +11510,19 @@ try {
 
 
 
+
+
+
+
+
+
+
+
                     quota:
+
+
+
+
 
 
 
@@ -5752,7 +11530,15 @@ try {
 
 
 
+
+
+
+
                         undefined
+
+
+
+
 
 
 
@@ -5760,11 +11546,23 @@ try {
 
 
 
+
+
+
+
         }
 
 
 
+
+
+
+
     }
+
+
+
+
 
 
 
@@ -5776,7 +11574,19 @@ try {
 
 
 
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -5784,7 +11594,19 @@ try {
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -5796,7 +11618,15 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
     try {
+
+
+
+
 
 
 
@@ -5808,7 +11638,19 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
         if (!authorization.startsWith("Bearer ")) {
+
+
+
+
 
 
 
@@ -5816,7 +11658,15 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
                 error: "Connecte-toi pour passer Premium."
+
+
+
+
 
 
 
@@ -5824,7 +11674,19 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
         }
+
+
+
+
+
+
+
+
 
 
 
@@ -5840,7 +11702,19 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
         const supabase =
+
+
+
+
 
 
 
@@ -5852,7 +11726,19 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
         const { data: userData, error: userError } =
+
+
+
+
 
 
 
@@ -5864,7 +11750,19 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
         if (userError || !userData?.user) {
+
+
+
+
 
 
 
@@ -5872,11 +11770,23 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
                 error: "Session invalide."
 
 
 
+
+
+
+
             });
+
+
+
+
 
 
 
@@ -5888,7 +11798,19 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
         const session = await stripe.checkout.sessions.create({
+
+
+
+
 
 
 
@@ -5900,7 +11822,19 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
             line_items: [
+
+
+
+
 
 
 
@@ -5908,7 +11842,15 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
                     price: process.env.STRIPE_PRICE_ID,
+
+
+
+
 
 
 
@@ -5916,11 +11858,27 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
                 }
 
 
 
+
+
+
+
             ],
+
+
+
+
+
+
+
+
 
 
 
@@ -5936,7 +11894,23 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
             client_reference_id: userData.user.id,
+
+
+
+
+
+
+
+
 
 
 
@@ -5948,7 +11922,15 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
                 supabase_user_id: userData.user.id
+
+
+
+
 
 
 
@@ -5960,7 +11942,19 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
             success_url:
+
+
+
+
 
 
 
@@ -5972,7 +11966,19 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
             cancel_url:
+
+
+
+
 
 
 
@@ -5980,7 +11986,19 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
         });
+
+
+
+
+
+
+
+
 
 
 
@@ -5992,11 +12010,27 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
             url: session.url
 
 
 
+
+
+
+
         });
+
+
+
+
+
+
+
+
 
 
 
@@ -6008,7 +12042,19 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
         console.error("❌ STRIPE :", error.message);
+
+
+
+
+
+
+
+
 
 
 
@@ -6020,7 +12066,15 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
             error: "Impossible de démarrer le paiement."
+
+
+
+
 
 
 
@@ -6028,7 +12082,15 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
     }
+
+
+
+
 
 
 
@@ -6036,11 +12098,23 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
+
+
+
+
 app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
     try {
+
+
+
+
 
 
 
@@ -6052,7 +12126,19 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
         if (!authorization.startsWith("Bearer ")) {
+
+
+
+
 
 
 
@@ -6060,7 +12146,15 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
                 error: "Connecte-toi pour gérer ton abonnement."
+
+
+
+
 
 
 
@@ -6068,7 +12162,19 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
         }
+
+
+
+
+
+
+
+
 
 
 
@@ -6084,7 +12190,19 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
         const supabase =
+
+
+
+
 
 
 
@@ -6096,7 +12214,19 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
         const { data: userData, error: userError } =
+
+
+
+
 
 
 
@@ -6108,7 +12238,19 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
         if (userError || !userData?.user) {
+
+
+
+
 
 
 
@@ -6116,7 +12258,15 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
                 error: "Session invalide."
+
+
+
+
 
 
 
@@ -6124,7 +12274,19 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
         }
+
+
+
+
+
+
+
+
 
 
 
@@ -6136,7 +12298,15 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
             await supabaseAdmin
+
+
+
+
 
 
 
@@ -6144,11 +12314,23 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
                 .select("stripe_customer_id")
 
 
 
+
+
+
+
                 .eq("id", userData.user.id)
+
+
+
+
 
 
 
@@ -6160,7 +12342,19 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
         if (profilError || !profil?.stripe_customer_id) {
+
+
+
+
 
 
 
@@ -6168,7 +12362,15 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
                 error: "Aucun abonnement Stripe trouvé."
+
+
+
+
 
 
 
@@ -6176,7 +12378,19 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
         }
+
+
+
+
+
+
+
+
 
 
 
@@ -6188,7 +12402,15 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
             await stripe.billingPortal.sessions.create({
+
+
+
+
 
 
 
@@ -6196,11 +12418,23 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
                 return_url:
 
 
 
+
+
+
+
                     `${req.protocol}://${req.get("host")}/`
+
+
+
+
 
 
 
@@ -6212,11 +12446,27 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
         return res.json({
 
 
 
+
+
+
+
             url: portalSession.url
+
+
+
+
 
 
 
@@ -6228,7 +12478,19 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
     } catch (error) {
+
+
+
+
 
 
 
@@ -6240,7 +12502,19 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
         return res.status(500).json({
+
+
+
+
 
 
 
@@ -6248,7 +12522,15 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
         });
+
+
+
+
 
 
 
@@ -6256,11 +12538,23 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
+
+
+
+
 });
 
 
 
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -6268,7 +12562,21 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -6280,25 +12588,49 @@ app.post("/create-customer-portal", async (req, res) => {
 
 /* ======================================================
 
+
+
    ANALYTICS — VISITES
 
-====================================================== */
+
+
+\====================================================== */
+
+
+
+
 
 
 
 app.post("/track-visit", async (req, res) => {
 
+
+
     try {
+
+
 
         const visitorId = String(req.body?.visitorId || "").trim().slice(0, 100);
 
 
 
+
+
+
+
         if (!visitorId) {
+
+
 
             return res.status(400).json({ error: "Identifiant visiteur manquant." });
 
+
+
         }
+
+
+
+
 
 
 
@@ -6306,21 +12638,43 @@ app.post("/track-visit", async (req, res) => {
 
 
 
+
+
+
+
         const { data: existing, error: readError } =
+
+
 
             await supabaseAdmin
 
+
+
                 .from("analytics_events")
+
+
 
                 .select("id")
 
+
+
                 .eq("event_name", "site_visit")
+
+
 
                 .eq("visitor_id", visitorId)
 
+
+
                 .gte("created_at", since)
 
+
+
                 .limit(1);
+
+
+
+
 
 
 
@@ -6328,27 +12682,55 @@ app.post("/track-visit", async (req, res) => {
 
 
 
+
+
+
+
         if (existing && existing.length > 0) {
 
+
+
             return res.json({ ok: true, counted: false });
+
+
 
         }
 
 
 
+
+
+
+
         const { error: insertError } =
+
+
 
             await supabaseAdmin
 
+
+
                 .from("analytics_events")
+
+
 
                 .insert({
 
+
+
                     event_name: "site_visit",
+
+
 
                     visitor_id: visitorId
 
+
+
                 });
+
+
+
+
 
 
 
@@ -6356,23 +12738,49 @@ app.post("/track-visit", async (req, res) => {
 
 
 
+
+
+
+
         return res.json({ ok: true, counted: true });
+
+
+
+
 
 
 
     } catch (error) {
 
+
+
         console.error("❌ ANALYTICS VISITE :", error.message);
+
+
 
         return res.status(500).json({
 
+
+
             error: "Impossible d'enregistrer la visite."
+
+
 
         });
 
+
+
     }
 
+
+
 });
+
+
+
+
+
+
 
 
 
@@ -6382,7 +12790,15 @@ app.get("/analytics.html", (req, res) => {
 
 
 
+
+
+
+
     res.sendFile(
+
+
+
+
 
 
 
@@ -6390,11 +12806,27 @@ app.get("/analytics.html", (req, res) => {
 
 
 
+
+
+
+
     );
 
 
 
+
+
+
+
 });
+
+
+
+
+
+
+
+
 
 
 
@@ -6406,7 +12838,15 @@ app.get(
 
 
 
+
+
+
+
     "/supabase-config",
+
+
+
+
 
 
 
@@ -6418,7 +12858,19 @@ app.get(
 
 
 
+
+
+
+
+
+
+
+
         const url =
+
+
+
+
 
 
 
@@ -6430,11 +12882,27 @@ app.get(
 
 
 
+
+
+
+
+
+
+
+
         const publishableKey =
 
 
 
+
+
+
+
             process.env
+
+
+
+
 
 
 
@@ -6450,7 +12918,23 @@ app.get(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
         if (
+
+
+
+
 
 
 
@@ -6458,7 +12942,15 @@ app.get(
 
 
 
+
+
+
+
             !publishableKey
+
+
+
+
 
 
 
@@ -6470,7 +12962,19 @@ app.get(
 
 
 
+
+
+
+
+
+
+
+
             return res
+
+
+
+
 
 
 
@@ -6478,7 +12982,15 @@ app.get(
 
 
 
+
+
+
+
                 .json({
+
+
+
+
 
 
 
@@ -6486,11 +12998,23 @@ app.get(
 
 
 
+
+
+
+
                         "Supabase n'est pas configuré."
 
 
 
+
+
+
+
                 });
+
+
+
+
 
 
 
@@ -6506,7 +13030,27 @@ app.get(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
         res.json({
+
+
+
+
+
+
+
+
 
 
 
@@ -6522,7 +13066,19 @@ app.get(
 
 
 
+
+
+
+
+
+
+
+
             publishableKey
+
+
+
+
 
 
 
@@ -6530,7 +13086,15 @@ app.get(
 
 
 
+
+
+
+
     }
+
+
+
+
 
 
 
@@ -6546,7 +13110,23 @@ app.get(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -6554,7 +13134,19 @@ app.get(
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -6566,11 +13158,27 @@ app.get(
 
 
 
+
+
+
+
     "/health",
 
 
 
+
+
+
+
     (req, res) => {
+
+
+
+
+
+
+
+
 
 
 
@@ -6586,7 +13194,19 @@ app.get(
 
 
 
+
+
+
+
+
+
+
+
             status:
+
+
+
+
 
 
 
@@ -6598,7 +13218,19 @@ app.get(
 
 
 
+
+
+
+
+
+
+
+
             app:
+
+
+
+
 
 
 
@@ -6610,7 +13242,19 @@ app.get(
 
 
 
+
+
+
+
+
+
+
+
             version:
+
+
+
+
 
 
 
@@ -6618,11 +13262,23 @@ app.get(
 
 
 
+
+
+
+
         });
 
 
 
+
+
+
+
     }
+
+
+
+
 
 
 
@@ -6638,7 +13294,23 @@ app.get(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -6646,7 +13318,19 @@ app.get(
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -6658,7 +13342,15 @@ app.use(
 
 
 
+
+
+
+
     "/api",
+
+
+
+
 
 
 
@@ -6670,7 +13362,19 @@ app.use(
 
 
 
+
+
+
+
+
+
+
+
         res
+
+
+
+
 
 
 
@@ -6678,7 +13382,15 @@ app.use(
 
 
 
+
+
+
+
             .json({
+
+
+
+
 
 
 
@@ -6686,7 +13398,15 @@ app.use(
 
 
 
+
+
+
+
                     "Route inconnue."
+
+
+
+
 
 
 
@@ -6694,7 +13414,15 @@ app.use(
 
 
 
+
+
+
+
     }
+
+
+
+
 
 
 
@@ -6710,7 +13438,23 @@ app.use(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 /* ======================================================
+
+
+
+
 
 
 
@@ -6718,7 +13462,19 @@ app.use(
 
 
 
-====================================================== */
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
 
 
 
@@ -6730,7 +13486,15 @@ app.listen(
 
 
 
+
+
+
+
     PORT,
+
+
+
+
 
 
 
@@ -6742,7 +13506,19 @@ app.listen(
 
 
 
+
+
+
+
+
+
+
+
         console.log(
+
+
+
+
 
 
 
@@ -6750,7 +13526,19 @@ app.listen(
 
 
 
+
+
+
+
         );
+
+
+
+
+
+
+
+
 
 
 
@@ -6762,7 +13550,15 @@ app.listen(
 
 
 
+
+
+
+
             `🤖 Modèle : ${MODELE}`
+
+
+
+
 
 
 
@@ -6770,7 +13566,15 @@ app.listen(
 
 
 
+
+
+
+
     }
+
+
+
+
 
 
 
