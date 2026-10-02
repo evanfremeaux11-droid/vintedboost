@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#7c3aed">
 <title>VintedBoost Analytics</title>
 <style>
-:root{--violet:#7c3aed;--violet2:#9333ea;--bg:#f7f5fb;--text:#18181b;--muted:#71717a;--border:#e9e5ef;--green:#16a34a}
+:root{--violet:#7c3aed;--violet2:#9333ea;--bg:#f7f5fb;--text:#18181b;--muted:#71717a;--border:#e9e5ef}
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#f3e8ff 0,#fafafa 280px);color:var(--text);min-height:100vh}
 .app{max-width:560px;margin:auto;padding:24px 18px 48px}
@@ -31,58 +31,32 @@ button{width:100%;border:0;border-radius:12px;padding:14px;font:inherit;font-wei
 .actions{display:flex;gap:10px;margin-top:16px}.actions button{margin:0}
 .updated{text-align:center;color:var(--muted);font-size:11px;margin-top:14px}
 .hidden{display:none!important}
-@media(max-width:370px){.grid{grid-template-columns:1fr}.hero h1{font-size:28px}}
-.periods{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:6px;
-  margin-bottom:16px;
-  padding:5px;
-  background:#f4f4f5;
-  border-radius:14px;
-}
-
-.period{
-  padding:10px 5px;
-  border-radius:10px;
-  background:transparent;
-  color:#71717a;
-  font-size:11px;
-  font-weight:800;
-}
-
-.period.active{
-  background:#fff;
-  color:#7c3aed;
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
-}
+.periods{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:16px;padding:5px;background:#f4f4f5;border-radius:14px}
+.period{padding:10px 5px;border-radius:10px;background:transparent;color:#71717a;font-size:11px;font-weight:800}
+.period.active{background:#fff;color:#7c3aed;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.chart-card{margin-top:16px;padding:18px;background:#fff;border:1px solid var(--border);border-radius:18px}
+.chart-header{margin-bottom:14px}
+.chart-header strong{display:block;font-size:15px}
+.chart-header small{display:block;color:var(--muted);margin-top:4px;font-size:11px}
+.chart-wrap{position:relative;width:100%;height:260px}
+#analyticsChart{display:block;width:100%!important;height:100%!important}
+@media(max-width:370px){.grid{grid-template-columns:1fr}.hero h1{font-size:28px}.chart-wrap{height:230px}}
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="top">
-    <div class="brand">⚡ Vinted<span>Boost</span></div>
-    <div class="badge">Analytics</div>
-  </div>
-
-  <section class="hero">
-    <h1>Ton activité en un coup d'œil.</h1>
-    <p>Tableau de bord privé VintedBoost.</p>
-  </section>
+  <div class="top"><div class="brand">⚡ Vinted<span>Boost</span></div><div class="badge">Analytics</div></div>
+  <section class="hero"><h1>Ton activité en un coup d'œil.</h1><p>Tableau de bord privé VintedBoost.</p></section>
 
   <section id="loginCard" class="login">
     <h2 style="margin:0">Connexion admin</h2>
     <p style="color:var(--muted);font-size:14px">Utilise ton compte principal VintedBoost.</p>
-    <label for="email">Adresse email</label>
-    <input id="email" type="email" autocomplete="email">
-    <label for="password">Mot de passe</label>
-    <input id="password" type="password" autocomplete="current-password">
-    <button id="loginBtn" class="primary">Se connecter</button>
-    <div id="loginError" class="error"></div>
+    <label for="email">Adresse email</label><input id="email" type="email" autocomplete="email">
+    <label for="password">Mot de passe</label><input id="password" type="password" autocomplete="current-password">
+    <button id="loginBtn" class="primary">Se connecter</button><div id="loginError" class="error"></div>
   </section>
 
   <section id="dashboard" class="dashboard hidden">
-
     <div class="periods">
       <button class="period active" data-period="today">Aujourd'hui</button>
       <button class="period" data-period="7d">7 jours</button>
@@ -96,181 +70,143 @@ button{width:100%;border:0;border-radius:12px;padding:14px;font:inherit;font-wei
       <div class="stat"><div class="icon">✨</div><div id="generations" class="number">—</div><div class="label">Générations</div></div>
       <div class="stat"><div class="icon">⚡</div><div id="genPerSignup" class="number">—</div><div class="label">Générations / inscrit</div></div>
     </div>
+
     <div class="grid" style="margin-top:12px">
-  <div class="stat">
-    <div class="icon">🆓</div>
-    <div id="freeUsers" class="number">—</div>
-    <div class="label">Comptes Free</div>
-  </div>
-
-  <div class="stat">
-    <div class="icon">💎</div>
-    <div id="premiumUsers" class="number">—</div>
-    <div class="label">Comptes Premium</div>
-  </div>
-</div>
-
-<div class="conversion">
-  <small>💰 Revenu mensuel Premium estimé</small>
-  <strong id="estimatedMrr">—</strong>
-</div>
-    <div class="conversion">
-      <small>Taux visite → inscription</small>
-      <strong id="conversion">—</strong>
+      <div class="stat"><div class="icon">🆓</div><div id="freeUsers" class="number">—</div><div class="label">Comptes Free</div></div>
+      <div class="stat"><div class="icon">💎</div><div id="premiumUsers" class="number">—</div><div class="label">Comptes Premium</div></div>
     </div>
-    <div class="actions">
-      <button id="refreshBtn" class="primary">Actualiser</button>
-      <button id="logoutBtn" class="secondary">Déconnexion</button>
+
+    <div class="conversion"><small>💰 Revenu mensuel Premium estimé</small><strong id="estimatedMrr">—</strong></div>
+    <div class="conversion"><small>Taux visite → inscription</small><strong id="conversion">—</strong></div>
+
+    <div class="chart-card">
+      <div class="chart-header"><strong>📈 Évolution de l'activité</strong><small>30 derniers jours</small></div>
+      <div class="chart-wrap"><canvas id="analyticsChart"></canvas></div>
     </div>
+
+    <div class="actions"><button id="refreshBtn" class="primary">Actualiser</button><button id="logoutBtn" class="secondary">Déconnexion</button></div>
     <div id="updated" class="updated"></div>
   </section>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-let supabaseClient = null;
-let currentPeriod = "today";
+let supabaseClient=null;
+let currentPeriod="today";
+let analyticsInterval=null;
+let analyticsChart=null;
+
 async function init(){
   try{
-    const response = await fetch("/supabase-config");
+    const response=await fetch("/supabase-config");
     if(!response.ok) throw new Error("Configuration Supabase indisponible.");
-    const config = await response.json();
-    supabaseClient = window.supabase.createClient(config.url, config.publishableKey,{
-      auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
-    });
-
-    const {data:{session}} = await supabaseClient.auth.getSession();
+    const config=await response.json();
+    supabaseClient=window.supabase.createClient(config.url,config.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    const {data:{session}}=await supabaseClient.auth.getSession();
     if(session) await showDashboard();
-
-    supabaseClient.auth.onAuthStateChange(async (_event, session)=>{
-      if(session) await showDashboard();
-      else showLogin();
-    });
-  }catch(e){
-    showError(e.message);
-  }
+    supabaseClient.auth.onAuthStateChange(async(_event,session)=>{if(session) await showDashboard();else showLogin();});
+  }catch(e){showError(e.message);}
 }
 
-function showError(message){
-  const el=document.getElementById("loginError");
-  el.textContent=message;
-  el.style.display="block";
-}
+function showError(message){const el=document.getElementById("loginError");el.textContent=message;el.style.display="block";}
 
 async function login(){
   const btn=document.getElementById("loginBtn");
   const email=document.getElementById("email").value.trim();
   const password=document.getElementById("password").value;
-  if(!email || !password){showError("Entre ton email et ton mot de passe.");return;}
-  btn.disabled=true; btn.textContent="Connexion...";
-  document.getElementById("loginError").style.display="none";
+  if(!email||!password){showError("Entre ton email et ton mot de passe.");return;}
+  btn.disabled=true;btn.textContent="Connexion...";document.getElementById("loginError").style.display="none";
   const {error}=await supabaseClient.auth.signInWithPassword({email,password});
-  btn.disabled=false; btn.textContent="Se connecter";
-  if(error) showError("Email ou mot de passe incorrect.");
+  btn.disabled=false;btn.textContent="Se connecter";
+  if(error)showError("Email ou mot de passe incorrect.");
 }
 
 async function showDashboard(){
   document.getElementById("loginCard").classList.add("hidden");
   document.getElementById("dashboard").classList.remove("hidden");
   await loadStats();
-await loadPlanStats();
+  await loadPlanStats();
+  await loadChart();
 }
-async function loadPlanStats(){
-  const {data,error}=await supabaseClient.rpc("get_plan_stats");
 
-  if(error){
-    console.error("Erreur statistiques abonnements :",error);
-    return;
-  }
-
-  const s = typeof data === "string" ? JSON.parse(data) : data;
-
-  const freeUsers=Number(s?.free_users||0);
-  const premiumUsers=Number(s?.premium_users||0);
-  const estimatedMrr=Number(s?.estimated_mrr||0);
-
-  document.getElementById("freeUsers").textContent=freeUsers;
-  document.getElementById("premiumUsers").textContent=premiumUsers;
-  document.getElementById("estimatedMrr").textContent=
-    estimatedMrr.toFixed(2).replace(".",",")+" €";
-}
 function showLogin(){
   document.getElementById("dashboard").classList.add("hidden");
   document.getElementById("loginCard").classList.remove("hidden");
 }
 
 async function loadStats(){
-  const {data,error}=await supabaseClient.rpc("get_analytics_summary",{
-  period_input: currentPeriod
-});
-  if(error){
-    alert(error.message.includes("Accès interdit") ? "Ce compte n'est pas autorisé à voir les statistiques." : "Impossible de charger les statistiques.");
-    return;
-  }async function loadPlanStats(){
-  const {data,error}=await supabaseClient.rpc("get_plan_stats");
-
-  if(error){
-    console.error("Erreur statistiques abonnements :",error);
-    return;
-  }
-
-  const s = typeof data === "string" ? JSON.parse(data) : data;
-
-  const freeUsers=Number(s?.free_users||0);
-  const premiumUsers=Number(s?.premium_users||0);
-  const estimatedMrr=Number(s?.estimated_mrr||0);
-
-  document.getElementById("freeUsers").textContent=freeUsers;
-  document.getElementById("premiumUsers").textContent=premiumUsers;
-  document.getElementById("estimatedMrr").textContent=
-    estimatedMrr.toFixed(2).replace(".",",")+" €";
-}
-  const s = typeof data === "string" ? JSON.parse(data) : data;
-  const visits=Number(s?.visits||0), signups=Number(s?.signups||0), generations=Number(s?.generations||0);
-  document.getElementById("visits").textContent=visits;
-  document.getElementById("signups").textContent=signups;
-  document.getElementById("generations").textContent=generations;
-  document.getElementById("conversion").textContent=visits ? ((signups/visits)*100).toFixed(1).replace(".",",")+" %" : "0 %";
-  document.getElementById("genPerSignup").textContent=signups ? (generations/signups).toFixed(1).replace(".",",") : "0";
+  const {data,error}=await supabaseClient.rpc("get_analytics_summary",{period_input:currentPeriod});
+  if(error){console.error("Analytics:",error);alert(error.message.includes("Accès interdit")?"Ce compte n'est pas autorisé à voir les statistiques.":"Impossible de charger les statistiques.");return;}
+  const s=typeof data==="string"?JSON.parse(data):data;
+  const v=Number(s?.visits||0),u=Number(s?.signups||0),g=Number(s?.generations||0);
+  document.getElementById("visits").textContent=v;
+  document.getElementById("signups").textContent=u;
+  document.getElementById("generations").textContent=g;
+  document.getElementById("conversion").textContent=v?((u/v)*100).toFixed(1).replace(".",",")+" %":"0 %";
+  document.getElementById("genPerSignup").textContent=u?(g/u).toFixed(1).replace(".",","):"0";
   document.getElementById("updated").textContent="Mis à jour à "+new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
 }
 
+async function loadPlanStats(){
+  const {data,error}=await supabaseClient.rpc("get_plan_stats");
+  if(error){console.error("Abonnements:",error);return;}
+  const s=typeof data==="string"?JSON.parse(data):data;
+  document.getElementById("freeUsers").textContent=Number(s?.free_users||0);
+  document.getElementById("premiumUsers").textContent=Number(s?.premium_users||0);
+  document.getElementById("estimatedMrr").textContent=Number(s?.estimated_mrr||0).toFixed(2).replace(".",",")+" €";
+}
+
+async function loadChart(){
+  const {data,error}=await supabaseClient.rpc("get_analytics_chart",{days_input:30});
+  if(error){console.error("Graphique:",error);return;}
+  const stats=typeof data==="string"?JSON.parse(data):data;
+  if(!Array.isArray(stats))return;
+  const canvas=document.getElementById("analyticsChart");
+  if(!canvas||typeof Chart==="undefined")return;
+  if(analyticsChart)analyticsChart.destroy();
+  analyticsChart=new Chart(canvas.getContext("2d"),{
+    type:"line",
+    data:{
+      labels:stats.map(x=>new Date(x.date+"T00:00:00").toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"})),
+      datasets:[
+        {label:"Visites",data:stats.map(x=>Number(x.visits||0)),borderColor:"#7c3aed",backgroundColor:"#7c3aed",tension:.25,borderWidth:3,pointRadius:3,pointHoverRadius:5},
+        {label:"Inscriptions",data:stats.map(x=>Number(x.signups||0)),borderColor:"#16a34a",backgroundColor:"#16a34a",tension:.25,borderWidth:3,pointRadius:3,pointHoverRadius:5},
+        {label:"Générations",data:stats.map(x=>Number(x.generations||0)),borderColor:"#f59e0b",backgroundColor:"#f59e0b",tension:.25,borderWidth:3,pointRadius:3,pointHoverRadius:5},
+        {label:"Premium",data:stats.map(x=>Number(x.premium||0)),borderColor:"#2563eb",backgroundColor:"#2563eb",tension:.25,borderWidth:3,pointRadius:3,pointHoverRadius:5}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:"index",intersect:false},
+      plugins:{legend:{display:true,position:"bottom"}},
+      scales:{
+        x:{grid:{display:false},ticks:{maxTicksLimit:7}},
+        y:{beginAtZero:true,suggestedMax:3,ticks:{precision:0,stepSize:1}}
+      }
+    }
+  });
+}
+
+function startLive(){
+  if(analyticsInterval)clearInterval(analyticsInterval);
+  analyticsInterval=setInterval(async()=>{
+    const {data:{session}}=await supabaseClient.auth.getSession();
+    if(session){await loadStats();await loadPlanStats();}
+  },5000);
+}
+
 document.getElementById("loginBtn").addEventListener("click",login);
-document.getElementById("refreshBtn").addEventListener("click",loadStats);
+document.getElementById("refreshBtn").addEventListener("click",async()=>{await loadStats();await loadPlanStats();await loadChart();});
 document.getElementById("logoutBtn").addEventListener("click",()=>supabaseClient.auth.signOut());
 document.getElementById("password").addEventListener("keydown",e=>{if(e.key==="Enter")login();});
-// Actualisation automatique des statistiques
-let analyticsInterval = null;
-
-function demarrerActualisationLive(){
-  if(analyticsInterval){
-    clearInterval(analyticsInterval);
-  }
-
-  analyticsInterval = setInterval(async ()=>{
-    const {data:{session}} = await supabaseClient.auth.getSession();
-
-    if(session){
-      await loadStats();
-    }
-    await loadPlanStats();
-  }, 5000);
-}
-document.querySelectorAll(".period").forEach(btn=>{
-  btn.addEventListener("click",async ()=>{
-    currentPeriod=btn.dataset.period;
-
-    document.querySelectorAll(".period").forEach(b=>{
-      b.classList.remove("active");
-    });
-
-    btn.classList.add("active");
-    await loadStats();
-  });
-});
-init().then(()=>{
-  demarrerActualisationLive();
-});
+document.querySelectorAll(".period").forEach(btn=>btn.addEventListener("click",async()=>{
+  currentPeriod=btn.dataset.period;
+  document.querySelectorAll(".period").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  await loadStats();
+}));
+init().then(startLive);
 </script>
 </body>
 </html>

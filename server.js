@@ -206,6 +206,36 @@ app.post(
 
 
 
+// Analytics : mémorise le passage Premium une seule fois par abonnement Stripe
+                    try {
+                        const premiumEventId = "stripe:" + String(session.subscription || "");
+
+                        const { data: premiumExisting, error: premiumReadError } =
+                            await supabaseAdmin
+                                .from("analytics_events")
+                                .select("visitor_id")
+                                .eq("event_name", "premium")
+                                .eq("visitor_id", premiumEventId)
+                                .limit(1);
+
+                        if (premiumReadError) throw premiumReadError;
+
+                        if (!premiumExisting || premiumExisting.length === 0) {
+                            const { error: premiumInsertError } =
+                                await supabaseAdmin
+                                    .from("analytics_events")
+                                    .insert({
+                                        event_name: "premium",
+                                        visitor_id: premiumEventId
+                                    });
+
+                            if (premiumInsertError) throw premiumInsertError;
+                        }
+                    } catch (analyticsError) {
+                        // Les statistiques ne doivent jamais empêcher l'activation Premium.
+                        console.error("Erreur analytics Premium :", analyticsError.message);
+                    }
+
                     console.log("⭐ Compte Premium activé :", userId);
 
 
