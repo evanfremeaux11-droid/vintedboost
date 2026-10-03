@@ -1865,12 +1865,7 @@ function extraireJSON(texte) {
             .replace(/**```**js/gi, "")
 
 
-
-
-
-
-
-            .replace(/**```**/g, "")
+.replace(/```/g, "")
 
 
 
