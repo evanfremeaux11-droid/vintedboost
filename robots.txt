@@ -1,0 +1,4 @@
+﻿User-agent: *
+Allow: /
+
+Sitemap: https://vintedboost-5jib.onrender.com/sitemap.xml
