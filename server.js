@@ -3350,31 +3350,13 @@ async function appelerOpenRouter(
 
 
 
-        const response =
+       const OPENROUTER_URL = "https:" + "//openrouter.ai/api/v1/chat/completions";
 
-
-
-
-
-
-
-            await fetch(
-
-
-
-
-
-
-
-                "https\\\\://openrouter.ai/api/v1/chat/completions",
-
-
-
-
-
-
-
-                {
+console.log("🔗 URL OPENROUTER =", OPENROUTER_URL);
+console.log("🔥 NOUVEAU CODE 2026");
+const response = await fetch(
+    OPENROUTER_URL,
+    {
 
 
 
