@@ -3788,7 +3788,7 @@ const response = await fetch(
 
 
 
-            console.error(
+          console.error("❌ ANALYSE :", err);
 
 
 
