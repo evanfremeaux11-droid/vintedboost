@@ -602,7 +602,7 @@ async function loadStats(){
 
 
 
-  if(error){console.error("Analytics:",error);alert(error.message.includes("Accès interdit")?"Ce compte n'est pas autorisé à voir les statistiques.":"Impossible de charger les statistiques.");return;}
+  if(error){console.error("Analytics:",error);if(error.message.includes("Accès interdit")){await supabaseClient.auth.signOut();showLogin();return;}alert("Impossible de charger les statistiques.");return;}
 
 
 
