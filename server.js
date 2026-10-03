@@ -1,4 +1,4 @@
-const express = require("express");
+﻿const express = require("express");
 
 
 
@@ -230,7 +230,7 @@ app.post(
 
 
 
-            console.error("❌ WEBHOOK STRIPE :", error.message);
+            console.error("âŒ WEBHOOK STRIPE :", error.message);
 
 
 
@@ -414,7 +414,7 @@ app.post(
 
 
 
-// Analytics : mémorise le passage Premium une seule fois par abonnement Stripe
+// Analytics : mÃ©morise le passage Premium une seule fois par abonnement Stripe
 
                     try {
 
@@ -466,7 +466,7 @@ app.post(
 
                     } catch (analyticsError) {
 
-                        // Les statistiques ne doivent jamais empêcher l'activation Premium.
+                        // Les statistiques ne doivent jamais empÃªcher l'activation Premium.
 
                         console.error("Erreur analytics Premium :", analyticsError.message);
 
@@ -474,7 +474,7 @@ app.post(
 
 
 
-                    console.log("⭐ Compte Premium activé :", userId);
+                    console.log("â­ Compte Premium activÃ© :", userId);
 
 
 
@@ -618,7 +618,7 @@ if (event.type === "customer.subscription.deleted") {
 
 
 
-    // Analytics : mémorise la résiliation une seule fois par abonnement Stripe
+    // Analytics : mÃ©morise la rÃ©siliation une seule fois par abonnement Stripe
     try {
         const cancellationEventId = "stripe_cancelled:" + String(subscription.id || "");
         const { data: cancellationExisting, error: cancellationReadError } =
@@ -642,8 +642,8 @@ if (event.type === "customer.subscription.deleted") {
             if (cancellationInsertError) throw cancellationInsertError;
         }
     } catch (analyticsError) {
-        // Les statistiques ne doivent jamais empêcher la résiliation.
-        console.error("Erreur analytics résiliation Premium :", analyticsError.message);
+        // Les statistiques ne doivent jamais empÃªcher la rÃ©siliation.
+        console.error("Erreur analytics rÃ©siliation Premium :", analyticsError.message);
     }
 
     console.log(
@@ -654,7 +654,7 @@ if (event.type === "customer.subscription.deleted") {
 
 
 
-        "🔒 Abonnement résilié, compte repassé Free :",
+        "ðŸ”’ Abonnement rÃ©siliÃ©, compte repassÃ© Free :",
 
 
 
@@ -710,7 +710,7 @@ if (event.type === "customer.subscription.deleted") {
 
 
 
-            console.error("❌ ACTIVATION PREMIUM :", error.message);
+            console.error("âŒ ACTIVATION PREMIUM :", error.message);
 
 
 
@@ -1278,7 +1278,7 @@ function limiterRequetes(req, res, next) {
 
 
 
-                    "Trop de requêtes. Réessaie un peu plus tard."
+                    "Trop de requÃªtes. RÃ©essaie un peu plus tard."
 
 
 
@@ -1718,7 +1718,7 @@ function extraireJSON(texte) {
 
 
 
-            "Réponse IA vide."
+            "RÃ©ponse IA vide."
 
 
 
@@ -1846,7 +1846,7 @@ function extraireJSON(texte) {
 
 
 
-            .replace(/**```**json/gi, "")
+            .replace(/```json/gi, "")
 
 
 
@@ -1854,7 +1854,7 @@ function extraireJSON(texte) {
 
 
 
-            .replace(/**```**javascript/gi, "")
+            .replace(/```javascript/gi, "")
 
 
 
@@ -1862,7 +1862,7 @@ function extraireJSON(texte) {
 
 
 
-            .replace(/**```**js/gi, "")
+            .replace(/```js/gi, "")
 
 
 
@@ -1870,7 +1870,7 @@ function extraireJSON(texte) {
 
 
 
-            .replace(/**```**/g, "")
+            .replace(/```/g, "")
 
 
 
@@ -1950,7 +1950,7 @@ function extraireJSON(texte) {
 
 
 
-            "Réponse IA inutilisable."
+            "RÃ©ponse IA inutilisable."
 
 
 
@@ -2070,7 +2070,7 @@ function extraireJSON(texte) {
 
 
 
-            "Réponse IA inutilisable."
+            "RÃ©ponse IA inutilisable."
 
 
 
@@ -2518,7 +2518,7 @@ function extraireJSON(texte) {
 
 
 
-                "JSON détecté mais invalide."
+                "JSON dÃ©tectÃ© mais invalide."
 
 
 
@@ -3072,7 +3072,7 @@ function recupererTexteIA(data) {
 
 async function appelerOpenRouter(messages, options = {}) {
     if (!process.env.OPENROUTER_API_KEY) {
-        throw new Error("La clé OpenRouter n'est pas configurée.");
+        throw new Error("La clÃ© OpenRouter n'est pas configurÃ©e.");
     }
 
     const maxTokens = options.maxTokens || 1800;
@@ -3089,7 +3089,7 @@ async function appelerOpenRouter(messages, options = {}) {
         const OPENROUTER_URL =
             "https://openrouter.ai/api/v1/chat/completions";
 
-        console.log("🔗 URL OPENROUTER =", OPENROUTER_URL);
+        console.log("ðŸ”— URL OPENROUTER =", OPENROUTER_URL);
 
         const response = await fetch(
             OPENROUTER_URL,
@@ -3119,7 +3119,7 @@ async function appelerOpenRouter(messages, options = {}) {
             data = await response.json();
         } catch {
             throw new Error(
-                "Réponse OpenRouter illisible."
+                "RÃ©ponse OpenRouter illisible."
             );
         }
 
@@ -3144,12 +3144,12 @@ async function appelerOpenRouter(messages, options = {}) {
             ((Date.now() - debut) / 1000).toFixed(1);
 
         console.log(
-            `🤖 ${data?.model || MODELE} • ${temps}s • ${data?.choices?.[0]?.finish_reason || "?"}`
+            `ðŸ¤– ${data?.model || MODELE} â€¢ ${temps}s â€¢ ${data?.choices?.[0]?.finish_reason || "?"}`
         );
 
         if (!texte) {
             throw new Error(
-                "L'IA a renvoyé une réponse vide."
+                "L'IA a renvoyÃ© une rÃ©ponse vide."
             );
         }
 
@@ -3158,7 +3158,7 @@ async function appelerOpenRouter(messages, options = {}) {
     } catch (error) {
         if (error.name === "AbortError") {
             throw new Error(
-                "OpenRouter met trop de temps à répondre."
+                "OpenRouter met trop de temps Ã  rÃ©pondre."
             );
         }
 
@@ -3336,7 +3336,7 @@ async function appelerIAJSON(
 
 
 
-                `🤖 IA ${tentative}/${MAX_TENTATIVES}`
+                `ðŸ¤– IA ${tentative}/${MAX_TENTATIVES}`
 
 
 
@@ -3464,7 +3464,7 @@ async function appelerIAJSON(
 
 
 
-                "✅ Réponse IA valide"
+                "âœ… RÃ©ponse IA valide"
 
 
 
@@ -3561,7 +3561,7 @@ async function appelerIAJSON(
 
 
        console.error(
-    `❌ IA ${tentative}:`,
+    `âŒ IA ${tentative}:`,
     error
 );
 
@@ -3771,7 +3771,7 @@ async function appelerIAJSON(
 
 
 
-        "L'IA n'a pas réussi à répondre."
+        "L'IA n'a pas rÃ©ussi Ã  rÃ©pondre."
 
 
 
@@ -4787,7 +4787,7 @@ app.post(
 
 
 
-Analyse ces photos du même vêtement ou article d'occasion.
+Analyse ces photos du mÃªme vÃªtement ou article d'occasion.
 
 
 
@@ -4803,7 +4803,7 @@ Analyse ces photos du même vêtement ou article d'occasion.
 
 
 
-Retourne UNIQUEMENT un objet JSON valide avec exactement ces clés :
+Retourne UNIQUEMENT un objet JSON valide avec exactement ces clÃ©s :
 
 
 
@@ -4907,7 +4907,7 @@ Retourne UNIQUEMENT un objet JSON valide avec exactement ces clés :
 
 
 
-Règles :
+RÃ¨gles :
 
 
 
@@ -4923,7 +4923,7 @@ Règles :
 
 
 
-\- n'invente jamais marque, taille, matière, modèle ou défaut ;
+\- n'invente jamais marque, taille, matiÃ¨re, modÃ¨le ou dÃ©faut ;
 
 
 
@@ -4931,7 +4931,7 @@ Règles :
 
 
 
-\- ne confirme jamais l'authenticité ;
+\- ne confirme jamais l'authenticitÃ© ;
 
 
 
@@ -4947,7 +4947,7 @@ Règles :
 
 
 
-\- details = caractéristiques visibles, texte court ;
+\- details = caractÃ©ristiques visibles, texte court ;
 
 
 
@@ -4955,7 +4955,7 @@ Règles :
 
 
 
-\- defauts = uniquement les défauts clairement visibles.
+\- defauts = uniquement les dÃ©fauts clairement visibles.
 
 
 
@@ -5003,7 +5003,7 @@ etat = uniquement :
 
 
 
-Neuf avec étiquette, Neuf sans étiquette, Très bon état, Bon état, État satisfaisant, ou "".
+Neuf avec Ã©tiquette, Neuf sans Ã©tiquette, TrÃ¨s bon Ã©tat, Bon Ã©tat, Ã‰tat satisfaisant, ou "".
 
 
 
@@ -5499,7 +5499,7 @@ Aucun Markdown. Aucune explication.
 
 
 
-                    "L'IA n'a pas réussi à identifier l'article."
+                    "L'IA n'a pas rÃ©ussi Ã  identifier l'article."
 
 
 
@@ -5547,7 +5547,7 @@ Aucun Markdown. Aucune explication.
 
 
 
-                `📸 Analyse terminée en ${((Date.now() - debut) / 1000).toFixed(1)}s`
+                `ðŸ“¸ Analyse terminÃ©e en ${((Date.now() - debut) / 1000).toFixed(1)}s`
 
 
 
@@ -5643,7 +5643,7 @@ Aucun Markdown. Aucune explication.
 
 
 
-                "❌ ANALYSE :",
+                "âŒ ANALYSE :",
 
 
 
@@ -5715,7 +5715,7 @@ Aucun Markdown. Aucune explication.
 
 
 
-                        "L'analyse IA a échoué. Réessaie dans quelques secondes."
+                        "L'analyse IA a Ã©chouÃ©. RÃ©essaie dans quelques secondes."
 
 
 
@@ -5915,7 +5915,7 @@ function obtenirStyle(style) {
 
 
 
-                "Annonce attractive et dynamique, sans exagération ni fausse urgence."
+                "Annonce attractive et dynamique, sans exagÃ©ration ni fausse urgence."
 
 
 
@@ -5971,7 +5971,7 @@ function obtenirStyle(style) {
 
 
 
-                "Annonce élégante, propre et soignée, sans inventer d'informations."
+                "Annonce Ã©lÃ©gante, propre et soignÃ©e, sans inventer d'informations."
 
 
 
@@ -6027,7 +6027,7 @@ function obtenirStyle(style) {
 
 
 
-                "Ton naturel, simple et crédible, comme un particulier."
+                "Ton naturel, simple et crÃ©dible, comme un particulier."
 
 
 
@@ -6179,7 +6179,7 @@ function obtenirPlateforme(
 
 
 
-            "eBay : titre précis et description claire et structurée."
+            "eBay : titre prÃ©cis et description claire et structurÃ©e."
 
 
 
@@ -6227,7 +6227,7 @@ function obtenirPlateforme(
 
 
 
-        "Vinted : titre recherché mais naturel, description simple entre particuliers."
+        "Vinted : titre recherchÃ© mais naturel, description simple entre particuliers."
 
 
 
@@ -6435,7 +6435,7 @@ function creerClientSupabaseUtilisateur(
 
 
 
-            "Supabase n'est pas configuré."
+            "Supabase n'est pas configurÃ©."
 
 
 
@@ -6843,7 +6843,7 @@ async function verifierUtilisateurEtQuota(
 
 
 
-                "Connecte-toi pour générer une annonce."
+                "Connecte-toi pour gÃ©nÃ©rer une annonce."
 
 
 
@@ -7243,7 +7243,7 @@ async function verifierUtilisateurEtQuota(
 
 
 
-                "Session expirée. Reconnecte-toi."
+                "Session expirÃ©e. Reconnecte-toi."
 
 
 
@@ -7411,7 +7411,7 @@ async function verifierUtilisateurEtQuota(
 
 
 
-            "❌ QUOTA :",
+            "âŒ QUOTA :",
 
 
 
@@ -7467,7 +7467,7 @@ async function verifierUtilisateurEtQuota(
 
 
 
-                "Impossible de vérifier ton quota."
+                "Impossible de vÃ©rifier ton quota."
 
 
 
@@ -7571,7 +7571,7 @@ async function verifierUtilisateurEtQuota(
 
 
 
-                "Tu as utilisé tes 5 générations gratuites ce mois-ci. Passe à Premium pour continuer."
+                "Tu as utilisÃ© tes 5 gÃ©nÃ©rations gratuites ce mois-ci. Passe Ã  Premium pour continuer."
 
 
 
@@ -7939,7 +7939,7 @@ app.post(
 
 
 
-            vérifie le compte Supabase
+            vÃ©rifie le compte Supabase
 
 
 
@@ -7947,7 +7947,7 @@ app.post(
 
 
 
-            et consomme 1 génération.
+            et consomme 1 gÃ©nÃ©ration.
 
 
 
@@ -8731,7 +8731,7 @@ app.post(
 
 
 
-Crée une annonce de seconde main.
+CrÃ©e une annonce de seconde main.
 
 
 
@@ -8811,7 +8811,7 @@ Marque : ${marque || "inconnue"}
 
 
 
-Catégorie : ${categorie || "inconnue"}
+CatÃ©gorie : ${categorie || "inconnue"}
 
 
 
@@ -8835,7 +8835,7 @@ Couleur : ${couleur || "inconnue"}
 
 
 
-État : ${etat || "inconnu"}
+Ã‰tat : ${etat || "inconnu"}
 
 
 
@@ -8843,7 +8843,7 @@ Couleur : ${couleur || "inconnue"}
 
 
 
-Prix envisagé : ${prix ? prix + " €" : "non renseigné"}
+Prix envisagÃ© : ${prix ? prix + " â‚¬" : "non renseignÃ©"}
 
 
 
@@ -8851,7 +8851,7 @@ Prix envisagé : ${prix ? prix + " €" : "non renseigné"}
 
 
 
-Détails : ${details || "aucun"}
+DÃ©tails : ${details || "aucun"}
 
 
 
@@ -8859,7 +8859,7 @@ Détails : ${details || "aucun"}
 
 
 
-Défauts : ${defauts || "aucun renseigné"}
+DÃ©fauts : ${defauts || "aucun renseignÃ©"}
 
 
 
@@ -8963,7 +8963,7 @@ Retourne UNIQUEMENT :
 
 
 
-Règles :
+RÃ¨gles :
 
 
 
@@ -8971,7 +8971,7 @@ Règles :
 
 
 
-\- aucune information inventée ;
+\- aucune information inventÃ©e ;
 
 
 
@@ -8979,7 +8979,7 @@ Règles :
 
 
 
-\- ne jamais inventer matière ou prix neuf ;
+\- ne jamais inventer matiÃ¨re ou prix neuf ;
 
 
 
@@ -8987,7 +8987,7 @@ Règles :
 
 
 
-\- ne jamais garantir l'authenticité ;
+\- ne jamais garantir l'authenticitÃ© ;
 
 
 
@@ -8995,7 +8995,7 @@ Règles :
 
 
 
-\- défauts mentionnés honnêtement ;
+\- dÃ©fauts mentionnÃ©s honnÃªtement ;
 
 
 
@@ -9011,7 +9011,7 @@ Règles :
 
 
 
-\- description naturelle et facile à lire ;
+\- description naturelle et facile Ã  lire ;
 
 
 
@@ -9019,7 +9019,7 @@ Règles :
 
 
 
-\- maximum 8 mots-clés pertinents ;
+\- maximum 8 mots-clÃ©s pertinents ;
 
 
 
@@ -9747,7 +9747,7 @@ Règles :
 
 
 
-                    "Annonce IA incomplète."
+                    "Annonce IA incomplÃ¨te."
 
 
 
@@ -9795,7 +9795,7 @@ Règles :
 
 
 
-                `✨ Annonce générée en ${((Date.now() - debut) / 1000).toFixed(1)}s`
+                `âœ¨ Annonce gÃ©nÃ©rÃ©e en ${((Date.now() - debut) / 1000).toFixed(1)}s`
 
 
 
@@ -10107,7 +10107,7 @@ try {
 
 
 
-                "❌ GENERATION :",
+                "âŒ GENERATION :",
 
 
 
@@ -10219,7 +10219,7 @@ try {
 
 
 
-                            : "La génération a échoué. Réessaie dans quelques secondes.",
+                            : "La gÃ©nÃ©ration a Ã©chouÃ©. RÃ©essaie dans quelques secondes.",
 
 
 
@@ -10795,7 +10795,7 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
-        console.error("❌ STRIPE :", error.message);
+        console.error("âŒ STRIPE :", error.message);
 
 
 
@@ -10819,7 +10819,7 @@ app.post("/create-checkout-session", async (req, res) => {
 
 
 
-            error: "Impossible de démarrer le paiement."
+            error: "Impossible de dÃ©marrer le paiement."
 
 
 
@@ -10899,7 +10899,7 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
-                error: "Connecte-toi pour gérer ton abonnement."
+                error: "Connecte-toi pour gÃ©rer ton abonnement."
 
 
 
@@ -11115,7 +11115,7 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
-                error: "Aucun abonnement Stripe trouvé."
+                error: "Aucun abonnement Stripe trouvÃ©."
 
 
 
@@ -11243,7 +11243,7 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
-        console.error("❌ PORTAIL STRIPE :", error.message);
+        console.error("âŒ PORTAIL STRIPE :", error.message);
 
 
 
@@ -11339,7 +11339,7 @@ app.post("/create-customer-portal", async (req, res) => {
 
 
 
-   ANALYTICS — VISITES
+   ANALYTICS â€” VISITES
 
 
 
@@ -11503,7 +11503,7 @@ app.post("/track-visit", async (req, res) => {
 
 
 
-        console.error("❌ ANALYTICS VISITE :", error.message);
+        console.error("âŒ ANALYTICS VISITE :", error.message);
 
 
 
@@ -11751,7 +11751,7 @@ app.get(
 
 
 
-                        "Supabase n'est pas configuré."
+                        "Supabase n'est pas configurÃ©."
 
 
 
@@ -12271,7 +12271,7 @@ app.listen(
 
 
 
-            `🚀 VintedBoost V9 fonctionne sur le port ${PORT}`
+            `ðŸš€ VintedBoost V9 fonctionne sur le port ${PORT}`
 
 
 
@@ -12303,7 +12303,7 @@ app.listen(
 
 
 
-            `🤖 Modèle : ${MODELE}`
+            `ðŸ¤– ModÃ¨le : ${MODELE}`
 
 
 
