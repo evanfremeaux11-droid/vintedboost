@@ -3560,31 +3560,10 @@ async function appelerIAJSON(
 
 
 
-            console.error(
-
-
-
-
-
-
-
-                `❌ IA ${tentative}:`,
-
-
-
-
-
-
-
-                error.message
-
-
-
-
-
-
-
-            );
+       console.error(
+    `❌ IA ${tentative}:`,
+    error
+);
 
 
 
