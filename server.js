@@ -1,4 +1,4 @@
-﻿const express = require("express");
+const express = require("express");
 
 
 
@@ -9011,7 +9011,11 @@ RÃ¨gles :
 
 
 
-\- description naturelle et facile Ã  lire ;
+\- description naturelle, fluide et agréable à lire ;
+\- rédiger la description en plusieurs lignes courtes, pas comme une succession d'informations séparées par des virgules ;
+\- commencer par 1 à 2 phrases présentant naturellement l'article ;
+\- afficher ensuite les informations importantes comme la taille et l'état sur des lignes séparées ;
+\- ne jamais inventer une caractéristique qui n'est pas visible ou certaine ;
 
 
 
