@@ -9011,11 +9011,14 @@ RÃ¨gles :
 
 
 
-\- description naturelle, fluide et agréable à lire ;
-\- rédiger la description en plusieurs lignes courtes, pas comme une succession d'informations séparées par des virgules ;
-\- commencer par 1 à 2 phrases présentant naturellement l'article ;
-\- afficher ensuite les informations importantes comme la taille et l'état sur des lignes séparées ;
-\- ne jamais inventer une caractéristique qui n'est pas visible ou certaine ;
+\- rédiger obligatoirement toute la description en français ;
+\- description naturelle, fluide et agréable à lire, comme une vraie annonce Vinted écrite par un particulier ;
+\- commencer par 1 à 2 phrases courtes présentant l'article ;
+\- faire ensuite de vrais retours à la ligne ;
+\- présenter la taille, la couleur et l'état chacun sur une ligne séparée ;
+\- ne pas écrire les libellés anglais Size, Color, Condition ou Features ;
+\- éviter les longues successions d'informations séparées uniquement par des virgules ;
+\- ne jamais inventer une caractéristique, un état ou un défaut qui n'est pas visible ou certain ;
 
 
 
