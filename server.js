@@ -918,7 +918,7 @@ const MAX_TENTATIVES = 2;
 
 
 
-const MODELE = "openrouter/free";
+const MODELE = "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free";
 
 
 
@@ -8971,44 +8971,91 @@ RÃ¨gles :
 
 
 
-\- analyser attentivement toutes les photos avant de rédiger l'annonce ;
-\- utiliser uniquement les informations visibles, fournies par l'utilisateur ou suffisamment certaines ;
-\- ne jamais inventer une information pour rendre l'annonce plus attractive ;
-\- si une information est incertaine, ne pas la présenter comme un fait ;
-\- ne jamais garantir l'authenticité d'une marque à partir des photos ;
-\- ne jamais inventer matière, modèle exact, collection, année, prix neuf ou provenance ;
-\- ne jamais utiliser vintage, rare, collector, édition limitée ou authentique sans preuve suffisante ;
-\- détecter et mentionner les défauts réellement visibles sans en inventer ;
+\- aucune information inventÃ©e ;
 
-\- TITRE : obligatoirement en français, naturel, précis et concis ;
-\- TITRE : utiliser si disponibles le type d'article, la marque, la couleur, la caractéristique principale et la taille ;
-\- TITRE : ne pas ajouter de mots promotionnels ou d'informations incertaines ;
 
-\- DESCRIPTION : obligatoirement en français ;
-\- DESCRIPTION : écrire comme une vraie annonce Vinted claire et soignée, pas comme une réponse d'assistant IA ;
-\- DESCRIPTION : commencer par 1 à 2 phrases naturelles présentant l'article ;
-\- DESCRIPTION : utiliser de vrais retours à la ligne ;
-\- DESCRIPTION : indiquer la taille, la couleur et l'état sur des lignes séparées lorsqu'ils sont connus ;
-\- DESCRIPTION : terminer par les caractéristiques utiles et les éventuels défauts réellement observés ;
-\- DESCRIPTION : ne jamais utiliser Size, Color, Condition ou Features ;
-\- DESCRIPTION : éviter les longues listes séparées par des virgules ;
-\- DESCRIPTION : ne pas inventer d'arguments commerciaux ;
 
-\- MOTS-CLES : maximum 8 mots-clés ;
-\- MOTS-CLES : utiliser uniquement des termes directement pertinents et suffisamment certains ;
-\- MOTS-CLES : privilégier type d'article, marque, couleur, taille, coupe et caractéristiques visibles ;
-\- MOTS-CLES : ne jamais ajouter vintage, rare, collector, luxe ou tendance uniquement pour attirer des vues ;
-\- MOTS-CLES : aucun doublon ;
 
-\- PRIX : fournir une estimation indicative réaliste et prudente ;
-\- PRIX : tenir compte des informations disponibles, notamment marque, type, état, caractéristiques et défauts ;
-\- PRIX : ne jamais inventer un prix neuf pour justifier l'estimation ;
+
+
+
+\- ne jamais inventer matiÃ¨re ou prix neuf ;
+
+
+
+
+
+
+
+\- ne jamais garantir l'authenticitÃ© ;
+
+
+
+
+
+
+
+\- dÃ©fauts mentionnÃ©s honnÃªtement ;
+
+
+
+
+
+
+
+\- titre clair avec les informations utiles ;
+
+
+
+
+
+
+
+\- description naturelle, fluide et agréable à lire ;
+\- rédiger la description en plusieurs lignes courtes, pas comme une succession d'informations séparées par des virgules ;
+\- commencer par 1 à 2 phrases présentant naturellement l'article ;
+\- afficher ensuite les informations importantes comme la taille et l'état sur des lignes séparées ;
+\- ne jamais inventer une caractéristique qui n'est pas visible ou certaine ;
+
+
+
+
+
+
+
+\- maximum 8 mots-clÃ©s pertinents ;
+
+
+
+
+
+
+
+\- pas de fausse urgence ;
+
+
+
+
+
+
+
+\- prix = estimation indicative uniquement ;
+
+
+
+
+
+
+
 \- prixConseille, prixMin et prixMax = nombres entiers sous forme de texte ;
-\- prixMin <= prixConseille <= prixMax ;
 
-\- COHERENCE : vérifier avant de répondre que titre, description, mots-clés et prix ne se contredisent pas ;
-\- COHERENCE : supprimer toute information insuffisamment certaine avant la réponse finale ;
-\- retourner uniquement le JSON demandé, sans texte supplémentaire.
+
+
+
+
+
+
+\- prixMin <= prixConseille <= prixMax ;
 
 
 
