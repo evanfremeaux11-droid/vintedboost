@@ -814,6 +814,15 @@ app.use(
 
 
 
+
+app.get("/generateur", (req, res) => {
+    res.sendFile(__dirname + "/index.html");
+});
+
+app.get("/", (req, res) => {
+    res.sendFile(__dirname + "/landing-v2.html");
+});
+
 app.use(express.static(__dirname));
 
 
@@ -8963,115 +8972,31 @@ Retourne UNIQUEMENT :
 
 
 
-RÃ¨gles :
-
-
-
-
-
-
-
-\- aucune information inventÃ©e ;
-
-
-
-
-
-
-
-\- ne jamais inventer matiÃ¨re ou prix neuf ;
-
-
-
-
-
-
-
-\- ne jamais garantir l'authenticitÃ© ;
-
-
-
-
-
-
-
-\- dÃ©fauts mentionnÃ©s honnÃªtement ;
-
-
-
-
-
-
-
-\- titre clair avec les informations utiles ;
-
-
-
-
-
-
-
-\- description naturelle, fluide et agréable à lire ;
-\- rédiger la description en plusieurs lignes courtes, pas comme une succession d'informations séparées par des virgules ;
-\- commencer par 1 à 2 phrases présentant naturellement l'article ;
-\- afficher ensuite les informations importantes comme la taille et l'état sur des lignes séparées ;
-\- ne jamais inventer une caractéristique qui n'est pas visible ou certaine ;
-
-
-
-
-
-
-
-\- maximum 8 mots-clÃ©s pertinents ;
-
-
-
-
-
-
-
-\- pas de fausse urgence ;
-
-
-
-
-
-
-
-\- prix = estimation indicative uniquement ;
-
-
-
-
-
-
-
-\- prixConseille, prixMin et prixMax = nombres entiers sous forme de texte ;
-
-
-
-
-
-
-
-\- prixMin <= prixConseille <= prixMax ;
-
-
-
-
-
-
-
-\- aucun Markdown ;
-
-
-
-
-
-
-
-\- aucun texte hors JSON.
+Règles :
+
+- aucune information inventée ;
+- ne jamais inventer matière, prix neuf, provenance ou authenticité ;
+- ne jamais garantir l'authenticité ;
+- utiliser uniquement les informations fournies ou clairement identifiées ;
+- écrire uniquement en français naturel ;
+- utiliser bleu marine et jamais navy blue lorsque la couleur correspond ;
+- ne jamais ajouter vintage, rare, collector, occasion ou édition limitée sans information explicite ;
+- ne jamais écrire aucun défaut, sans défaut ou état parfait si cela n'est pas explicitement renseigné ;
+- ne jamais inventer de délai d'envoi, mesures ou informations de livraison ;
+- éviter les phrases commerciales génériques comme parfait pour un look urbain ;
+- titre court, naturel et précis ;
+- commencer la description par une courte présentation de l'article ;
+- afficher ensuite Taille, Couleur et État sur des lignes séparées lorsque connus ;
+- terminer par les caractéristiques réellement connues ;
+- éviter les formulations col à col, mi-fermeture et patch compass ;
+- écrire patch Stone Island lorsqu'un patch Stone Island est réellement identifié ;
+- maximum 8 mots-clés pertinents et uniquement fondés sur les informations connues ;
+- pas de fausse urgence ni de texte promotionnel ;
+- prix = estimation indicative uniquement ;
+- prixConseille, prixMin et prixMax = nombres entiers sous forme de texte ;
+- prixMin <= prixConseille <= prixMax ;
+- aucun Markdown ;
+- aucun texte hors JSON.
 
 
 
