@@ -1876,97 +1876,51 @@ footer{
 
 <div id="resultat"></div>
 
-<!-- TABLEAU DE BORD VINTEDBOOST -->
-<style id="vb-dashboard-progress-style">
-.vb-progress { width:100%; height:10px; background:#e5e7eb; border-radius:20px; overflow:hidden; margin:12px 0; }
-.vb-progress-fill { height:100%; width:0%; border-radius:20px; transition:width .6s ease; }
-.vb-score-fill { background:linear-gradient(90deg,#22c55e,#16a34a); }
-.vb-photos-fill { background:linear-gradient(90deg,#60a5fa,#2563eb); }
+<!-- TABLEAU DE BORD VINTEDBOOST V3 -->
+<style id="vb-dashboard-v3-style">
+#vintedDashboard{margin:30px 0 12px;color:#18263b;font-family:inherit}#vintedDashboard *{box-sizing:border-box}
+#vintedDashboard .vb3-shell{padding:clamp(17px,3vw,30px);border-radius:26px;background:linear-gradient(145deg,#fff 45%,#f7fbff);border:1px solid #e0e9f2;box-shadow:0 18px 55px rgba(22,48,79,.08)}
+#vintedDashboard .vb3-head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+#vintedDashboard .vb3-kicker{margin:0 0 7px;font-size:11px;font-weight:850;letter-spacing:.12em;color:#5383a5}
+#vintedDashboard h2{font-size:clamp(22px,3vw,29px);color:#14253c;margin:0;line-height:1.2}
+#vintedDashboard .vb3-status{border:1px solid #bfe8d1;background:#eaf9f0;color:#157b4b;border-radius:30px;padding:9px 14px;font-size:12px;font-weight:800}
+#vintedDashboard .vb3-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+#vintedDashboard .vb3-metric{border:1px solid #e5edf5;border-radius:20px;background:white;padding:20px;min-width:0}
+#vintedDashboard .vb3-label{display:flex;align-items:center;gap:9px;color:#52657c;font-size:13px;font-weight:750}
+#vintedDashboard .vb3-icon{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:10px;background:#eaf5ff;color:#2263b3;font-size:17px}
+#vintedDashboard .vb3-number{font-size:clamp(32px,5vw,44px);font-weight:850;letter-spacing:-.05em;color:#16885d;margin:12px 0 14px;line-height:1}
+#vintedDashboard .vb3-blue{color:#2563c6}#vintedDashboard .vb3-denom{font-size:17px;color:#7b8a9b;letter-spacing:0}
+#vintedDashboard .vb3-track{height:10px;background:#e8eef5;border-radius:20px;overflow:hidden}
+#vintedDashboard .vb3-fill{height:100%;width:0%;border-radius:20px;transition:width .5s ease}
+#vintedDashboard #dashboardScoreBar{background:linear-gradient(90deg,#47dba0,#15956b)}
+#vintedDashboard #dashboardPhotosBar{background:linear-gradient(90deg,#82b9ff,#2c68df)}
+#vintedDashboard .vb3-hint{color:#64758a;font-size:13px;line-height:1.5;margin:11px 0 0}
+#vintedDashboard .vb3-panel{border:1px solid #e5edf5;background:#fff;border-radius:20px;margin-top:16px;padding:20px}
+#vintedDashboard .vb3-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+#vintedDashboard h3{margin:0;color:#17283d;font-size:17px}#vintedDashboard .vb3-count{font-size:12px;color:#617389;font-weight:750}
+#vintedDashboard .vb3-recos{list-style:none;padding:0;margin:0}#vintedDashboard .vb3-recos li{display:flex;align-items:center;gap:12px;padding:15px 0;border-bottom:1px solid #edf1f6}
+#vintedDashboard .vb3-recos li:last-child{border:0;padding-bottom:0}#vintedDashboard .vb3-priority{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;background:#edf5ff;color:#2461b4;font-weight:850}
+#vintedDashboard .vb3-reco-body{min-width:0;flex:1}#vintedDashboard .vb3-reco-title{font-size:14px;font-weight:800;color:#1b2d44;margin:0 0 4px}#vintedDashboard .vb3-reco-desc{font-size:12px;color:#65758b;line-height:1.5;margin:0}
+#vintedDashboard .vb3-action{font:inherit;font-size:12px;font-weight:800;border:1px solid #c6d9f3;background:#f3f8ff;color:#1e5ca5;border-radius:10px;padding:9px 12px;cursor:pointer;white-space:nowrap}
+#vintedDashboard .vb3-action:hover{background:#e4f0ff}#vintedDashboard .vb3-action:focus-visible{outline:3px solid #60a5fa;outline-offset:2px}
+#vintedDashboard .vb3-audit{display:grid;gap:9px;margin-top:13px}#vintedDashboard .vb3-audit-row{display:flex;align-items:start;gap:9px;font-size:13px;color:#51657a}
+#vintedDashboard .vb3-dot{font-weight:850;color:#16885d}#vintedDashboard .vb3-dot-off{color:#8998aa}
+#vintedDashboard .vb3-foot{font-size:12px;color:#6e8093;line-height:1.6;margin:15px 3px 0}
+@media(max-width:640px){#vintedDashboard .vb3-metrics{grid-template-columns:1fr}#vintedDashboard .vb3-recos li{align-items:flex-start;flex-wrap:wrap}#vintedDashboard .vb3-action{margin-left:46px}}
+@media(prefers-reduced-motion:reduce){#vintedDashboard .vb3-fill{transition:none}}
 </style>
-<section id="vintedDashboard" style="display:none; margin-top:25px;">
-<style>
-.vb-dashboard {
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 18px;
-    padding: 25px;
-    box-shadow: 0 8px 25px rgba(0,0,0,.06);
-}
-.vb-dashboard h2 {
-    margin: 0 0 20px;
-    color: #111827;
-}
-.vb-dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(2,minmax(0,1fr));
-    gap: 15px;
-}
-.vb-dashboard-card {
-    background: #f8fafc;
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
-    padding: 18px;
-    min-width: 0;
-}
-.vb-dashboard-card h3 {
-    margin: 0 0 12px;
-    font-size: 16px;
-}
-.vb-dashboard-value {
-    font-size: 28px;
-    font-weight: 800;
-    color: #2563eb;
-}
-.vb-dashboard-card p {
-    line-height: 1.6;
-}
-@media(max-width:650px) {
-    .vb-dashboard-grid {
-        grid-template-columns: 1fr;
-    }
-    .vb-dashboard {
-        padding: 16px;
-    }
-}
-</style>
-
-<div class="vb-dashboard">
-    <h2>Analyse de ton annonce</h2>
-
-    <div class="vb-dashboard-grid">
-        <div class="vb-dashboard-card">
-            <h3>Score de complétude</h3>
-            <div class="vb-dashboard-value" id="dashboardScore">-- / 100</div>
-<div class="vb-progress" role="progressbar" aria-label="Completude de l'annonce" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="dashboardScoreProgress">
-    <div class="vb-progress-fill vb-score-fill" id="dashboardScoreBar"></div>
-</div>
-<p id="dashboardScoreMessage">Score de complétude.</p>
-            <p>Évaluation des informations renseignées.</p>
-        </div>
-
-        <div class="vb-dashboard-card">
-            <h3>Analyse des photos</h3>
-            <div class="vb-dashboard-value" id="dashboardPhotos">-- / 4</div>
-<div class="vb-progress" role="progressbar" aria-label="Nombre de photos sur quatre" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0" id="dashboardPhotosProgress">
-    <div class="vb-progress-fill vb-photos-fill" id="dashboardPhotosBar"></div>
-</div>
-            <p id="dashboardPhotoConseil">Conseils photo à venir.</p>
-        </div>
-
-        <div class="vb-dashboard-card">
-            <h3>Points à améliorer</h3>
-            <p id="dashboardConseils">Analyse en attente.</p>
-        </div>
-
-        <div class="vb-dashboard-card">
-            <h3>Délai de vente estimé</h3>
-            <div class="vb-dashboard-value">Indisponible</div>
-            <p>Données de ventes insuffisantes pour fournir une estimation fiable.</p>
-        </div>
-    </div>
-</div>
+<section id="vintedDashboard" style="display:none" aria-label="Diagnostic de ton annonce">
+ <div class="vb3-shell">
+  <div class="vb3-head"><div><p class="vb3-kicker">VINTEDBOOST ANALYTICS</p><h2>Diagnostic de ton annonce</h2></div><span class="vb3-status" id="dashboardStatus">Diagnostic disponible</span></div>
+  <div class="vb3-metrics">
+   <div class="vb3-metric"><div class="vb3-label"><span class="vb3-icon" aria-hidden="true">◫</span> Complétude de l'annonce</div><div class="vb3-number"><span id="dashboardScore">--</span><span class="vb3-denom"> / 100</span></div><div class="vb3-track" id="dashboardScoreProgress" role="progressbar" aria-label="Complétude de l'annonce" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="vb3-fill" id="dashboardScoreBar"></div></div><p class="vb3-hint" id="dashboardScoreMessage">Score calculé à la génération.</p></div>
+   <div class="vb3-metric"><div class="vb3-label"><span class="vb3-icon" aria-hidden="true">▣</span> Photos ajoutées</div><div class="vb3-number vb3-blue"><span id="dashboardPhotos">--</span><span class="vb3-denom"> / 4</span></div><div class="vb3-track" id="dashboardPhotosProgress" role="progressbar" aria-label="Nombre de photos sur quatre" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0"><div class="vb3-fill" id="dashboardPhotosBar"></div></div><p class="vb3-hint" id="dashboardPhotoConseil">Nombre de photos, sans analyse de netteté.</p></div>
+  </div>
+  <div class="vb3-panel"><div class="vb3-panel-head"><h3>✦ Ton plan d'optimisation</h3><span class="vb3-count" id="dashboardActionCount"></span></div><ul class="vb3-recos" id="dashboardRecommendations" aria-live="polite"></ul></div>
+  <div class="vb3-panel"><h3>✧ Transparence de l'analyse</h3><div class="vb3-audit"><div class="vb3-audit-row"><span class="vb3-dot">✓</span> Complétude des champs renseignés : vérifiée</div><div class="vb3-audit-row"><span class="vb3-dot">✓</span> Nombre de photos : compté</div><div class="vb3-audit-row"><span class="vb3-dot vb3-dot-off">○</span> Netteté et luminosité des photos : non analysées ici</div><div class="vb3-audit-row"><span class="vb3-dot vb3-dot-off">○</span> Délai de vente : indisponible sans ventes comparables fiables</div></div></div>
+  <p class="vb3-foot">Le score est celui de la dernière génération et mesure la complétude, pas les chances de vente. Les recommandations peuvent être actualisées après modification des champs ; régénère l'annonce pour recalculer son score.</p>
+ </div>
 </section>
-
 
 </div>
 
@@ -4418,86 +4372,59 @@ function afficherAnnonce(data){
 
 
 function afficherTableauDeBord() {
-
     const dashboard = document.getElementById("vintedDashboard");
     if (!dashboard) return;
-
-    const scoreElement = document.getElementById("scoreText");
-    const scoreDashboard = document.getElementById("dashboardScore");
-
-    if (scoreElement && scoreDashboard) {
-        const score = parseInt(scoreElement.textContent, 10);
-        scoreDashboard.textContent =
-            Number.isFinite(score) ? score + " / 100" : "Indisponible";
-    }
-
-    const nombrePhotos = photosBase64.length;
-
-    document.getElementById("dashboardPhotos").textContent =
-        nombrePhotos + " / 4";
-
-    let conseilPhoto = "";
-
-    if (nombrePhotos === 0) {
-        conseilPhoto = "Ajoute des photos de ton article.";
-    } else if (nombrePhotos === 1) {
-        conseilPhoto = "Ajoute une photo de dos et des détails.";
-    } else if (nombrePhotos <= 3) {
-        conseilPhoto = "Pense à montrer les étiquettes et les éventuels défauts.";
-    } else {
-        conseilPhoto = "Vérifie la netteté, la luminosité et la variété des angles.";
-    }
-
-    document.getElementById("dashboardPhotoConseil").textContent =
-        conseilPhoto;
-
+    const byId = (id) => document.getElementById(id);
+    const scoreSource = byId("scoreText");
+    const raw = scoreSource ? parseInt(scoreSource.textContent, 10) : NaN;
+    const scoreValid = Number.isFinite(raw);
+    const score = scoreValid ? Math.max(0, Math.min(100, raw)) : 0;
+    const nombrePhotos = Array.isArray(photosBase64) ? photosBase64.length : 0;
+    const photos = Math.max(0, Math.min(4, nombrePhotos));
+    byId("dashboardScore").textContent = scoreValid ? String(score) : "--";
+    byId("dashboardPhotos").textContent = String(nombrePhotos);
+    byId("dashboardScoreBar").style.width = score + "%";
+    byId("dashboardPhotosBar").style.width = (photos * 25) + "%";
+    byId("dashboardScoreProgress").setAttribute("aria-valuenow", String(score));
+    byId("dashboardPhotosProgress").setAttribute("aria-valuenow", String(photos));
+    byId("dashboardScoreMessage").textContent = !scoreValid ? "Score indisponible." : score >= 85 ? "Bonne complétude lors de la génération." : score >= 60 ? "Quelques informations à compléter." : "Plusieurs informations à compléter.";
+    byId("dashboardPhotoConseil").textContent = nombrePhotos === 0 ? "Ajoute des photos pour présenter l'article." : nombrePhotos === 1 ? "Pense à photographier aussi le dos et les détails." : nombrePhotos < 4 ? "Une vue de l'étiquette ou d'un détail peut être utile." : "Vérifie toi-même la netteté et la lumière des photos.";
+    byId("dashboardStatus").textContent = !scoreValid ? "Score indisponible" : score >= 85 ? "Bonne base" : score >= 60 ? "À améliorer" : "À compléter";
     const champs = [
-        ["article", "le type d'article"],
-        ["marque", "la marque"],
-        ["categorie", "la catégorie"],
-        ["taille", "la taille"],
-        ["couleur", "la couleur"],
-        ["etat", "l'état"],
-        ["details", "les détails de l'article"]
+        ["article", "Préciser le type d'article", "Aide les acheteurs à identifier l'article."],
+        ["marque", "Renseigner la marque", "Si elle est connue, indique la marque réelle."],
+        ["categorie", "Choisir la catégorie", "Sélectionne la catégorie qui correspond à l'article."],
+        ["taille", "Préciser la taille", "Indique la taille lorsqu'elle s'applique à l'article."],
+        ["couleur", "Indiquer la couleur", "Précise la couleur réelle de l'article."],
+        ["etat", "Indiquer l'état", "Décris l'état réel, y compris les défauts connus."],
+        ["details", "Ajouter des détails", "Ajoute des caractéristiques utiles sans rien inventer."]
     ];
-
-    const manquants = champs
-        .filter(([id]) => !value(id))
-        .map(([, label]) => label);
-
-    document.getElementById("dashboardConseils").textContent =
-        manquants.length
-            ? "À compléter si applicable : " + manquants.join(", ") + "."
-            : "Les principales informations sont renseignées. Vérifie leur exactitude avant publication.";
-
-    const scoreBar = document.getElementById("dashboardScoreBar");
-    const photosBar = document.getElementById("dashboardPhotosBar");
-    const scoreMessage = document.getElementById("dashboardScoreMessage");
-    const scoreProgress = document.getElementById("dashboardScoreProgress");
-    const photosProgress = document.getElementById("dashboardPhotosProgress");
-    const scoreValeur = scoreElement ? parseInt(scoreElement.textContent, 10) : NaN;
-
-    if (scoreBar) {
-        scoreBar.style.width = Number.isFinite(scoreValeur)
-            ? Math.max(0, Math.min(100, scoreValeur)) + "%" : "0%";
-    }
-    if (scoreProgress) {
-        scoreProgress.setAttribute("aria-valuenow", Number.isFinite(scoreValeur)
-            ? String(Math.max(0, Math.min(100, scoreValeur))) : "0");
-    }
-    if (photosBar) {
-        photosBar.style.width = Math.max(0, Math.min(100, nombrePhotos * 25)) + "%";
-    }
-    if (photosProgress) {
-        photosProgress.setAttribute("aria-valuenow", String(Math.max(0, Math.min(4, nombrePhotos))));
-    }
-    if (scoreMessage) {
-        scoreMessage.textContent = !Number.isFinite(scoreValeur)
-            ? "Score indisponible."
-            : scoreValeur >= 85 ? "Informations bien complétées."
-            : scoreValeur >= 60 ? "Bonne base, quelques informations Ã  ajouter."
-            : "Complète davantage les informations de l'article.";
-    }
+    const recommandations = champs.filter(([id]) => !value(id)).map(([id, titre, description]) => ({id, titre, description}));
+    if (nombrePhotos < 4) recommandations.push({id: null, titre: nombrePhotos === 0 ? "Ajouter des photos" : "Compléter les photos", description: "Ajoute une vue utile si tu en disposes ; montre les défauts éventuels."});
+    const liste = byId("dashboardRecommendations");
+    liste.replaceChildren();
+    const visibles = recommandations.slice(0, 4);
+    if (!visibles.length) visibles.push({id:null, titre:"Les informations principales sont présentes", description:"Relis l'annonce et vérifie tes photos avant publication."});
+    byId("dashboardActionCount").textContent = recommandations.length ? recommandations.length + " action" + (recommandations.length > 1 ? "s" : "") : "Aucune action essentielle";
+    visibles.forEach((r, i) => {
+        const li = document.createElement("li");
+        const number = document.createElement("span"); number.className = "vb3-priority"; number.textContent = recommandations.length ? String(i + 1) : "✓";
+        const body = document.createElement("div"); body.className = "vb3-reco-body";
+        const title = document.createElement("p"); title.className = "vb3-reco-title"; title.textContent = r.titre;
+        const desc = document.createElement("p"); desc.className = "vb3-reco-desc"; desc.textContent = r.description;
+        body.append(title, desc); li.append(number, body);
+        if (r.id && byId(r.id)) {
+            const btn = document.createElement("button"); btn.type = "button"; btn.className = "vb3-action"; btn.textContent = "Corriger";
+            btn.setAttribute("aria-label", "Corriger : " + r.titre);
+            btn.addEventListener("click", () => {
+                const field = byId(r.id); if (!field) return;
+                field.scrollIntoView({behavior:"smooth",block:"center"});
+                try { field.focus({preventScroll:true}); } catch (_) { field.focus(); }
+            });
+            li.append(btn);
+        }
+        liste.appendChild(li);
+    });
     dashboard.style.display = "block";
 }
 
