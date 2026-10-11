@@ -1876,6 +1876,97 @@ footer{
 
 <div id="resultat"></div>
 
+<!-- TABLEAU DE BORD VINTEDBOOST -->
+<style id="vb-dashboard-progress-style">
+.vb-progress { width:100%; height:10px; background:#e5e7eb; border-radius:20px; overflow:hidden; margin:12px 0; }
+.vb-progress-fill { height:100%; width:0%; border-radius:20px; transition:width .6s ease; }
+.vb-score-fill { background:linear-gradient(90deg,#22c55e,#16a34a); }
+.vb-photos-fill { background:linear-gradient(90deg,#60a5fa,#2563eb); }
+</style>
+<section id="vintedDashboard" style="display:none; margin-top:25px;">
+<style>
+.vb-dashboard {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.06);
+}
+.vb-dashboard h2 {
+    margin: 0 0 20px;
+    color: #111827;
+}
+.vb-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 15px;
+}
+.vb-dashboard-card {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 18px;
+    min-width: 0;
+}
+.vb-dashboard-card h3 {
+    margin: 0 0 12px;
+    font-size: 16px;
+}
+.vb-dashboard-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: #2563eb;
+}
+.vb-dashboard-card p {
+    line-height: 1.6;
+}
+@media(max-width:650px) {
+    .vb-dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .vb-dashboard {
+        padding: 16px;
+    }
+}
+</style>
+
+<div class="vb-dashboard">
+    <h2>Analyse de ton annonce</h2>
+
+    <div class="vb-dashboard-grid">
+        <div class="vb-dashboard-card">
+            <h3>Score de complétude</h3>
+            <div class="vb-dashboard-value" id="dashboardScore">-- / 100</div>
+<div class="vb-progress" role="progressbar" aria-label="Completude de l'annonce" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="dashboardScoreProgress">
+    <div class="vb-progress-fill vb-score-fill" id="dashboardScoreBar"></div>
+</div>
+<p id="dashboardScoreMessage">Score de complétude.</p>
+            <p>Évaluation des informations renseignées.</p>
+        </div>
+
+        <div class="vb-dashboard-card">
+            <h3>Analyse des photos</h3>
+            <div class="vb-dashboard-value" id="dashboardPhotos">-- / 4</div>
+<div class="vb-progress" role="progressbar" aria-label="Nombre de photos sur quatre" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0" id="dashboardPhotosProgress">
+    <div class="vb-progress-fill vb-photos-fill" id="dashboardPhotosBar"></div>
+</div>
+            <p id="dashboardPhotoConseil">Conseils photo à venir.</p>
+        </div>
+
+        <div class="vb-dashboard-card">
+            <h3>Points à améliorer</h3>
+            <p id="dashboardConseils">Analyse en attente.</p>
+        </div>
+
+        <div class="vb-dashboard-card">
+            <h3>Délai de vente estimé</h3>
+            <div class="vb-dashboard-value">Indisponible</div>
+            <p>Données de ventes insuffisantes pour fournir une estimation fiable.</p>
+        </div>
+    </div>
+</div>
+</section>
+
 
 </div>
 
@@ -4325,6 +4416,92 @@ function afficherAnnonce(data){
     );
 
 
+
+function afficherTableauDeBord() {
+
+    const dashboard = document.getElementById("vintedDashboard");
+    if (!dashboard) return;
+
+    const scoreElement = document.getElementById("scoreText");
+    const scoreDashboard = document.getElementById("dashboardScore");
+
+    if (scoreElement && scoreDashboard) {
+        const score = parseInt(scoreElement.textContent, 10);
+        scoreDashboard.textContent =
+            Number.isFinite(score) ? score + " / 100" : "Indisponible";
+    }
+
+    const nombrePhotos = photosBase64.length;
+
+    document.getElementById("dashboardPhotos").textContent =
+        nombrePhotos + " / 4";
+
+    let conseilPhoto = "";
+
+    if (nombrePhotos === 0) {
+        conseilPhoto = "Ajoute des photos de ton article.";
+    } else if (nombrePhotos === 1) {
+        conseilPhoto = "Ajoute une photo de dos et des détails.";
+    } else if (nombrePhotos <= 3) {
+        conseilPhoto = "Pense à montrer les étiquettes et les éventuels défauts.";
+    } else {
+        conseilPhoto = "Vérifie la netteté, la luminosité et la variété des angles.";
+    }
+
+    document.getElementById("dashboardPhotoConseil").textContent =
+        conseilPhoto;
+
+    const champs = [
+        ["article", "le type d'article"],
+        ["marque", "la marque"],
+        ["categorie", "la catégorie"],
+        ["taille", "la taille"],
+        ["couleur", "la couleur"],
+        ["etat", "l'état"],
+        ["details", "les détails de l'article"]
+    ];
+
+    const manquants = champs
+        .filter(([id]) => !value(id))
+        .map(([, label]) => label);
+
+    document.getElementById("dashboardConseils").textContent =
+        manquants.length
+            ? "À compléter si applicable : " + manquants.join(", ") + "."
+            : "Les principales informations sont renseignées. Vérifie leur exactitude avant publication.";
+
+    const scoreBar = document.getElementById("dashboardScoreBar");
+    const photosBar = document.getElementById("dashboardPhotosBar");
+    const scoreMessage = document.getElementById("dashboardScoreMessage");
+    const scoreProgress = document.getElementById("dashboardScoreProgress");
+    const photosProgress = document.getElementById("dashboardPhotosProgress");
+    const scoreValeur = scoreElement ? parseInt(scoreElement.textContent, 10) : NaN;
+
+    if (scoreBar) {
+        scoreBar.style.width = Number.isFinite(scoreValeur)
+            ? Math.max(0, Math.min(100, scoreValeur)) + "%" : "0%";
+    }
+    if (scoreProgress) {
+        scoreProgress.setAttribute("aria-valuenow", Number.isFinite(scoreValeur)
+            ? String(Math.max(0, Math.min(100, scoreValeur))) : "0");
+    }
+    if (photosBar) {
+        photosBar.style.width = Math.max(0, Math.min(100, nombrePhotos * 25)) + "%";
+    }
+    if (photosProgress) {
+        photosProgress.setAttribute("aria-valuenow", String(Math.max(0, Math.min(4, nombrePhotos))));
+    }
+    if (scoreMessage) {
+        scoreMessage.textContent = !Number.isFinite(scoreValeur)
+            ? "Score indisponible."
+            : scoreValeur >= 85 ? "Informations bien complétées."
+            : scoreValeur >= 60 ? "Bonne base, quelques informations Ã  ajouter."
+            : "Complète davantage les informations de l'article.";
+    }
+    dashboard.style.display = "block";
+}
+
+    afficherTableauDeBord();
     result.scrollIntoView({
         behavior:"smooth",
         block:"start"
