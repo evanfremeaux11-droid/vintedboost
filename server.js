@@ -1,3 +1,5 @@
+const { appelerGemini } = require("./gemini-client");
+const { corrigerDescription } = require("./description-correction");
 const express = require("express");
 
 
@@ -3385,7 +3387,7 @@ async function appelerIAJSON(
 
 
 
-                await appelerOpenRouter(
+                await appelerGemini(
 
 
 
@@ -3716,7 +3718,7 @@ async function appelerIAJSON(
 
 
 
-                await attendre(350);
+                await attendre(2000);
 
 
 
@@ -4796,7 +4798,7 @@ app.post(
 
 
 
-Analyse ces photos du mÃªme vÃªtement ou article d'occasion.
+Analyse ces photos du même vêtement ou article d'occasion.
 
 
 
@@ -4812,7 +4814,7 @@ Analyse ces photos du mÃªme vÃªtement ou article d'occasion.
 
 
 
-Retourne UNIQUEMENT un objet JSON valide avec exactement ces clÃ©s :
+Retourne UNIQUEMENT un objet JSON valide avec exactement ces clés :
 
 
 
@@ -4916,7 +4918,7 @@ Retourne UNIQUEMENT un objet JSON valide avec exactement ces clÃ©s :
 
 
 
-RÃ¨gles :
+Règles :
 
 
 
@@ -4932,7 +4934,7 @@ RÃ¨gles :
 
 
 
-\- n'invente jamais marque, taille, matiÃ¨re, modÃ¨le ou dÃ©faut ;
+\- n'invente jamais marque, taille, matière, modèle ou défaut ;
 
 
 
@@ -4940,7 +4942,7 @@ RÃ¨gles :
 
 
 
-\- ne confirme jamais l'authenticitÃ© ;
+\- ne confirme jamais l'authenticité ;
 
 
 
@@ -4956,7 +4958,7 @@ RÃ¨gles :
 
 
 
-\- details = caractÃ©ristiques visibles, texte court ;
+\- details = caractéristiques visibles, texte court ;
 
 
 
@@ -4964,7 +4966,24 @@ RÃ¨gles :
 
 
 
-\- defauts = uniquement les dÃ©fauts clairement visibles.
+\- defauts = uniquement les défauts clairement visibles.
+\- examine toutes les photos ensemble avant de conclure ;
+\- distingue une étiquette intérieure de marque ou de composition d'une étiquette commerciale de vente attachée à l'article ;
+\- Neuf avec étiquette = uniquement si une étiquette commerciale attachée est clairement visible ET si l'article ne présente aucun signe visible d'utilisation ;
+\- une étiquette de marque cousue à l'intérieur ne prouve jamais que l'article est neuf ;
+\- Neuf sans étiquette = ne jamais conclure à cet état uniquement parce que le vêtement paraît propre, repassé ou sans défaut visible ; sans preuve suffisante de non-utilisation, retourner etat = "" ;
+\- Très bon état = aucun défaut visible significatif, sans garantir que l'article n'a jamais été porté ;
+\- Bon état = signes légers d'utilisation clairement visibles ;
+\- État satisfaisant = usure ou défauts visibles importants ;
+\- si l'état ne peut pas être déterminé de façon fiable, retourne etat = "" ;
+\- ne déduis jamais l'état neuf de la seule présence d'un logo ou d'un patch ;
+\- distingue les couleurs proches comme bleu marine, bleu clair et noir en tenant compte de l'éclairage ;
+\- ne confonds pas les ombres, reflets et plis naturels avec des défauts ;
+\- ne renseigne tailleVisible que si la taille est lisible sur une étiquette ou un marquage ;
+\- n'invente jamais une référence ou un modèle précis à partir de la marque seule ;
+\- décris uniquement les détails réellement visibles : type de col, fermeture, manches, logos et patchs ;
+\- n'affirme jamais qu'un article est authentique ou original ;
+\- en cas de doute sur une information, laisse le champ correspondant vide ;
 
 
 
@@ -5012,7 +5031,7 @@ etat = uniquement :
 
 
 
-Neuf avec Ã©tiquette, Neuf sans Ã©tiquette, TrÃ¨s bon Ã©tat, Bon Ã©tat, Ã‰tat satisfaisant, ou "".
+Neuf avec étiquette, Neuf sans étiquette, Très bon état, Bon état, État satisfaisant, ou "".
 
 
 
@@ -5364,7 +5383,7 @@ Aucun Markdown. Aucune explication.
 
 
 
-                            1800
+                            800
 
 
 
@@ -5868,7 +5887,7 @@ function obtenirStyle(style) {
 
 
 
-                "Annonce courte, directe, naturelle et efficace."
+                "MODE COURT : commencer directement par les informations essentielles avec emojis. Aucune introduction, aucun bonjour, aucune phrase commerciale. Description tres courte, claire et sans repetition. Ne jamais afficher une information inconnue."
 
 
 
@@ -5924,7 +5943,7 @@ function obtenirStyle(style) {
 
 
 
-                "Annonce attractive et dynamique, sans exagÃ©ration ni fausse urgence."
+                "MODE VENDEUR : commencer par une phrase engageante qui valorise un detail distinctif reel du vetement. Ton dynamique, humain et convaincant, comme un vendeur Vinted experimente. Ajouter ensuite les informations essentielles avec emojis. Ne pas repeter les informations deja donnees. Ne jamais inventer d'argument commercial."
 
 
 
@@ -5980,7 +5999,7 @@ function obtenirStyle(style) {
 
 
 
-                "Annonce Ã©lÃ©gante, propre et soignÃ©e, sans inventer d'informations."
+                "MODE PREMIUM : rediger une introduction courte, sobre et professionnelle en utilisant uniquement la marque, le type de vetement et les caracteristiques explicitement confirmees. Ne jamais inventer ou supposer la coupe, la qualite des finitions, le confort, la rarete, l'authenticite ou la valeur du vetement. Ne jamais employer des expressions comme coupe structuree, finitions soignees, design epure ou qualite premium sans preuve explicite. Ne pas repeter dans la ligne des details une caracteristique deja mentionnee dans l'introduction. Ajouter ensuite les informations essentielles avec emojis sur des lignes distinctes. Si aucune caracteristique distinctive n'est confirmee, utiliser une introduction factuelle et simple."
 
 
 
@@ -6036,7 +6055,7 @@ function obtenirStyle(style) {
 
 
 
-                "Ton naturel, simple et crÃ©dible, comme un particulier."
+                "MODE NATUREL : rediger une phrase simple et spontanee comme un particulier qui vend son vetement. Ton amical, naturel et direct, sans bonjour ni formule commerciale. Ajouter ensuite les informations essentielles avec emojis. Eviter les repetitions et ne jamais afficher une information inconnue."
 
 
 
@@ -8740,7 +8759,7 @@ app.post(
 
 
 
-CrÃ©e une annonce de seconde main.
+Crée une annonce de seconde main.
 
 
 
@@ -8820,7 +8839,7 @@ Marque : ${marque || "inconnue"}
 
 
 
-CatÃ©gorie : ${categorie || "inconnue"}
+Catégorie : ${categorie || "inconnue"}
 
 
 
@@ -8844,7 +8863,7 @@ Couleur : ${couleur || "inconnue"}
 
 
 
-Ã‰tat : ${etat || "inconnu"}
+État : ${etat || "inconnu"}
 
 
 
@@ -8852,7 +8871,7 @@ Couleur : ${couleur || "inconnue"}
 
 
 
-Prix envisagÃ© : ${prix ? prix + " â‚¬" : "non renseignÃ©"}
+Prix envisagé : ${prix ? prix + " €" : "non renseigné"}
 
 
 
@@ -8985,16 +9004,52 @@ Règles :
 - ne jamais inventer de délai d'envoi, mesures ou informations de livraison ;
 - éviter les phrases commerciales génériques comme parfait pour un look urbain ;
 - titre court, naturel et précis ;
-- commencer la description par une courte présentation de l'article ;
-- afficher ensuite Taille, Couleur et État sur des lignes séparées lorsque connus ;
-- terminer par les caractéristiques réellement connues ;
+- appliquer uniquement les consignes du style selectionne dans consigneStyle ;
+- differencier clairement les styles par leur longueur, leur ton et leur structure ;
+- respecter exactement les informations fournies, notamment l'etat, la taille et la couleur ;
+- ne jamais transformer tres bon etat en excellent etat ;
+- ne jamais ajouter de formule generique comme ideal pour l'automne ou parfait pour toutes les occasions ;
+- eviter les formulations artificielles et les repetitions ;
+- en mode court, ne pas imposer de phrase d'introduction ;
+- dans les autres modes, commencer par une presentation naturelle adaptee au style ;
+- ne jamais combiner des caracteristiques contradictoires ;
+- ne jamais repeter dans la presentation les informations deja affichees avec les emojis ;
+- REGLE PRIORITAIRE ANTI-REPETITION : chaque caracteristique precise doit apparaitre une seule fois dans toute la description. Si le col montant, les manches longues ou le badge sont deja mentionnes dans la presentation, ne pas les recopier dans la ligne des details. Si aucune caracteristique supplementaire ne reste, supprimer entierement la ligne des details ;
+- utiliser une seule ligne avec l'emoji 🧵 pour regrouper les details supplementaires connus ;
+- ne jamais afficher plusieurs lignes commencant par 🧵 ;
+- ne jamais ajouter de details simplement pour allonger la description ;
+- utiliser de vrais retours à la ligne dans la description ;
+- afficher les informations connues sur des lignes séparées avec ces emojis, sans écrire les mots Taille, Couleur ou État :
+- 📏 suivi uniquement de la taille ;
+- 🎨 suivi uniquement de la couleur ;
+- ✨ suivi uniquement de l'état ;
+- 🧵 suivi des détails réellement connus, uniquement s'ils apportent une information supplémentaire ;
+- séparer la phrase de présentation et les informations par une ligne vide ;
+- ne jamais répéter les mêmes caractéristiques dans plusieurs parties de la description ;
+- ne jamais inventer de caractéristique ou d'information manquante ;
+- ne jamais afficher une ligne correspondant à une information inconnue ;
 - éviter les formulations col à col, mi-fermeture et patch compass ;
 - écrire patch Stone Island lorsqu'un patch Stone Island est réellement identifié ;
 - maximum 8 mots-clés pertinents et uniquement fondés sur les informations connues ;
 - pas de fausse urgence ni de texte promotionnel ;
 - prix = estimation indicative uniquement ;
+- estimer selon la marque, la catégorie, le modèle, l'état et les défauts ;
+- tenir compte de la hierarchie des etats : neuf avec etiquette, neuf sans etiquette, tres bon etat, bon etat, satisfaisant ;
+- a article identique, un etat moins bon ne doit pas justifier un prix plus eleve ;
+- diminuer raisonnablement l'estimation lorsque l'etat se degrade, selon la marque et la categorie ;
+- ne pas appliquer automatiquement une decote fixe identique a tous les vetements ;
+- ne jamais surevaluer un article pour compenser son mauvais etat ;
+- distinguer les marques classiques, premium et de luxe ;
+- tenir compte de l'état neuf avec étiquette ou de l'usure réelle ;
+- ne pas appliquer un prix générique identique à des articles différents ;
+- utiliser le prix envisagé comme un indice, jamais comme une valeur à recopier automatiquement ;
+- si le modèle exact ou la cote sont inconnus, rester prudent et éviter une estimation artificiellement précise ;
+- ne pas inventer de prix neuf ou de ventes comparables ;
+- eviter les estimations generiques pour les marques comme Stone Island ;
+- prixMin = vente rapide, prixConseille = prix raisonnable, prixMax = prix haut envisageable ;
 - prixConseille, prixMin et prixMax = nombres entiers sous forme de texte ;
 - prixMin <= prixConseille <= prixMax ;
+- ne jamais inventer une raison de vente, une frequence d'utilisation, une provenance, une authenticite garantie ou une qualite non confirmee ;
 - aucun Markdown ;
 - aucun texte hors JSON.
 
@@ -9171,6 +9226,94 @@ Règles :
 
 
 
+
+const { obtenirPrixCache, enregistrerPrixCache } = require("./price-cache");
+
+const articlePourPrix = {
+    article, marque, categorie, taille, couleur,
+    etat, prix, details, defauts, plateforme
+};
+
+let prixMarcheApplique = false;
+
+// PRICE_CACHE_V1
+            // MARKET_PRICE_INTEGRATION_V1
+            // Recherche eBay facultative : ne doit jamais bloquer la génération.
+            if (
+                process.env.EBAY_CLIENT_ID &&
+                process.env.EBAY_CLIENT_SECRET
+            ) {
+                try {
+                    const { rechercherPrixArticle } =
+                        require("./price-research");
+
+                    const estimationMarche = await rechercherPrixArticle({
+                        marque,
+                        categorie,
+                        taille,
+                        modele: ""
+                    });
+
+                    if (
+                        estimationMarche?.disponible === true &&
+                        Number.isFinite(estimationMarche.prixBas) &&
+                        Number.isFinite(estimationMarche.prixConseille) &&
+                        Number.isFinite(estimationMarche.prixHaut) &&
+                        estimationMarche.prixBas <= estimationMarche.prixConseille &&
+                        estimationMarche.prixConseille <= estimationMarche.prixHaut
+                    ) {
+                        prixMarcheApplique = true;
+                        annonce.prixMin = String(estimationMarche.prixBas);
+                        annonce.prixConseille = String(estimationMarche.prixConseille);
+                        annonce.prixMax = String(estimationMarche.prixHaut);
+
+                        console.log(
+                            "Estimation eBay appliquée :",
+                            estimationMarche.nombreComparables,
+                            "annonces comparables"
+                        );
+                    } else {
+                        console.log(
+                            "Estimation eBay indisponible ou insuffisante : estimation IA conservée."
+                        );
+                    }
+                } catch (erreurPrix) {
+                    console.warn(
+                        "Recherche eBay indisponible : estimation IA conservée.",
+                        erreurPrix.message
+                    );
+                }
+            }
+            // PRICE_CACHE_APPLICATION_V1
+            if (!prixMarcheApplique) {
+                const prixEnCache = obtenirPrixCache(articlePourPrix);
+
+                if (prixEnCache) {
+                    Object.assign(annonce, prixEnCache);
+                    console.log("Prix recuperes du cache.");
+                } else {
+                    enregistrerPrixCache(articlePourPrix, annonce);
+                    console.log("Nouvelle estimation enregistree.");
+                }
+            } else {
+                enregistrerPrixCache(articlePourPrix, annonce);
+            }
+            // PRICE_COHERENCE_CHECK_V1
+            if (!prixMarcheApplique) {
+                const { verifierCoherencePrix } = require("./price-coherence");
+
+                const controlePrix = verifierCoherencePrix(
+                    articlePourPrix,
+                    annonce
+                );
+
+                if (!controlePrix.coherent) {
+                    console.warn(
+                        "ATTENTION : incoherence de prix detectee.",
+                        JSON.stringify(controlePrix.anomalies)
+                    );
+                }
+            }
 
             let motsCles =
 
@@ -9404,39 +9547,7 @@ Règles :
 
 
 
-                description:
-
-
-
-
-
-
-
-                    nettoyerTexte(
-
-
-
-
-
-
-
-                        annonce?.description,
-
-
-
-
-
-
-
-                        2000
-
-
-
-
-
-
-
-                    ),
+                description: corrigerDescription(nettoyerTexte(annonce?.description, 2000)),
 
 
 

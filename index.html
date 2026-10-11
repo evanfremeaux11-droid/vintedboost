@@ -4274,7 +4274,7 @@ function afficherAnnonce(data){
                     class="action primary"
                     onclick="nouvelleAnnonce()"
                 >
-                    ï¼‹ Nouvelle annonce
+                    + Nouvelle annonce
                 </button>
 
             </div>
@@ -4292,7 +4292,7 @@ function afficherAnnonce(data){
     document.getElementById(
         "resultDescription"
     ).textContent =
-        data.description || "";
+        (data.description || "").replace(/\r\n/g, "\n").replace(/[ \t]*\n[ \t]*/g, "\n").replace(/(?:^|\s+)Taille\s*:/gi, "\n\n📏 ").replace(/(?:^|\s+)Couleur\s*:/gi, "\n\n🎨 ").replace(/(?:^|\s+)[ÉE]tat\s*:/gi, "\n\n✨ ").replace(/\s*(📏|🎨|✨|🧵)\s*/gu, "\n\n$1 ").replace(/\n{3,}/g, "\n\n").trim();
 
 
     const keywordZone =
