@@ -1093,6 +1093,9 @@ footer{
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="VintedBoost — Générateur d'annonces Vinted avec IA">
 <meta name="twitter:description" content="Crée rapidement tes annonces Vinted grâce à l'IA.">
+    <link rel="stylesheet" href="animations-v4.css">
+  <link rel="stylesheet" href="/generateur-design-v4.css?v=4.2">
+
 </head>
 <body>
 
@@ -1357,7 +1360,8 @@ footer{
 
 <main class="container">
 
-<div class="card">
+<div class="card vb4-generator-card">
+<section class="vb4-panel vb4-photos">
 
 
 <h2 class="section-title">
@@ -1437,6 +1441,8 @@ footer{
 <div class="separator"></div>
 
 
+</section>
+<section class="vb4-panel vb4-infos">
 <!-- ======================================================
      INFORMATIONS
 ====================================================== -->
@@ -1697,6 +1703,8 @@ footer{
 ></textarea>
 
 
+</section>
+<section class="vb4-panel vb4-personnalisation">
 <!-- ======================================================
      PLATEFORME
 ====================================================== -->
@@ -1821,6 +1829,8 @@ footer{
 </div>
 
 
+</section>
+<section class="vb4-panel vb4-generation">
 <!-- ======================================================
      SCORE
 ====================================================== -->
@@ -1876,6 +1886,7 @@ footer{
 
 <div id="resultat"></div>
 
+</section>
 <!-- TABLEAU DE BORD VINTEDBOOST V3 -->
 <style id="vb-dashboard-v3-style">
 #vintedDashboard{margin:30px 0 12px;color:#18263b;font-family:inherit}#vintedDashboard *{box-sizing:border-box}
@@ -1909,14 +1920,38 @@ footer{
 @media(max-width:640px){#vintedDashboard .vb3-metrics{grid-template-columns:1fr}#vintedDashboard .vb3-recos li{align-items:flex-start;flex-wrap:wrap}#vintedDashboard .vb3-action{margin-left:46px}}
 @media(prefers-reduced-motion:reduce){#vintedDashboard .vb3-fill{transition:none}}
 </style>
-<section id="vintedDashboard" style="display:none" aria-label="Diagnostic de ton annonce">
+<link rel="stylesheet" href="/generateur-sections-v4.css?v=4-responsive">
+<section id="vintedDashboard" style="display:block" aria-label="Diagnostic de ton annonce">
  <div class="vb3-shell">
   <div class="vb3-head"><div><p class="vb3-kicker">VINTEDBOOST ANALYTICS</p><h2>Diagnostic de ton annonce</h2></div><span class="vb3-status" id="dashboardStatus">Diagnostic disponible</span></div>
   <div class="vb3-metrics">
    <div class="vb3-metric"><div class="vb3-label"><span class="vb3-icon" aria-hidden="true">◫</span> Complétude de l'annonce</div><div class="vb3-number"><span id="dashboardScore">--</span><span class="vb3-denom"> / 100</span></div><div class="vb3-track" id="dashboardScoreProgress" role="progressbar" aria-label="Complétude de l'annonce" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="vb3-fill" id="dashboardScoreBar"></div></div><p class="vb3-hint" id="dashboardScoreMessage">Score calculé à la génération.</p></div>
    <div class="vb3-metric"><div class="vb3-label"><span class="vb3-icon" aria-hidden="true">▣</span> Photos ajoutées</div><div class="vb3-number vb3-blue"><span id="dashboardPhotos">--</span><span class="vb3-denom"> / 4</span></div><div class="vb3-track" id="dashboardPhotosProgress" role="progressbar" aria-label="Nombre de photos sur quatre" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0"><div class="vb3-fill" id="dashboardPhotosBar"></div></div><p class="vb3-hint" id="dashboardPhotoConseil">Nombre de photos, sans analyse de netteté.</p></div>
-  </div>
-  <div class="vb3-panel"><div class="vb3-panel-head"><h3>✦ Ton plan d'optimisation</h3><span class="vb3-count" id="dashboardActionCount"></span></div><ul class="vb3-recos" id="dashboardRecommendations" aria-live="polite"></ul></div>
+  <div class="vb3-metric vb4-sale-delay">
+
+    <div class="vb3-label">
+        <span class="vb3-icon">⏱</span>
+        Délai de vente estimé
+    </div>
+
+    <div class="vb4-delay-value" id="dashboardSaleDelay">
+        Données insuffisantes
+    </div>
+
+    <p class="vb3-hint">
+        Une estimation sera disponible lorsque
+        nous disposerons de ventes comparables fiables.
+    </p>
+
+    <div class="vb4-delay-trust">
+        ✓ Aucun délai inventé par l'IA
+    </div>
+
+</div>
+
+</div>
+
+<div class="vb3-panel"><div class="vb3-panel-head"><h3>✦ Ton plan d'optimisation</h3><span class="vb3-count" id="dashboardActionCount"></span></div><ul class="vb3-recos" id="dashboardRecommendations" aria-live="polite"></ul></div>
   <div class="vb3-panel"><h3>✧ Transparence de l'analyse</h3><div class="vb3-audit"><div class="vb3-audit-row"><span class="vb3-dot">✓</span> Complétude des champs renseignés : vérifiée</div><div class="vb3-audit-row"><span class="vb3-dot">✓</span> Nombre de photos : compté</div><div class="vb3-audit-row"><span class="vb3-dot vb3-dot-off">○</span> Netteté et luminosité des photos : non analysées ici</div><div class="vb3-audit-row"><span class="vb3-dot vb3-dot-off">○</span> Délai de vente : indisponible sans ventes comparables fiables</div></div></div>
   <p class="vb3-foot">Le score est celui de la dernière génération et mesure la complétude, pas les chances de vente. Les recommandations peuvent être actualisées après modification des champs ; régénère l'annonce pour recalculer son score.</p>
  </div>
@@ -3734,6 +3769,10 @@ function updateScore(){
         "scoreHelp"
     ).textContent =
         text;
+
+    if (typeof afficherTableauDeBord === "function") {
+        afficherTableauDeBord();
+    }
 }
 
 
@@ -4054,6 +4093,10 @@ async function genererAnnonce(){
 
             ...data,
 
+            informationsArticle: {
+                ...payload
+            },
+
             plateforme:
                 payload.plateforme,
 
@@ -4149,7 +4192,7 @@ function formatPrix(prix){
    AFFICHAGE ANNONCE
 ====================================================== */
 
-function afficherAnnonce(data){
+function afficherAnnonce(data, depuisHistorique = false){
 
     const result =
         document.getElementById(
@@ -4308,6 +4351,7 @@ function afficherAnnonce(data){
 
 
                 <button
+                    id="regenerateResultButton"
                     class="action secondary"
                     onclick="genererAnnonce()"
                 >
@@ -4328,6 +4372,17 @@ function afficherAnnonce(data){
     `;
 
 
+    // Une annonce rouverte n'a pas forcément ses photos et champs
+    // restaurés : éviter une génération involontaire d'un autre article.
+    if (depuisHistorique) {
+        const boutonRegenerer = document.getElementById("regenerateResultButton");
+        if (boutonRegenerer) {
+            boutonRegenerer.disabled = true;
+            boutonRegenerer.textContent = "🔒 Régénération indisponible";
+            boutonRegenerer.title = "Pour régénérer, remplis le formulaire et ajoute les photos de l'article.";
+        }
+    }
+
     document.getElementById(
         "resultTitle"
     ).textContent =
@@ -4339,6 +4394,65 @@ function afficherAnnonce(data){
     ).textContent =
         (data.description || "").replace(/\r\n/g, "\n").replace(/[ \t]*\n[ \t]*/g, "\n").replace(/(?:^|\s+)Taille\s*:/gi, "\n\n📏 ").replace(/(?:^|\s+)Couleur\s*:/gi, "\n\n🎨 ").replace(/(?:^|\s+)[ÉE]tat\s*:/gi, "\n\n✨ ").replace(/\s*(📏|🎨|✨|🧵)\s*/gu, "\n\n$1 ").replace(/\n{3,}/g, "\n\n").trim();
 
+
+    const infosArticle = data.informationsArticle;
+
+    if (infosArticle && typeof infosArticle === "object") {
+
+        const fiche = document.createElement("section");
+        fiche.className = "vb4-article-details";
+
+        const titreFiche = document.createElement("h3");
+        titreFiche.textContent = "📦 Informations de l'article";
+
+        const grille = document.createElement("div");
+        grille.className = "vb4-article-details-grid";
+
+        const champsArticle = [
+            ["article", "Article"],
+            ["marque", "Marque"],
+            ["categorie", "Catégorie"],
+            ["taille", "Taille"],
+            ["couleur", "Couleur"],
+            ["etat", "État"],
+            ["prix", "Prix renseigné"],
+            ["details", "Détails"],
+            ["defauts", "Défauts"]
+        ];
+
+        champsArticle.forEach(([cle, libelle]) => {
+
+            const valeur = infosArticle[cle];
+
+            if (valeur === undefined || valeur === null ||
+                String(valeur).trim() === "") {
+                return;
+            }
+
+            const ligne = document.createElement("div");
+            ligne.className = "vb4-article-detail";
+
+            const nom = document.createElement("span");
+            nom.className = "vb4-article-detail-label";
+            nom.textContent = libelle;
+
+            const contenu = document.createElement("strong");
+            contenu.textContent = String(valeur);
+
+            ligne.append(nom, contenu);
+            grille.appendChild(ligne);
+        });
+
+        if (grille.children.length > 0) {
+            fiche.append(titreFiche, grille);
+
+            const actions = result.querySelector(".result-actions");
+
+            if (actions) {
+                actions.before(fiche);
+            }
+        }
+    }
 
     const keywordZone =
         document.getElementById(
@@ -4371,6 +4485,13 @@ function afficherAnnonce(data){
 
 
 
+    afficherTableauDeBord();
+
+    result.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+}
 function afficherTableauDeBord() {
     const dashboard = document.getElementById("vintedDashboard");
     if (!dashboard) return;
@@ -4429,11 +4550,7 @@ function afficherTableauDeBord() {
 }
 
     afficherTableauDeBord();
-    result.scrollIntoView({
-        behavior:"smooth",
-        block:"start"
-    });
-}
+
 
 
 /* ======================================================
@@ -4747,9 +4864,44 @@ function afficherHistorique(){
                 );
 
 
+            const voirButton =
+                document.createElement(
+                    "button"
+                );
+
+            voirButton.type = "button";
+
+            voirButton.className =
+                "history-view-button";
+
+            voirButton.textContent =
+                "Voir l'annonce";
+
+            voirButton.addEventListener(
+                "click",
+                () => {
+
+                    if(!annonce.titre || !annonce.description){
+                        alert("Cette ancienne annonce ne contient pas toutes les informations nécessaires.");
+                        return;
+                    }
+
+                    derniereAnnonce = annonce;
+
+                    afficherAnnonce(annonce, true);
+
+                    document.getElementById("resultat")
+                        .scrollIntoView({
+                            behavior: "smooth",
+                            block: "start"
+                        });
+                }
+            );
+
             item.append(
                 left,
-                price
+                price,
+                voirButton
             );
 
 

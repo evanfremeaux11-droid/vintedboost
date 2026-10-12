@@ -12271,6 +12271,10 @@ app.use(
 
 
 
+
+app.get("/generateur-v4-test", (req, res) => {
+  res.sendFile(__dirname + "/index-v4-travail.html");
+});
 app.listen(
 
 
