@@ -3449,6 +3449,19 @@ async function analyserPhotos(){
     }
 
 
+    if (!supabaseClient) {
+        alert("Le service de connexion est indisponible.");
+        return;
+    }
+
+    const { data: { session } } =
+        await supabaseClient.auth.getSession();
+
+    if (!session?.access_token) {
+        ouvrirAuth();
+        return;
+    }
+
     const button =
         document.getElementById(
             "analyseButton"
@@ -3488,7 +3501,8 @@ async function analyserPhotos(){
 
                     headers:{
                         "Content-Type":
-                            "application/json"
+                            "application/json",
+                        "Authorization": `Bearer ${session.access_token}`
                     },
 
                     body:

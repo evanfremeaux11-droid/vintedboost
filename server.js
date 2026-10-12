@@ -4348,6 +4348,43 @@ function normaliserAnalyse(analyse) {
 
 
 
+async function verifierAuthPhotos(req, res, next) {
+    try {
+        const authorization = req.headers.authorization || "";
+
+        if (!authorization.startsWith("Bearer ")) {
+            return res.status(401).json({
+                error: "Connecte-toi pour analyser tes photos."
+            });
+        }
+
+        const accessToken = authorization.slice(7).trim();
+
+        if (!accessToken) {
+            return res.status(401).json({
+                error: "Session invalide."
+            });
+        }
+
+        const supabase = creerClientSupabaseUtilisateur(accessToken);
+        const { data, error } = await supabase.auth.getUser(accessToken);
+
+        if (error || !data?.user) {
+            return res.status(401).json({
+                error: "Session expirée. Reconnecte-toi."
+            });
+        }
+
+        req.utilisateur = data.user;
+        next();
+    } catch (error) {
+        console.error("Erreur authentification photos :", error.message);
+
+        return res.status(500).json({
+            error: "Impossible de vérifier la session."
+        });
+    }
+}
 app.post(
 
 
@@ -4364,7 +4401,7 @@ app.post(
 
 
 
-    limiterRequetes,
+    limiterRequetes, verifierAuthPhotos,
 
 
 
