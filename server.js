@@ -825,7 +825,29 @@ app.get("/", (req, res) => {
     res.sendFile(__dirname + "/landing-v2.html");
 });
 
-app.use(express.static(__dirname));
+const fichiersPublics = new Set([
+  "favicon.svg",
+  "ads.txt",
+  "robots.txt",
+  "sitemap.xml",
+  "animations-v4.css",
+  "generateur-design-v4.css",
+  "generateur-sections-v4.css",
+  "landing-design-v4.css",
+  "contact.html",
+  "mentions-legales.html",
+  "politique-confidentialite.html",
+  "description-vinted.html",
+  "estimation-prix-vinted.html",
+  "guide-annonce-vinted.html",
+  "google3547b7febabd0b85.html",
+  "googledfcc6483a26bc64c.html"
+]);
+
+app.get("/:fichier", (req, res, next) => {
+  if (!fichiersPublics.has(req.params.fichier)) return next();
+  res.sendFile(__dirname + "/" + req.params.fichier);
+});
 
 
 
