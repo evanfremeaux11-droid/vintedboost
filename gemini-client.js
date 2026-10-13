@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const MODELE_GEMINI = "gemini-3.5-flash-lite";
+const MODELE_GEMINI = "gemini-3.1-flash-lite";
 
 async function appelerGemini(messages, options = {}) {
     if (!process.env.GEMINI_API_KEY) {

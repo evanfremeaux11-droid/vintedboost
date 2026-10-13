@@ -16,6 +16,7 @@ async function rechercherPrixArticle(article, options = {}) {
     const categorie = String(article.categorie || "").trim();
     const taille = String(article.taille || "").trim();
     const modele = String(article.modele || "").trim();
+    const etat = String(article.etat || '').trim();
 
     if (!marque || !categorie) {
         return {
@@ -48,7 +49,7 @@ async function rechercherPrixArticle(article, options = {}) {
             marque,
             categorie,
             taille
-        }
+        , modele, etat}
     );
 
     if (comparables.length < 3) {

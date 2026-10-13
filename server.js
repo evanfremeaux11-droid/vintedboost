@@ -8442,6 +8442,8 @@ app.post(
 
 
 
+            const modele = nettoyerTexte(req.body?.modele, 150);
+
             const details =
 
 
@@ -9289,7 +9291,7 @@ Règles :
 const { obtenirPrixCache, enregistrerPrixCache } = require("./price-cache");
 
 const articlePourPrix = {
-    article, marque, categorie, taille, couleur,
+    article, marque, modele, categorie, taille, couleur,
     etat, prix, details, defauts, plateforme
 };
 
@@ -9310,7 +9312,7 @@ let prixMarcheApplique = false;
                         marque,
                         categorie,
                         taille,
-                        modele: ""
+                        modele: modele, etat: etat
                     });
 
                     if (
