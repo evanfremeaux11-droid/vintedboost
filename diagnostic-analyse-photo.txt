@@ -1,0 +1,78 @@
+﻿                            "Ajoute au moins une photo valide."
+                    });
+            }
+            const prompt = `
+Analyse ces photos du même vêtement ou article d'occasion.
+Retourne UNIQUEMENT un objet JSON valide avec exactement ces clés :
+{
+"article":"",
+"marque":"",
+"categorie":"",
+"couleur":"",
+"tailleVisible":"",
+"etat":"",
+"details":"",
+"defauts":""
+}
+Règles :
+\- utilise uniquement ce qui est visible ;
+\- n'invente jamais marque, taille, matière, modèle ou défaut ;
+\- ne confirme jamais l'authenticité ;
+\- information inconnue = "";
+\- details = caractéristiques visibles, texte court ;
+\- defauts = uniquement les défauts clairement visibles.
+\- examine toutes les photos ensemble avant de conclure ;
+\- distingue une étiquette intérieure de marque ou de composition d'une étiquette commerciale de vente attachée à l'article ;
+\- Neuf avec étiquette = uniquement si une étiquette commerciale attachée est clairement visible ET si l'article ne présente aucun signe visible d'utilisation ;
+\- une étiquette de marque cousue à l'intérieur ne prouve jamais que l'article est neuf ;
+\- Neuf sans étiquette = ne jamais conclure à cet état uniquement parce que le vêtement paraît propre, repassé ou sans défaut visible ; sans preuve suffisante de non-utilisation, retourner etat = "" ;
+\- Très bon état = aucun défaut visible significatif, sans garantir que l'article n'a jamais été porté ;
+\- Bon état = signes légers d'utilisation clairement visibles ;
+\- État satisfaisant = usure ou défauts visibles importants ;
+\- si l'état ne peut pas être déterminé de façon fiable, retourne etat = "" ;
+\- ne déduis jamais l'état neuf de la seule présence d'un logo ou d'un patch ;
+\- distingue les couleurs proches comme bleu marine, bleu clair et noir en tenant compte de l'éclairage ;
+\- ne confonds pas les ombres, reflets et plis naturels avec des défauts ;
+\- ne renseigne tailleVisible que si la taille est lisible sur une étiquette ou un marquage ;
+\- n'invente jamais une référence ou un modèle précis à partir de la marque seule ;
+\- décris uniquement les détails réellement visibles : type de col, fermeture, manches, logos et patchs ;
+\- n'affirme jamais qu'un article est authentique ou original ;
+\- en cas de doute sur une information, laisse le champ correspondant vide ;
+categorie = uniquement :
+Veste, Sweat, T-shirt, Pantalon, Jean, Chaussures, Accessoire, Robe, Chemise, Pull, Short, Autre.
+etat = uniquement :
+Neuf avec étiquette, Neuf sans étiquette, Très bon état, Bon état, État satisfaisant, ou "".
+Aucun Markdown. Aucune explication.
+`.trim();
+            const contenu = [
+                {
+                    type: "text",
+                    text: prompt
+                }
+            ];
+            for (
+                const image of images
+            ) {
+                contenu.push({
+                    type:
+                        "image_url",
+                    image_url: {
+                        url: image
+                    }
+                });
+            }
+            const analyse =
+                await appelerIAJSON(
+                    [
+                        {
+                            role:
+                                "user",
+                            content:
+                                contenu
+                        }
+                    ],
+                    {
+                        maxTokens:
+                            1800
+                    }
+                );

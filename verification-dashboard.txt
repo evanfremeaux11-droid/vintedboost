@@ -1,0 +1,91 @@
+﻿                mot;
+
+
+            keywordZone.appendChild(
+                span
+            );
+        }
+    );
+
+
+
+function afficherTableauDeBord() {
+
+    const dashboard = document.getElementById("vintedDashboard");
+    if (!dashboard) return;
+
+    const scoreElement = document.getElementById("scoreText");
+    const scoreDashboard = document.getElementById("dashboardScore");
+
+    if (scoreElement && scoreDashboard) {
+        const score = parseInt(scoreElement.textContent, 10);
+        scoreDashboard.textContent =
+            Number.isFinite(score) ? score + " / 100" : "Indisponible";
+    }
+
+    const nombrePhotos = photosBase64.length;
+
+    document.getElementById("dashboardPhotos").textContent =
+        nombrePhotos + " / 4";
+
+    let conseilPhoto = "";
+
+    if (nombrePhotos === 0) {
+        conseilPhoto = "Ajoute des photos de ton article.";
+    } else if (nombrePhotos === 1) {
+        conseilPhoto = "Ajoute une photo de dos et des dÃ©tails.";
+    } else if (nombrePhotos <= 3) {
+        conseilPhoto = "Pense Ã  montrer les Ã©tiquettes et les Ã©ventuels dÃ©fauts.";
+    } else {
+        conseilPhoto = "VÃ©rifie la nettetÃ©, la luminositÃ© et la variÃ©tÃ© des angles.";
+    }
+
+    document.getElementById("dashboardPhotoConseil").textContent =
+        conseilPhoto;
+
+    const champs = [
+        ["article", "le type d'article"],
+        ["marque", "la marque"],
+        ["categorie", "la catÃ©gorie"],
+        ["taille", "la taille"],
+        ["couleur", "la couleur"],
+        ["etat", "l'Ã©tat"],
+        ["details", "les dÃ©tails de l'article"]
+    ];
+
+    const manquants = champs
+        .filter(([id]) => !value(id))
+        .map(([, label]) => label);
+
+    document.getElementById("dashboardConseils").textContent =
+        manquants.length
+            ? "Ã€ complÃ©ter si applicable : " + manquants.join(", ") + "."
+            : "Les principales informations sont renseignÃ©es. VÃ©rifie leur exactitude avant publication.";
+
+    dashboard.style.display = "block";
+}
+
+    afficherTableauDeBord();
+    result.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+}
+
+
+/* ======================================================
+   COPIE
+====================================================== */
+
+async function copierTexte(text){
+
+    try{
+
+        await navigator
+            .clipboard
+            .writeText(
+                text
+            );
+
+
+        alert(

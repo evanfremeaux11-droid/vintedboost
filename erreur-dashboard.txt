@@ -1,0 +1,13 @@
+﻿}
+</style>
+'@
+
+$jsAncien = '    dashboard.style.display = "block";'
+
+$jsNouveau = @'
+    const scoreBar = document.getElementById("dashboardScoreBar");
+    const photosBar = document.getElementById("dashboardPhotosBar");
+    const scoreMessage = document.getElementById("dashboardScoreMessage");
+
+    const scoreValeur = scoreElement
+        ?

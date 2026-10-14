@@ -1,0 +1,259 @@
+﻿     HEADER V9
+====================================================== -->
+
+<header>
+
+    <div class="header-left">
+
+        <div class="logo">
+            <span class="logo-icon">âš¡</span>
+            Vinted<span>Boost</span>
+        </div>
+
+        <div class="version">
+            V9 â€¢ Free + Premium
+        </div>
+
+    </div>
+
+
+    <div class="header-right">
+
+        <div
+            id="quotaBadge"
+            class="quota-badge"
+        >
+            ðŸŽ Free â€¢ 0/5
+        </div>
+<button
+    id="premiumButton"
+    class="auth-button"
+    onclick="passerPremium()"
+    style="display:none;"
+>
+    ðŸ’Ž Passer Premium
+</button>
+<button
+    id="manageSubscriptionButton"
+    class="logout-button"
+    onclick="gererAbonnement()"
+    style="display:none;"
+>
+    âš™ï¸ GÃ©rer mon abonnement
+</button>
+        <button
+            id="authButton"
+            class="auth-button"
+            onclick="ouvrirAuth()"
+        >
+            ðŸ‘¤ Se connecter
+        </button>
+
+
+        <div
+            id="userZone"
+            class="user-zone"
+            style="display:none"
+        >
+
+            <span id="userEmail"></span>
+
+            <button
+                class="logout-button"
+                onclick="deconnexion()"
+            >
+                DÃ©connexion
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- ======================================================
+     FENÃŠTRE CONNEXION
+====================================================== -->
+
+<div
+    id="authModal"
+    class="auth-modal"
+    onclick="fermerAuthSiFond(event)"
+>
+
+    <div class="auth-card">
+
+        <button
+            class="auth-close"
+            onclick="fermerAuth()"
+            aria-label="Fermer"
+        >
+            Ã—
+        </button>
+
+
+        <div class="auth-logo">
+            âš¡ Vinted<span>Boost</span>
+        </div>
+
+
+        <h2 id="authTitle">
+            Se connecter
+        </h2>
+
+
+        <p
+            id="authSubtitle"
+            class="auth-subtitle"
+        >
+            Connecte-toi pour accÃ©der Ã  ton compte VintedBoost.
+        </p>
+
+
+        <div
+            id="authMessage"
+            class="auth-message"
+        ></div>
+
+
+        <label
+            class="auth-label"
+            for="authEmail"
+        >
+            Adresse email
+        </label>
+
+        <input
+            id="authEmail"
+            class="auth-input"
+            type="email"
+            autocomplete="email"
+            placeholder="exemple@email.com"
+        >
+
+
+        <label
+            class="auth-label"
+            for="authPassword"
+        >
+            Mot de passe
+        </label>
+
+        <input
+            id="authPassword"
+            class="auth-input"
+            type="password"
+            autocomplete="current-password"
+            placeholder="6 caractÃ¨res minimum"
+        >
+
+
+        <button
+            id="authSubmit"
+            class="auth-submit"
+            onclick="envoyerAuth()"
+        >
+            Se connecter
+        </button>
+
+
+        <p class="auth-switch">
+
+            <span id="authSwitchText">
+                Pas encore de compte ?
+            </span>
+
+            <button
+                id="authSwitchButton"
+                onclick="changerModeAuth()"
+            >
+                CrÃ©er un compte
+            </button>
+
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================================
+     HERO
+====================================================== -->
+
+<section class="hero">
+
+    <div class="hero-badge">
+        âœ¨ Assistant IA pour tes annonces
+    </div>
+
+
+    <h1>
+        Vends mieux avec
+        <span class="gradient">
+            VintedBoost
+        </span>
+    </h1>
+
+
+    <p>
+        Ajoute les photos de ton article,
+        complÃ¨te quelques informations et
+        laisse l'intelligence artificielle
+        crÃ©er une annonce optimisÃ©e pour
+        Vinted ou eBay.
+    </p>
+
+</section>
+
+
+<!-- ======================================================
+     Ã‰TAPES
+====================================================== -->
+
+<section class="steps">
+
+    <div
+        id="step1"
+        class="step active"
+    >
+        <strong>
+            1. Photos
+        </strong>
+
+        Ajoute ton article
+    </div>
+
+
+    <div
+        id="step2"
+        class="step"
+    >
+        <strong>
+            2. Informations
+        </strong>
+
+        ComplÃ¨te l'annonce
+    </div>
+
+
+    <div
+        id="step3"
+        class="step"
+    >
+        <strong>
+            3. GÃ©nÃ©ration
+        </strong>
+
+        L'IA crÃ©e ton annonce
+    </div>
+
+</section>
+
+
+<!-- ======================================================
+     CONTENU
+====================================================== -->
+
+<main class="container">

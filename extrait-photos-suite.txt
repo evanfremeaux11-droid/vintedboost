@@ -1,0 +1,76 @@
+﻿                photo;
+
+            image.alt =
+                `Photo ${index + 1}`;
+
+
+            const numero =
+                document.createElement(
+                    "div"
+                );
+
+
+            numero.className =
+                "preview-number";
+
+            numero.textContent =
+                `Photo ${index + 1}`;
+
+
+            const supprimer =
+                document.createElement(
+                    "button"
+                );
+
+
+            supprimer.className =
+                "remove-photo";
+
+            supprimer.type =
+                "button";
+
+            supprimer.textContent =
+                "×";
+
+
+            supprimer.onclick =
+                event=>{
+
+                    event.stopPropagation();
+
+                    supprimerPhoto(
+                        index
+                    );
+                };
+
+
+            preview.append(
+                image,
+                numero,
+                supprimer
+            );
+
+
+            zone.appendChild(
+                preview
+            );
+        }
+    );
+
+
+    compteur.textContent =
+        `${photosBase64.length} / 4 photos`;
+
+
+    analyseButton.style.display =
+        photosBase64.length
+        ? "block"
+        : "none";
+}
+
+
+/* ======================================================
+   SUPPRESSION PHOTO
+====================================================== */
+
+function supprimerPhoto(index){

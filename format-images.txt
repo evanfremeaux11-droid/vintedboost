@@ -1,0 +1,9 @@
+﻿            for (
+                const image of images
+            ) {
+                contenu.push({
+                    type:
+                        "image_url",
+                    image_url: {
+                        url: image
+                    }

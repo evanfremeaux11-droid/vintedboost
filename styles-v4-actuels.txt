@@ -1,0 +1,111 @@
+﻿
+.auth-message.success{
+    display:block;
+    color:#166534;
+    background:#f0fdf4;
+    border:1px solid #bbf7d0;
+}
+
+
+/* ======================================================
+   HERO
+====================================================== */
+
+.hero{
+    max-width:900px;
+    margin:auto;
+    text-align:center;
+    padding:60px 20px 32px;
+}
+
+.hero-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:8px 14px;
+    border:1px solid var(--violetBorder);
+    background:rgba(255,255,255,.65);
+    border-radius:999px;
+    color:var(--violet);
+    font-weight:800;
+    font-size:14px;
+}
+
+.hero h1{
+    margin:20px 0 15px;
+    font-size:clamp(40px,6vw,64px);
+    line-height:1.02;
+    letter-spacing:-2.7px;
+}
+
+.gradient{
+    background:
+        linear-gradient(
+            90deg,
+            var(--violet),
+            #a855f7
+        );
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+}
+
+.hero p{
+    max-width:690px;
+    margin:auto;
+    color:var(--muted);
+    font-size:18px;
+    line-height:1.65;
+}
+
+
+/* ======================================================
+   ÉTAPES
+====================================================== */
+
+.steps{
+    max-width:900px;
+    margin:0 auto 35px;
+    padding:0 20px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+}
+
+.step{
+    position:relative;
+    padding:17px;
+    border-radius:16px;
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.8);
+    text-align:center;
+    font-size:13px;
+    color:var(--muted);
+    transition:.2s;
+}
+
+.step strong{
+    display:block;
+    color:var(--text);
+    font-size:14px;
+    margin-bottom:4px;
+}
+
+.step.active{
+    border-color:var(--violet);
+    background:var(--violetLight);
+    box-shadow:
+        0 8px 30px
+        rgba(124,58,237,.08);
+}
+
+.step.done{
+    border-color:#bbf7d0;
+    background:#f0fdf4;
+}
+
+
+/* ======================================================
+   CONTENU PRINCIPAL
+====================================================== */
+

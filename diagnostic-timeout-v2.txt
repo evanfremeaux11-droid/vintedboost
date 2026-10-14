@@ -1,0 +1,82 @@
+﻿
+  server.js:3104:
+  server.js:3105:
+  server.js:3106:async function 
+appelerOpenRouter(messages, options = {}) 
+{
+  server.js:3107:    if 
+(!process.env.OPENROUTER_API_KEY) {
+  server.js:3108:        throw new 
+Error("La clÃ© OpenRouter n'est pas 
+configurÃ©e.");
+  server.js:3109:    }
+  server.js:3110:
+  server.js:3111:    const maxTokens = 
+options.maxTokens || 1800;
+> server.js:3112:    const controller = 
+new AbortController();
+  server.js:3113:
+> server.js:3114:    const timeout = 
+setTimeout(
+  server.js:3115:        () => 
+controller.abort(),
+  server.js:3116:        70000
+  server.js:3117:    );
+  server.js:3118:
+  server.js:3119:    const debut = 
+Date.now();
+  server.js:3120:
+  server.js:3121:    try {
+  server.js:3122:        const 
+OPENROUTER_URL =
+  server.js:3123:            "https://open
+router.ai/api/v1/chat/completions";
+  server.js:3124:
+  server.js:3125:        
+console.log("ðŸ”— URL OPENROUTER =", 
+OPENROUTER_URL);
+  server.js:3126:
+  server.js:3127:        const response = 
+await fetch(
+  server.js:3128:            
+OPENROUTER_URL,
+  server.js:3129:            {
+  server.js:3130:                method: 
+"POST",
+  server.js:3131:                signal: 
+controller.signal,
+  server.js:3132:
+  server.js:3193:            throw new 
+Error(
+  server.js:3194:                
+"OpenRouter met trop de temps Ã 
+rÃ©pondre."
+  server.js:3195:            );
+  server.js:3196:        }
+  server.js:3197:
+  server.js:3198:        throw error;
+  server.js:3199:
+  server.js:3200:    } finally {
+> server.js:3201:        
+clearTimeout(timeout);
+  server.js:3202:    }
+  server.js:3203:}
+  server.js:3204:/* ======================
+================================
+  server.js:3205:
+  server.js:3206:
+  server.js:3207:
+  server.js:3208:
+  server.js:3209:
+  server.js:3210:
+  server.js:3211:
+  server.js:3212:   IA JSON + RETRY
+  server.js:3213:
+  server.js:3214:
+  server.js:3215:
+  server.js:3216:
+  server.js:3217:
+  server.js:3218:
+  server.js:3219:
+
+

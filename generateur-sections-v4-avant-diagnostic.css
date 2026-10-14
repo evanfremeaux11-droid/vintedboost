@@ -1,0 +1,758 @@
+﻿/* VINTEDBOOST V4 - NOUVELLE INTERFACE */
+
+.vb4-generator-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  display: grid;
+  gap: 24px;
+}
+
+.vb4-panel {
+  background: #ffffff;
+  border: 1px solid #e8def5;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 12px 35px rgba(70, 35, 120, .06);
+}
+
+.vb4-panel .section-title {
+  color: #24143f;
+  font-size: 24px;
+  letter-spacing: -.5px;
+  margin-bottom: 10px;
+}
+
+.vb4-photos {
+  background: linear-gradient(145deg, #ffffff, #faf6ff);
+}
+
+.vb4-infos {
+  border-top: 4px solid #8950ed;
+}
+
+.vb4-personnalisation {
+  background: #f8f4ff;
+  border-color: #e5d6ff;
+}
+
+.vb4-generation {
+  background: linear-gradient(135deg, #f3eaff, #ffffff);
+  border: 1px solid #d9c4ff;
+}
+
+.vb4-panel input:not([type="radio"]):not([type="checkbox"]),
+.vb4-panel select,
+.vb4-panel textarea {
+  border-radius: 12px;
+  border: 1px solid #ddd5e9;
+  background: #ffffff;
+}
+
+.vb4-panel input:focus,
+.vb4-panel select:focus,
+.vb4-panel textarea:focus {
+  border-color: #8950ed;
+  outline-color: #8950ed;
+}
+
+.vb4-generation .generate {
+  border-radius: 14px;
+  background: linear-gradient(135deg, #7136dd, #9855ed);
+  box-shadow: 0 8px 22px rgba(113, 54, 221, .20);
+}
+
+@media (max-width: 650px) {
+  .vb4-generator-card {
+    gap: 16px;
+  }
+
+  .vb4-panel {
+    padding: 22px 18px;
+    border-radius: 18px;
+  }
+
+  .vb4-panel .section-title {
+    font-size: 21px;
+  }
+}
+
+/* V4 - DISPOSITION PREMIUM DESKTOP */
+
+@media (min-width: 900px) {
+
+  .vb4-generator-card {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    align-items: start;
+  }
+
+  .vb4-photos {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .vb4-infos {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .vb4-personnalisation {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .vb4-generation {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+
+  .vb4-generator-card > #vintedDashboard {
+    grid-column: 1 / -1;
+  }
+
+}
+
+
+/* ==========================================
+   VINTEDBOOST V4 - PREMIUM DESIGN
+   ========================================== */
+
+/* Structure principale */
+
+.vb4-generator-card {
+  display: grid !important;
+  gap: 24px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  align-items: start;
+}
+
+/* Cartes premium */
+
+.vb4-panel {
+  min-width: 0;
+  background: #ffffff !important;
+  border: 1px solid #e9e2f5 !important;
+  border-radius: 24px !important;
+  padding: 30px !important;
+  box-shadow:
+    0 4px 12px rgba(60, 30, 100, .025),
+    0 18px 45px rgba(60, 30, 100, .055) !important;
+  transition: box-shadow .25s ease, border-color .25s ease;
+}
+
+.vb4-panel:hover {
+  border-color: #d9c7f8 !important;
+  box-shadow: 0 18px 50px rgba(95, 50, 160, .09) !important;
+}
+
+/* Titres */
+
+.vb4-panel .section-title {
+  color: #24133e !important;
+  font-size: 23px !important;
+  font-weight: 800 !important;
+  letter-spacing: -.6px;
+  margin-bottom: 12px !important;
+}
+
+.vb4-panel .subtitle {
+  color: #82758f !important;
+  font-size: 14px !important;
+  line-height: 1.7;
+}
+
+/* Photos */
+
+.vb4-photos {
+  background:
+    linear-gradient(145deg, #ffffff, #faf7ff) !important;
+}
+
+.vb4-photos .photo-zone {
+  background: #faf7ff !important;
+  border: 2px dashed #b99af5 !important;
+  border-radius: 20px !important;
+  transition: all .25s ease;
+}
+
+.vb4-photos .photo-zone:hover {
+  background: #f2eaff !important;
+  border-color: #8950ed !important;
+  transform: translateY(-2px);
+}
+
+/* Champs du formulaire */
+
+.vb4-panel input:not([type="radio"]):not([type="checkbox"]):not([type="file"]),
+.vb4-panel select,
+.vb4-panel textarea {
+  background: #fcfbff !important;
+  border: 1px solid #e4ddec !important;
+  border-radius: 13px !important;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.vb4-panel input:focus,
+.vb4-panel select:focus,
+.vb4-panel textarea:focus {
+  border-color: #8950ed !important;
+  box-shadow: 0 0 0 4px rgba(137, 80, 237, .10) !important;
+  outline: none !important;
+}
+
+.vb4-panel .field-label {
+  color: #433454 !important;
+  font-weight: 650 !important;
+}
+
+/* Personnalisation */
+
+.vb4-personnalisation {
+  background: #ffffff !important;
+}
+
+.vb4-personnalisation .choice-title {
+  color: #37234e !important;
+  font-weight: 750 !important;
+}
+
+/* Boutons IA */
+
+.vb4-photos .analyse-button,
+.vb4-generation .generate {
+  background: linear-gradient(
+    135deg,
+    #7137df,
+    #9555f0
+  ) !important;
+
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 14px !important;
+  box-shadow: 0 9px 22px rgba(113, 55, 223, .22) !important;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.vb4-photos .analyse-button:hover,
+.vb4-generation .generate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 13px 28px rgba(113, 55, 223, .30) !important;
+}
+
+/* Generation */
+
+.vb4-generation {
+  background: linear-gradient(
+    135deg,
+    #f7f1ff,
+    #ffffff
+  ) !important;
+  border-color: #dfcff9 !important;
+}
+
+.vb4-generation .score {
+  border-radius: 16px;
+}
+
+/* Deux colonnes sur ordinateur */
+
+@media (min-width: 900px) {
+
+  .vb4-generator-card {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1.2fr) !important;
+  }
+
+  .vb4-photos {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .vb4-infos {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .vb4-personnalisation {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .vb4-generation {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+
+  .vb4-generator-card > #vintedDashboard {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 899px) {
+
+  .vb4-generator-card {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .vb4-panel {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    padding: 22px 18px !important;
+    border-radius: 19px !important;
+  }
+
+  .vb4-panel .section-title {
+    font-size: 21px !important;
+  }
+}
+
+
+/* ==========================================
+   VINTEDBOOST V4 - RESPONSIVE ADAPTATIF
+   ========================================== */
+
+/* Fenetres moyennes : conserver deux colonnes */
+
+@media (min-width: 720px) and (max-width: 1199px) {
+
+  .vb4-generator-card {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1.1fr) !important;
+
+    gap: 16px !important;
+  }
+
+  .vb4-photos {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+
+  .vb4-infos {
+    grid-column: 2 !important;
+    grid-row: 1 / span 2 !important;
+  }
+
+  .vb4-personnalisation {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+  }
+
+  .vb4-generation {
+    grid-column: 1 / -1 !important;
+    grid-row: 3 !important;
+  }
+
+  .vb4-panel {
+    padding: 20px !important;
+    border-radius: 18px !important;
+  }
+
+  .vb4-panel .section-title {
+    font-size: 20px !important;
+  }
+
+}
+
+/* Petites fenetres : une colonne lisible */
+
+@media (max-width: 719px) {
+
+  .vb4-generator-card {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 14px !important;
+  }
+
+  .vb4-panel {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    padding: 18px 14px !important;
+    border-radius: 16px !important;
+  }
+
+  .vb4-panel .section-title {
+    font-size: 19px !important;
+  }
+
+  .vb4-panel .row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .vb4-panel input,
+  .vb4-panel select,
+  .vb4-panel textarea {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+}
+
+/* Eviter les debordements */
+
+.vb4-generator-card,
+.vb4-panel {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* V4 - OPTIMISATION DES FENETRES REDUITES */
+
+@media (min-width: 600px) and (max-width: 899px) {
+
+  .vb4-generator-card {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .vb4-photos {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+
+  .vb4-infos {
+    grid-column: 2 !important;
+    grid-row: 1 / span 2 !important;
+  }
+
+  .vb4-personnalisation {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+  }
+
+  .vb4-generation {
+    grid-column: 1 / -1 !important;
+    grid-row: 3 !important;
+  }
+
+  .vb4-panel {
+    padding: 14px !important;
+    border-radius: 16px !important;
+  }
+
+  .vb4-panel .section-title {
+    font-size: 18px !important;
+  }
+
+  .vb4-panel .row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .vb4-panel input,
+  .vb4-panel select,
+  .vb4-panel textarea {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+}
+
+
+/* ==========================================
+   VINTEDBOOST V4 - CHOIX PREMIUM
+   ========================================== */
+
+.vb4-personnalisation .choices,
+.vb4-personnalisation .styles {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  margin: 14px 0 24px !important;
+}
+
+.vb4-personnalisation .choice {
+  position: relative;
+  min-width: 0;
+}
+
+/* Garder les radios fonctionnels et accessibles */
+
+.vb4-personnalisation .choice input[type="radio"] {
+  position: absolute !important;
+  opacity: 0 !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: 0 !important;
+}
+
+/* Cartes cliquables */
+
+.vb4-personnalisation .choice label {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 54px;
+  padding: 12px 10px !important;
+  background: #ffffff !important;
+  border: 1.5px solid #e6dff0 !important;
+  border-radius: 14px !important;
+  color: #554466 !important;
+  font-size: 14px !important;
+  font-weight: 650 !important;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition:
+    background .2s ease,
+    border-color .2s ease,
+    box-shadow .2s ease;
+}
+
+.vb4-personnalisation .choice label:hover {
+  background: #faf6ff !important;
+  border-color: #b995f4 !important;
+}
+
+/* Choix selectionne */
+
+.vb4-personnalisation .choice input[type="radio"]:checked + label {
+  background: #f2eaff !important;
+  border-color: #8950ed !important;
+  color: #7137df !important;
+  box-shadow: 0 0 0 2px rgba(137,80,237,.08) !important;
+}
+
+/* Navigation au clavier */
+
+.vb4-personnalisation .choice input[type="radio"]:focus-visible + label {
+  outline: 3px solid #a978f5 !important;
+  outline-offset: 3px;
+}
+
+/* Fenetres etroites */
+
+@media (max-width: 420px) {
+  .vb4-personnalisation .choices,
+  .vb4-personnalisation .styles {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+
+/* ==========================================
+   VINTEDBOOST V4 - SCORE PREMIUM
+   ========================================== */
+
+.vb4-generation .score {
+  background: #ffffff !important;
+  border: 1px solid #e8ddf7 !important;
+  border-radius: 20px !important;
+  padding: 24px !important;
+  margin-bottom: 24px !important;
+  box-shadow: 0 8px 25px rgba(80, 40, 140, .05);
+}
+
+.vb4-generation .score-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 16px !important;
+  margin-bottom: 18px !important;
+}
+
+.vb4-generation .score-header span:first-child {
+  color: #342247 !important;
+  font-size: 16px !important;
+  font-weight: 750 !important;
+}
+
+.vb4-generation #scoreText {
+  color: #7c3aed !important;
+  font-size: 26px !important;
+  font-weight: 850 !important;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.vb4-generation .score-bar {
+  width: 100% !important;
+  height: 12px !important;
+  background: #eee6f9 !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  margin-bottom: 18px !important;
+}
+
+.vb4-generation #scoreProgress {
+  height: 100% !important;
+  max-width: 100%;
+  background: linear-gradient(
+    90deg,
+    #8950ed,
+    #b17bff
+  ) !important;
+  border-radius: 999px !important;
+  transition: width .4s ease !important;
+}
+
+.vb4-generation #scoreHelp {
+  background: #f8f4ff !important;
+  color: #655476 !important;
+  border: 1px solid #eee4fc !important;
+  border-radius: 12px !important;
+  padding: 14px 16px !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+}
+
+@media (max-width: 719px) {
+  .vb4-generation .score {
+    padding: 18px !important;
+  }
+
+  .vb4-generation #scoreText {
+    font-size: 22px !important;
+  }
+}
+
+
+/* ==========================================
+   VINTEDBOOST V4 - RESULTAT IA PREMIUM
+========================================== */
+
+.vb4-generation #resultat:not(:empty) {
+    margin-top: 24px;
+}
+
+.vb4-generation #resultat .result {
+    padding: 24px;
+    border: 1px solid rgba(139, 92, 246, 0.20);
+    border-radius: 22px;
+    background: linear-gradient(145deg, #ffffff, #faf7ff);
+    box-shadow: 0 12px 35px rgba(65, 35, 120, 0.08);
+}
+
+.vb4-generation #resultat .result h2 {
+    margin: 0 0 10px;
+    font-size: 23px;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.vb4-generation #resultat .result-subtitle {
+    margin: 0 0 22px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #64748b;
+}
+
+.vb4-generation #resultat .price-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin: 20px 0 24px;
+}
+
+.vb4-generation #resultat .price {
+    min-width: 0;
+    padding: 16px 10px;
+    border: 1px solid #e9e2f5;
+    border-radius: 15px;
+    background: #ffffff;
+    text-align: center;
+}
+
+.vb4-generation #resultat .price small {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.vb4-generation #resultat .price strong {
+    display: block;
+    font-size: clamp(15px, 1.7vw, 23px);
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.vb4-generation #resultat .price.main {
+    border: 2px solid #8b5cf6;
+    background: linear-gradient(145deg, #f3e8ff, #ede9fe);
+    box-shadow: 0 5px 18px rgba(139, 92, 246, 0.12);
+}
+
+.vb4-generation #resultat .price.main strong {
+    color: #6d28d9;
+}
+
+.vb4-generation #resultat .result-section {
+    min-width: 0;
+    margin-top: 16px;
+    padding: 18px;
+    border: 1px solid #ede9f4;
+    border-radius: 16px;
+    background: #ffffff;
+}
+
+.vb4-generation #resultat .result-label {
+    margin-bottom: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #4c1d95;
+}
+
+.vb4-generation #resultat .result-text {
+    overflow-wrap: anywhere;
+    line-height: 1.7;
+}
+
+.vb4-generation #resultat .copy {
+    margin-top: 14px;
+    padding: 11px 16px;
+    border: 1px solid #ddd6fe;
+    border-radius: 11px;
+    background: #f5f3ff;
+    color: #6d28d9;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.vb4-generation #resultat .copy:hover {
+    background: #ede9fe;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 1100px) {
+    .vb4-generation #resultat .result {
+        padding: 15px;
+    }
+
+    .vb4-generation #resultat .price-grid {
+        gap: 6px;
+    }
+
+    .vb4-generation #resultat .price {
+        padding: 12px 5px;
+    }
+
+    .vb4-generation #resultat .result-section {
+        padding: 13px;
+    }
+}
+
+@media (max-width: 420px) {
+    .vb4-generation #resultat .price-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .vb4-generation #resultat .price strong {
+        font-size: 21px;
+    }
+}
+

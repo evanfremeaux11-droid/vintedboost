@@ -1,0 +1,115 @@
+﻿/* VINTEDBOOST V4 - NOUVELLE INTERFACE */
+
+.vb4-generator-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  display: grid;
+  gap: 24px;
+}
+
+.vb4-panel {
+  background: #ffffff;
+  border: 1px solid #e8def5;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 12px 35px rgba(70, 35, 120, .06);
+}
+
+.vb4-panel .section-title {
+  color: #24143f;
+  font-size: 24px;
+  letter-spacing: -.5px;
+  margin-bottom: 10px;
+}
+
+.vb4-photos {
+  background: linear-gradient(145deg, #ffffff, #faf6ff);
+}
+
+.vb4-infos {
+  border-top: 4px solid #8950ed;
+}
+
+.vb4-personnalisation {
+  background: #f8f4ff;
+  border-color: #e5d6ff;
+}
+
+.vb4-generation {
+  background: linear-gradient(135deg, #f3eaff, #ffffff);
+  border: 1px solid #d9c4ff;
+}
+
+.vb4-panel input:not([type="radio"]):not([type="checkbox"]),
+.vb4-panel select,
+.vb4-panel textarea {
+  border-radius: 12px;
+  border: 1px solid #ddd5e9;
+  background: #ffffff;
+}
+
+.vb4-panel input:focus,
+.vb4-panel select:focus,
+.vb4-panel textarea:focus {
+  border-color: #8950ed;
+  outline-color: #8950ed;
+}
+
+.vb4-generation .generate {
+  border-radius: 14px;
+  background: linear-gradient(135deg, #7136dd, #9855ed);
+  box-shadow: 0 8px 22px rgba(113, 54, 221, .20);
+}
+
+@media (max-width: 650px) {
+  .vb4-generator-card {
+    gap: 16px;
+  }
+
+  .vb4-panel {
+    padding: 22px 18px;
+    border-radius: 18px;
+  }
+
+  .vb4-panel .section-title {
+    font-size: 21px;
+  }
+}
+
+/* V4 - DISPOSITION PREMIUM DESKTOP */
+
+@media (min-width: 900px) {
+
+  .vb4-generator-card {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    align-items: start;
+  }
+
+  .vb4-photos {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .vb4-infos {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .vb4-personnalisation {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .vb4-generation {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+
+  .vb4-generator-card > #vintedDashboard {
+    grid-column: 1 / -1;
+  }
+
+}
+

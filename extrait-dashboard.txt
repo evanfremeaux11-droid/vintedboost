@@ -1,0 +1,71 @@
+﻿    if(!nouvelleValeur){
+        return;
+    }
+
+
+    const texte =
+        String(
+            nouvelleValeur
+        ).trim();
+
+
+    if(!texte){
+        return;
+    }
+
+
+    document
+        .getElementById(id)
+        .value =
+            texte;
+}
+
+
+function remplirSelect(
+    id,
+    nouvelleValeur
+){
+
+    if(!nouvelleValeur){
+        return;
+    }
+
+
+    const select =
+        document.getElementById(
+            id
+        );
+
+
+    const recherche =
+        String(
+            nouvelleValeur
+        )
+        .trim()
+        .toLowerCase();
+
+
+    const option =
+        Array.from(
+            select.options
+        )
+        .find(
+            option =>
+                option.value
+                    .toLowerCase()
+                === recherche
+        );
+
+
+    if(option){
+
+        select.value =
+            option.value;
+    }
+}
+/* ======================================================
+   SCORE DE QUALITÉ
+====================================================== */
+
+function updateScore(){
+

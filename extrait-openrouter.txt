@@ -1,0 +1,146 @@
+﻿
+async function appelerOpenRouter(messages, options = {}) {
+    if (!process.env.OPENROUTER_API_KEY) {
+        throw new Error("La clÃ© OpenRouter n'est pas configurÃ©e.");
+    }
+
+    const maxTokens = options.maxTokens || 1800;
+    const controller = new AbortController();
+
+    const timeout = setTimeout(
+        () => controller.abort(),
+        70000
+    );
+
+    const debut = Date.now();
+
+    try {
+        const OPENROUTER_URL =
+            "https://openrouter.ai/api/v1/chat/completions";
+
+        console.log("ðŸ”— URL OPENROUTER =", OPENROUTER_URL);
+
+        const response = await fetch(
+            OPENROUTER_URL,
+            {
+                method: "POST",
+                signal: controller.signal,
+
+                headers: {
+                    "Authorization":
+                        `Bearer ${process.env.OPENROUTER_API_KEY}`,
+                    "Content-Type": "application/json",
+                    "X-Title": "VintedBoost"
+                },
+
+                body: JSON.stringify({
+                    model: MODELE,
+                    messages,
+                    temperature: 0.1,
+                    max_tokens: maxTokens
+                })
+            }
+        );
+
+        let data;
+
+        try {
+            data = await response.json();
+        } catch {
+            throw new Error(
+                "RÃ©ponse OpenRouter illisible."
+            );
+        }
+
+        if (!response.ok) {
+            console.error(
+                "OPENROUTER :",
+                response.status,
+                data?.error?.message || "Erreur inconnue"
+            );
+
+            const erreur = new Error(
+                data?.error?.message || "Erreur OpenRouter."
+            );
+
+            erreur.status = response.status;
+            throw erreur;
+        }
+
+        const texte = recupererTexteIA(data);
+
+        const temps =
+            ((Date.now() - debut) / 1000).toFixed(1);
+
+        console.log(
+            `ðŸ¤– ${data?.model || MODELE} â€¢ ${temps}s â€¢ ${data?.choices?.[0]?.finish_reason || "?"}`
+        );
+
+        if (!texte) {
+            throw new Error(
+                "L'IA a renvoyÃ© une rÃ©ponse vide."
+            );
+        }
+
+        return texte;
+
+    } catch (error) {
+        if (error.name === "AbortError") {
+            throw new Error(
+                "OpenRouter met trop de temps Ã  rÃ©pondre."
+            );
+        }
+
+        throw error;
+
+    } finally {
+        clearTimeout(timeout);
+    }
+}
+/* ======================================================
+
+
+
+
+
+
+
+   IA JSON + RETRY
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function appelerIAJSON(
+
+
+
+
+
+
+
+    messages,
+
+
+
+
+
+

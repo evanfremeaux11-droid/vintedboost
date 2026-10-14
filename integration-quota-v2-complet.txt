@@ -1,0 +1,91 @@
+﻿const articleObligatoire =
+    nettoyerTexte(req.body?.article, 100);
+if (!articleObligatoire) {
+    return res.status(400).json({
+        error: "Indique au minimum le type d'article."
+    });
+}
+const sessionQuota =
+    await verifierUtilisateurEtQuota(req);
+            const article =
+                nettoyerTexte(
+                    req.body?.article,
+                    100
+                );
+            const marque =
+                nettoyerTexte(
+                    req.body?.marque,
+                    100
+                );
+            const categorie =
+                nettoyerTexte(
+                    req.body?.categorie,
+                    100
+                );
+            const taille =
+                nettoyerTexte(
+                    req.body?.taille,
+                    50
+                );
+            const couleur =
+                nettoyerTexte(
+                    req.body?.couleur,
+                    100
+                );
+            const etat =
+ticsError) {
+        console.error(
+            "Erreur analytics generation :",
+            analyticsError.message
+        );
+    }
+} catch (analyticsError) {
+    console.error(
+        "Erreur analytics generation :",
+        analyticsError.message
+    );
+}
+            return res.json({
+                ...resultat,
+                quota:
+                    sessionQuota.quota
+            });
+        } catch (error) {
+            console.error(
+                "âŒ GENERATION :",
+                error.message
+            );
+} catch (error) {
+            console.error(
+                "âŒ GENERATION :",
+                error.message
+            );
+            return res
+                .status(
+                    error.status || 500
+                )
+                .json({
+                    error:
+                        error.status
+                            ? error.message
+                            : "La gÃ©nÃ©ration a Ã©chouÃ©. RÃ©essaie dans quelques secondes.",
+                    code:
+                        error.code ||
+                        undefined,
+                    quota:
+                        error.quota ||
+                        undefined
+                });
+        }
+    }
+);
+/* ======================================================
+   STRIPE CHECKOUT PREMIUM
+\====================================================== */
+app.post("/create-checkout-session", async (req, res) => {
+    try {
+        const authorization = req.headers.authorization || "";
+        if (!authorization.startsWith("Bearer ")) {
+            return res.status(401).json({
+                error: "Connecte-toi pour passer Premium."
+            });

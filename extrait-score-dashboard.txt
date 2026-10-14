@@ -1,0 +1,131 @@
+﻿
+    let score = 0;
+
+    if(photosBase64.length)
+        score += 15;
+
+    if(value("article"))
+        score += 20;
+
+    if(value("marque"))
+        score += 10;
+
+    if(value("categorie"))
+        score += 10;
+
+    if(value("taille"))
+        score += 10;
+
+    if(value("couleur"))
+        score += 10;
+
+    if(value("etat"))
+        score += 10;
+
+    if(value("prix"))
+        score += 5;
+
+    if(value("details"))
+        score += 10;
+
+
+    score =
+        Math.min(
+            score,
+            100
+        );
+
+
+    document.getElementById(
+        "scoreText"
+    ).textContent =
+        score + " %";
+
+
+    document.getElementById(
+        "scoreProgress"
+    ).style.width =
+        score + "%";
+
+
+    let text =
+        "Ajoute quelques informations pour obtenir une meilleure annonce.";
+
+
+    if(score >= 85){
+
+        text =
+            "Excellent : les informations sont suffisamment complètes.";
+
+    }else if(score >= 60){
+
+        text =
+            "Bonne base. Quelques informations supplémentaires peuvent encore aider.";
+
+    }else if(score >= 30){
+
+        text =
+            "Continue à compléter les caractéristiques de ton article.";
+    }
+
+
+    document.getElementById(
+        "scoreHelp"
+    ).textContent =
+        text;
+}
+
+
+/* ======================================================
+   GÉNÉRATION DE L'ANNONCE V9
+====================================================== */
+
+async function genererAnnonce(){
+
+    const article =
+        value("article");
+
+
+    if(!article){
+
+        alert(
+            "Indique au minimum le type d'article."
+        );
+
+
+        document.getElementById(
+            "article"
+        ).focus();
+
+
+        return;
+    }
+
+
+    /*
+    ==========================================
+    Vérification Supabase
+    ==========================================
+    */
+
+    if(!supabaseClient){
+
+        alert(
+            "Le service de connexion est encore en cours de chargement."
+        );
+
+        return;
+    }
+
+
+    const {
+        data:{
+            session
+        }
+    } =
+        await supabaseClient
+            .auth
+            .getSession();
+
+
+    /*

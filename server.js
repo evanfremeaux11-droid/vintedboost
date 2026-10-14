@@ -7379,6 +7379,38 @@ async function verifierUtilisateurEtQuota(
 
 
     }
+    // V2 uniquement : activer apres installation et tests du SQL V2.
+    if (process.env.V2_QUOTA_RESERVATIONS_ENABLED === "true") {
+        const { data: reservation, error: reservationError } =
+            await supabaseAdmin.rpc("reserve_generation_v2", {
+                p_user_id: userData.user.id
+            });
+        if (reservationError) {
+            console.error("Erreur reservation V2 :", reservationError.message);
+            const erreur = new Error("Impossible de reserver une generation.");
+            erreur.status = 503;
+            throw erreur;
+        }
+        if (!reservation?.allowed) {
+            const erreur = new Error("Quota gratuit atteint. Passe a Premium pour continuer.");
+            erreur.status = 403;
+            erreur.code = "QUOTA_REACHED";
+            erreur.quota = reservation;
+            throw erreur;
+        }
+        if (!reservation.reservation_id) {
+            const erreur = new Error("Reservation V2 invalide.");
+            erreur.status = 503;
+            throw erreur;
+        }
+        return {
+            user: userData.user,
+            quota: reservation,
+            supabase,
+            reservationId: reservation.reservation_id
+        };
+    }
+
 
 
 
@@ -7971,6 +8003,7 @@ app.post(
 
 
             Date.now();
+        let sessionQuota = null;
 
 
 
@@ -8058,31 +8091,17 @@ app.post(
 
 
 
-            const sessionQuota =
+            const articleObligatoire =
+    nettoyerTexte(req.body?.article, 100);
 
+if (!articleObligatoire) {
+    return res.status(400).json({
+        error: "Indique au minimum le type d'article."
+    });
+}
 
-
-
-
-
-
-                await verifierUtilisateurEtQuota(
-
-
-
-
-
-
-
-                    req
-
-
-
-
-
-
-
-                );
+sessionQuota =
+    await verifierUtilisateurEtQuota(req);
 
 
 
@@ -9912,6 +9931,22 @@ let prixMarcheApplique = false;
 
 
 
+// V2 : confirmer avant de retourner une annonce reussie.
+            if (sessionQuota?.reservationId) {
+                const { data: completed, error: completeError } =
+                    await supabaseAdmin.rpc("complete_generation_v2", {
+                        p_reservation_id: sessionQuota.reservationId
+                    });
+                if (completeError || completed !== true) {
+                    console.error("Confirmation quota V2 impossible :", completeError?.message || completed);
+                    const erreur = new Error("Impossible de confirmer la generation. Reessaie plus tard.");
+                    erreur.status = 503;
+                    throw erreur;
+                }
+                // Une generation confirmee ne doit jamais etre remboursee.
+                sessionQuota.reservationId = null;
+            }
+
 try {
 
 
@@ -10185,6 +10220,21 @@ try {
 
 
         } catch (error) {
+                // V2 : remboursement idempotent si reservation encore en attente.
+                if (sessionQuota?.reservationId) {
+                    try {
+                        const { data: refunded, error: refundError } =
+                            await supabaseAdmin.rpc("refund_generation_v2", {
+                                p_reservation_id: sessionQuota.reservationId
+                            });
+                        if (refundError || refunded !== true) {
+                            console.error("Remboursement quota V2 non confirme :", refundError?.message || refunded);
+                        }
+                    } catch (refundError) {
+                        console.error("Erreur remboursement quota V2 :", refundError.message);
+                    }
+                }
+
 
 
 

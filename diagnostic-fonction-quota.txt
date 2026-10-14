@@ -1,0 +1,91 @@
+﻿async function verifierUtilisateurEtQuota(
+    req
+) {
+    const authorization =
+        req.headers.authorization || "";
+    if (
+        !authorization.startsWith(
+            "Bearer "
+        )
+    ) {
+        const erreur =
+            new Error(
+                "Connecte-toi pour gÃ©nÃ©rer une annonce."
+            );
+        erreur.status = 401;
+        throw erreur;
+    }
+    const accessToken =
+        authorization
+            .slice(7)
+            .trim();
+    if (!accessToken) {
+        const erreur =
+            new Error(
+                "Session invalide."
+            );
+        erreur.status = 401;
+        throw erreur;
+    }
+    const supabase =
+        creerClientSupabaseUtilisateur(
+            accessToken
+        );
+    const {
+        data: userData,
+        error: userError
+    } =
+        await supabase.auth.getUser(
+            accessToken
+        );
+    if (
+        userError ||
+        !userData?.user
+    ) {
+        const erreur =
+            new Error(
+                "Session expirÃ©e. Reconnecte-toi."
+            );
+        erreur.status = 401;
+        throw erreur;
+    }
+    const {
+        data: quota,
+        error: quotaError
+    } =
+        await supabase.rpc(
+            "use_generation"
+        );
+    if (quotaError) {
+        console.error(
+            "âŒ QUOTA :",
+            quotaError.message
+        );
+        const erreur =
+            new Error(
+                "Impossible de vÃ©rifier ton quota."
+            );
+        erreur.status = 500;
+        throw erreur;
+    }
+    if (!quota?.allowed) {
+        const erreur =
+            new Error(
+                "Tu as utilisÃ© tes 5 gÃ©nÃ©rations gratuites ce mois-ci. Passe Ã  Premium pour continuer."
+            );
+        erreur.status = 403;
+        erreur.code =
+            "QUOTA_REACHED";
+        erreur.quota =
+            quota;
+        throw erreur;
+    }
+    return {
+        user:
+            userData.user,
+         quota,
+    supabase
+};
+}
+/* ======================================================
+   GENERATION ANNONCE

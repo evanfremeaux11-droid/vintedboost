@@ -1,0 +1,111 @@
+﻿function afficherAnnonce(data){
+
+    const result =
+        document.getElementById(
+            "resultat"
+        );
+
+
+    const mots =
+        Array.isArray(
+            data.motsCles
+        )
+
+        ? data.motsCles
+
+        : [];
+
+
+    result.style.display =
+        "block";
+
+
+    result.innerHTML = `
+
+        <div class="result">
+
+            <h2>
+                🎉 Ton annonce est prête
+            </h2>
+
+
+            <p class="result-subtitle">
+                Vérifie toujours les informations
+                et l'état réel de l'article
+                avant publication.
+            </p>
+
+
+            <div class="price-grid">
+
+                <div class="price">
+
+                    <small>
+                        Prix bas
+                    </small>
+
+                    <strong>
+                        ${formatPrix(
+                            data.prixMin
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="price main">
+
+                    <small>
+                        Prix conseillé
+                    </small>
+
+                    <strong>
+                        ${formatPrix(
+                            data.prixConseille
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="price">
+
+                    <small>
+                        Prix haut
+                    </small>
+
+                    <strong>
+                        ${formatPrix(
+                            data.prixMax
+                        )}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="result-section">
+
+                <div class="result-label">
+                    🏷️ Titre
+                </div>
+
+
+                <div
+                    id="resultTitle"
+                    class="result-text"
+                ></div>
+
+
+                <button
+                    class="copy"
+                    onclick="copierElement('resultTitle')"
+                >
+                    📋 Copier le titre
+                </button>
+
+            </div>
+
+
+            <div class="result-section">

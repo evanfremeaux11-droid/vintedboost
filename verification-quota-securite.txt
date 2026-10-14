@@ -1,0 +1,101 @@
+﻿            "use_generation"
+        );
+    if (quotaError) {
+        console.error(
+            "âŒ QUOTA :",
+            quotaError.message
+        );
+        const erreur =
+            new Error(
+                "Impossible de vÃ©rifier ton quota."
+            );
+        erreur.status = 500;
+        throw erreur;
+    }
+    if (!quota?.allowed) {
+        const erreur =
+            new Error(
+                "Tu as utilisÃ© tes 5 gÃ©nÃ©rations gratuites ce mois-ci. Passe Ã  Premium pour continuer."
+            );
+        erreur.status = 403;
+        erreur.code =
+            "QUOTA_REACHED";
+        erreur.quota =
+            quota;
+        throw erreur;
+    }
+    return {
+        user:
+            userData.user,
+         quota,
+    supabase
+};
+}
+/* ======================================================
+   GENERATION ANNONCE
+\====================================================== */
+app.post(
+    "/generate",
+    limiterRequetes,
+    async (req, res) => {
+        const debut =
+            Date.now();
+        try {
+            /*
+            V9 :
+            vÃ©rifie le compte Supabase
+            et consomme 1 gÃ©nÃ©ration.
+            */
+            const sessionQuota =
+                await verifierUtilisateurEtQuota(
+                    req
+                );
+            const article =
+                nettoyerTexte(
+                    req.body?.article,
+                    100
+                );
+            const marque =
+                nettoyerTexte(
+                    req.body?.marque,
+                    100
+                );
+            const categorie =
+                nettoyerTexte(
+                    req.body?.categorie,
+                    100
+                );
+            const taille =
+                nettoyerTexte(
+                    req.body?.taille,
+                    50
+                );
+            const couleur =
+                nettoyerTexte(
+                    req.body?.couleur,
+                    100
+                );
+            const etat =
+                nettoyerTexte(
+                    req.body?.etat,
+                    50
+                );
+            const prix =
+                nettoyerTexte(
+                    req.body?.prix,
+                    20
+                );
+            const details =
+                nettoyerTexte(
+                    req.body?.details,
+                    1000
+                );
+            const defauts =
+                nettoyerTexte(
+                    req.body?.defauts,
+                    500
+                );
+            const style =
+                nettoyerTexte(
+                    req.body?.style,
+                    30

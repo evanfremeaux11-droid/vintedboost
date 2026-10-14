@@ -1,0 +1,66 @@
+﻿            "use_generation"
+        );
+    if (quotaError) {
+        console.error(
+            "Ã¢ÂÅ’ QUOTA :",
+            quotaError.message
+        );
+        const erreur =
+            new Error(
+                "Impossible de vÃƒÂ©rifier ton quota."
+            );
+        erreur.status = 500;
+        throw erreur;
+    }
+    if (!quota?.allowed) {
+        const erreur =
+            new Error(
+                "Tu as utilisÃƒÂ© tes 5 gÃƒÂ©nÃƒÂ©rations gratuites ce mois-ci. Passe ÃƒÂ  Premium pour continuer."
+            );
+        erreur.status = 403;
+        erreur.code =
+            "QUOTA_REACHED";
+        erreur.quota =
+            quota;
+        throw erreur;
+    }
+    return {
+        user:
+            userData.user,
+         quota,
+    supabase
+};
+}
+/* ======================================================
+   GENERATION ANNONCE
+\====================================================== */
+app.post(
+    "/generate",
+    limiterRequetes,
+    async (req, res) => {
+        const debut =
+            Date.now();
+        try {
+            /*
+            V9 :
+            vÃƒÂ©rifie le compte Supabase
+            et consomme 1 gÃƒÂ©nÃƒÂ©ration.
+            */
+            const sessionQuota =
+                await verifierUtilisateurEtQuota(
+                    req
+                );
+            const article =
+                nettoyerTexte(
+                    req.body?.article,
+                    100
+                );
+            const marque =
+                nettoyerTexte(
+                    req.body?.marque,
+                    100
+                );
+            const categorie =
+                nettoyerTexte(
+                    req.body?.categorie,
+                    100

@@ -1,0 +1,26 @@
+﻿VINTEDBOOST - REPRISE V4
+
+Projet : C:\Users\maison\Desktop\vinted boost
+
+DEJA REALISE :
+- Dashboard V3 installe et publie.
+- Page d'accueil V4 : landing-v2.html
+- Design accueil : landing-design-v4.css
+- Generateur : index.html
+- Animations : animations-v4.css
+- Nouveau design generateur : generateur-design-v4.css
+- Lien CSS V4 ajoute au generateur.
+- Sauvegardes HTML creees avant modifications.
+
+A VERIFIER DEMAIN :
+1. Ouvrir http://localhost:3000/generateur
+2. Verifier que le serveur Node fonctionne.
+3. Verifier que le design sombre V4 apparait.
+4. Moderniser la zone photos, les cartes et le formulaire.
+5. Tester IA, quotas, connexion et Premium.
+6. Publier uniquement apres validation.
+
+ATTENTION :
+- Ne pas utiliser git add .
+- Ne pas publier les fichiers .env.
+- Ne pas deployer avant les tests locaux.

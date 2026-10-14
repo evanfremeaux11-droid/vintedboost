@@ -1,0 +1,302 @@
+﻿async function verifierUtilisateurEtQuota(
+req
+) {
+const authorization =
+req.headers.authorization || "";
+if (
+!authorization.startsWith(
+"Bearer "
+)
+) {
+const erreur =
+new Error(
+"Connecte-toi pour gÃƒÂ©nÃƒÂ©rer une annonce."
+);
+erreur.status = 401;
+throw erreur;
+}
+const accessToken =
+authorization
+.slice(7)
+.trim();
+if (!accessToken) {
+const erreur =
+new Error(
+"Session invalide."
+);
+erreur.status = 401;
+throw erreur;
+}
+const supabase =
+creerClientSupabaseUtilisateur(
+accessToken
+);
+const {
+data: userData,
+error: userError
+} =
+await supabase.auth.getUser(
+accessToken
+);
+if (
+userError ||
+!userData?.user
+) {
+const erreur =
+new Error(
+"Session expirÃƒÂ©e. Reconnecte-toi."
+);
+erreur.status = 401;
+throw erreur;
+}
+const {
+data: quota,
+error: quotaError
+} =
+await supabase.rpc(
+"use_generation"
+);
+if (quotaError) {
+console.error(
+"Ã¢ÂÅ’ QUOTA :",
+quotaError.message
+);
+const erreur =
+new Error(
+"Impossible de vÃƒÂ©rifier ton quota."
+);
+erreur.status = 500;
+throw erreur;
+}
+if (!quota?.allowed) {
+const erreur =
+new Error(
+"Tu as utilisÃƒÂ© tes 5 gÃƒÂ©nÃƒÂ©rations gratuites ce mois-ci. Passe ÃƒÂ  Premium pour continuer."
+);
+erreur.status = 403;
+erreur.code =
+"QUOTA_REACHED";
+erreur.quota =
+quota;
+throw erreur;
+}
+return {
+user:
+userData.user,
+quota,
+supabase
+};
+}
+/* ======================================================
+GENERATION ANNONCE
+\====================================================== */
+app.post(
+"/generate",
+limiterRequetes,
+async (req, res) => {
+const debut =
+Date.now();
+try {
+/*
+V9 :
+vÃƒÂ©rifie le compte Supabase
+et consomme 1 gÃƒÂ©nÃƒÂ©ration.
+*/
+const sessionQuota =
+await verifierUtilisateurEtQuota(
+req
+);
+const article =
+nettoyerTexte(
+req.body?.article,
+100
+);
+const marque =
+nettoyerTexte(
+req.body?.marque,
+100
+);
+const categorie =
+nettoyerTexte(
+req.body?.categorie,
+100
+);
+const taille =
+nettoyerTexte(
+req.body?.taille,
+50
+);
+const couleur =
+nettoyerTexte(
+req.body?.couleur,
+100
+);
+const etat =
+nettoyerTexte(
+req.body?.etat,
+50
+);
+const prix =
+nettoyerTexte(
+req.body?.prix,
+20
+);
+const modele = nettoyerTexte(req.body?.modele, 150);
+const details =
+nettoyerTexte(
+req.body?.details,
+1000
+);
+const defauts =
+nettoyerTexte(
+req.body?.defauts,
+500
+);
+const style =
+nettoyerTexte(
+req.body?.style,
+30
+);
+const plateforme =
+nettoyerTexte(
+req.body?.plateforme,
+30
+);
+if (!article) {
+return res
+.status(400)
+.json({
+error:
+"Indique au minimum le type d'article."
+});
+}
+const consigneStyle =
+obtenirStyle(style);
+const consignePlateforme =
+obtenirPlateforme(
+plateforme
+);
+const prompt = `
+CrÃ©e une annonce de seconde main.
+Plateforme :
+${consignePlateforme}
+Style :
+${consigneStyle}
+Article : ${article}
+Marque : ${marque || "inconnue"}
+CatÃ©gorie : ${categorie || "inconnue"}
+Taille : ${taille || "inconnue"}
+Couleur : ${couleur || "inconnue"}
+Ã‰tat : ${etat || "inconnu"}
+Prix envisagÃ© : ${prix ? prix + " â‚¬" : "non renseignÃ©"}
+DÃƒÂ©tails : ${details || "aucun"}
+DÃƒÂ©fauts : ${defauts || "aucun renseignÃƒÂ©"}
+Retourne UNIQUEMENT :
+{
+"titre":"",
+"description":"",
+"prixConseille":"",
+"prixMin":"",
+"prixMax":"",
+"motsCles":[]
+}
+RÃ¨gles :
+- aucune information inventÃ©e ;
+- ne jamais inventer matiÃ¨re, prix neuf, provenance ou authenticitÃ© ;
+- ne jamais garantir l'authenticitÃ© ;
+- utiliser uniquement les informations fournies ou clairement identifiÃ©es ;
+- Ã©crire uniquement en franÃ§ais naturel ;
+- utiliser bleu marine et jamais navy blue lorsque la couleur correspond ;
+- ne jamais ajouter vintage, rare, collector, occasion ou Ã©dition limitÃ©e sans information explicite ;
+- ne jamais Ã©crire aucun dÃ©faut, sans dÃ©faut ou Ã©tat parfait si cela n'est pas explicitement renseignÃ© ;
+- ne jamais inventer de dÃ©lai d'envoi, mesures ou informations de livraison ;
+- Ã©viter les phrases commerciales gÃ©nÃ©riques comme parfait pour un look urbain ;
+- titre court, naturel et prÃ©cis ;
+- appliquer uniquement les consignes du style selectionne dans consigneStyle ;
+- differencier clairement les styles par leur longueur, leur ton et leur structure ;
+- respecter exactement les informations fournies, notamment l'etat, la taille et la couleur ;
+- ne jamais transformer tres bon etat en excellent etat ;
+- ne jamais ajouter de formule generique comme ideal pour l'automne ou parfait pour toutes les occasions ;
+- eviter les formulations artificielles et les repetitions ;
+- en mode court, ne pas imposer de phrase d'introduction ;
+- dans les autres modes, commencer par une presentation naturelle adaptee au style ;
+- ne jamais combiner des caracteristiques contradictoires ;
+- ne jamais repeter dans la presentation les informations deja affichees avec les emojis ;
+- REGLE PRIORITAIRE ANTI-REPETITION : chaque caracteristique precise doit apparaitre une seule fois dans toute la description. Si le col montant, les manches longues ou le badge sont deja mentionnes dans la presentation, ne pas les recopier dans la ligne des details. Si aucune caracteristique supplementaire ne reste, supprimer entierement la ligne des details ;
+- utiliser une seule ligne avec l'emoji ðŸ§µ pour regrouper les details supplementaires connus ;
+- ne jamais afficher plusieurs lignes commencant par ðŸ§µ ;
+- ne jamais ajouter de details simplement pour allonger la description ;
+- utiliser de vrais retours Ã  la ligne dans la description ;
+- afficher les informations connues sur des lignes sÃ©parÃ©es avec ces emojis, sans Ã©crire les mots Taille, Couleur ou Ã‰tat :
+- ðŸ“ suivi uniquement de la taille ;
+- ðŸŽ¨ suivi uniquement de la couleur ;
+- âœ¨ suivi uniquement de l'Ã©tat ;
+- ðŸ§µ suivi des dÃ©tails rÃ©ellement connus, uniquement s'ils apportent une information supplÃ©mentaire ;
+- sÃ©parer la phrase de prÃ©sentation et les informations par une ligne vide ;
+- ne jamais rÃ©pÃ©ter les mÃªmes caractÃ©ristiques dans plusieurs parties de la description ;
+- ne jamais inventer de caractÃ©ristique ou d'information manquante ;
+- ne jamais afficher une ligne correspondant Ã  une information inconnue ;
+- Ã©viter les formulations col Ã  col, mi-fermeture et patch compass ;
+- Ã©crire patch Stone Island lorsqu'un patch Stone Island est rÃ©ellement identifiÃ© ;
+- maximum 8 mots-clÃ©s pertinents et uniquement fondÃ©s sur les informations connues ;
+- pas de fausse urgence ni de texte promotionnel ;
+- prix = estimation indicative uniquement ;
+- estimer selon la marque, la catÃ©gorie, le modÃ¨le, l'Ã©tat et les dÃ©fauts ;
+- tenir compte de la hierarchie des etats : neuf avec etiquette, neuf sans etiquette, tres bon etat, bon etat, satisfaisant ;
+- a article identique, un etat moins bon ne doit pas justifier un prix plus eleve ;
+- diminuer raisonnablement l'estimation lorsque l'etat se degrade, selon la marque et la categorie ;
+- ne pas appliquer automatiquement une decote fixe identique a tous les vetements ;
+- ne jamais surevaluer un article pour compenser son mauvais etat ;
+- distinguer les marques classiques, premium et de luxe ;
+- tenir compte de l'Ã©tat neuf avec Ã©tiquette ou de l'usure rÃ©elle ;
+- ne pas appliquer un prix gÃ©nÃ©rique identique Ã  des articles diffÃ©rents ;
+- utiliser le prix envisagÃ© comme un indice, jamais comme une valeur Ã  recopier automatiquement ;
+- si le modÃ¨le exact ou la cote sont inconnus, rester prudent et Ã©viter une estimation artificiellement prÃ©cise ;
+- ne pas inventer de prix neuf ou de ventes comparables ;
+- eviter les estimations generiques pour les marques comme Stone Island ;
+- prixMin = vente rapide, prixConseille = prix raisonnable, prixMax = prix haut envisageable ;
+- prixConseille, prixMin et prixMax = nombres entiers sous forme de texte ;
+- prixMin <= prixConseille <= prixMax ;
+- ne jamais inventer une raison de vente, une frequence d'utilisation, une provenance, une authenticite garantie ou une qualite non confirmee ;
+- aucun Markdown ;
+- aucun texte hors JSON.
+`.trim();
+const annonce =
+await appelerIAJSON(
+[
+{
+role:
+"user",
+content:
+prompt
+}
+],
+{
+maxTokens:
+1600
+}
+);
+const { obtenirPrixCache, enregistrerPrixCache } = require("./price-cache");
+const articlePourPrix = {
+    article, marque, modele, categorie, taille, couleur,
+    etat, prix, details, defauts, plateforme
+};
+let prixMarcheApplique = false;
+// PRICE_CACHE_V1
+            // MARKET_PRICE_INTEGRATION_V1
+            // Recherche eBay facultative : ne doit jamais bloquer la gÃ©nÃ©ration.
+            if (
+                process.env.EBAY_CLIENT_ID &&
+                process.env.EBAY_CLIENT_SECRET
+            ) {
+                try {
+                    const { rechercherPrixArticle } =
+                        require("./price-research");
+const estimationMarche = await rechercherPrixArticle({
+                        marque,
+                        categorie,
+                        taille,
+                        modele: modele, etat: etat
+                    });
+if (
+                        estimationMarche?.disponib

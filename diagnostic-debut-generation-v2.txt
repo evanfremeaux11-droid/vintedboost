@@ -1,0 +1,82 @@
+﻿app.post(
+    "/generate",
+    limiterRequetes,
+    async (req, res) => {
+        const debut =
+            Date.now();
+        try {
+            /*
+            V9 :
+            vÃ©rifie le compte Supabase
+            et consomme 1 gÃ©nÃ©ration.
+            */
+            const sessionQuota =
+                await verifierUtilisateurEtQuota(
+                    req
+                );
+            const article =
+                nettoyerTexte(
+                    req.body?.article,
+                    100
+                );
+            const marque =
+                nettoyerTexte(
+                    req.body?.marque,
+                    100
+                );
+            const categorie =
+                nettoyerTexte(
+                    req.body?.categorie,
+                    100
+                );
+            const taille =
+                nettoyerTexte(
+                    req.body?.taille,
+                    50
+                );
+            const couleur =
+                nettoyerTexte(
+                    req.body?.couleur,
+                    100
+                );
+            const etat =
+                nettoyerTexte(
+                    req.body?.etat,
+                    50
+                );
+            const prix =
+                nettoyerTexte(
+                    req.body?.prix,
+                    20
+                );
+            const modele = nettoyerTexte(req.body?.modele, 150);
+            const details =
+                nettoyerTexte(
+                    req.body?.details,
+                    1000
+                );
+            const defauts =
+                nettoyerTexte(
+                    req.body?.defauts,
+                    500
+                );
+            const style =
+                nettoyerTexte(
+                    req.body?.style,
+                    30
+                );
+            const plateforme =
+                nettoyerTexte(
+                    req.body?.plateforme,
+                    30
+                );
+            if (!article) {
+                return res
+                    .status(400)
+                    .json({
+                        error:
+                            "Indique au minimum le type d'article."
+                    });
+            }
+            const consigneStyle =
+                obtenirStyle(style);

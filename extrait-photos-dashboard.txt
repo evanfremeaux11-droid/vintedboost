@@ -1,0 +1,51 @@
+﻿
+
+/* ======================================================
+   AFFICHAGE PHOTOS
+====================================================== */
+
+function afficherPhotos(){
+
+    const zone =
+        document.getElementById(
+            "previews"
+        );
+
+    const compteur =
+        document.getElementById(
+            "photoCounter"
+        );
+
+    const analyseButton =
+        document.getElementById(
+            "analyseButton"
+        );
+
+
+    zone.innerHTML = "";
+
+
+    photosBase64.forEach(
+        (
+            photo,
+            index
+        )=>{
+
+            const preview =
+                document.createElement(
+                    "div"
+                );
+
+
+            preview.className =
+                "preview";
+
+
+            const image =
+                document.createElement(
+                    "img"
+                );
+
+
+            image.src =
+                photo;

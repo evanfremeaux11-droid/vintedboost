@@ -1,0 +1,36 @@
+﻿/* VintedBoost - Generateur V4 */
+.hero {
+  background: linear-gradient(135deg, #111027, #251642, #15102e);
+  color: white;
+  padding: 85px 24px 100px;
+  border-radius: 0 0 36px 36px;
+}
+
+.hero h1 {
+  color: white;
+  font-size: clamp(36px, 5vw, 68px);
+}
+
+.hero p {
+  color: #cbc4e1;
+}
+
+.hero .gradient {
+  background: linear-gradient(100deg, #b89aff, #e8bbff, #9bc8ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-badge {
+  background: rgba(255,255,255,.1);
+  color: #e8d8ff;
+  border: 1px solid rgba(255,255,255,.2);
+}
+
+@media (max-width: 600px) {
+  .hero {
+    padding: 60px 18px 75px;
+    border-radius: 0 0 24px 24px;
+  }
+}

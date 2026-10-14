@@ -1,0 +1,294 @@
+﻿
+<main class="container">
+
+<div class="card">
+
+
+<h2 class="section-title">
+    📸 Ajoute tes photos
+</h2>
+
+<p class="subtitle">
+    Jusqu'à 4 photos du même article.
+    VintedBoost peut les analyser automatiquement
+    pour t'aider à remplir les informations.
+</p>
+
+
+<!-- ======================================================
+     PHOTOS
+====================================================== -->
+
+<div
+    class="photo-zone"
+    onclick="document.getElementById('photos').click()"
+>
+
+    <div class="photo-icon">
+        📷
+    </div>
+
+    <strong>
+        Ajouter des photos
+    </strong>
+
+    <span>
+        JPG, PNG ou WEBP • 4 photos maximum
+    </span>
+
+</div>
+
+
+<input
+    id="photos"
+    type="file"
+    accept="image/jpeg,image/png,image/webp"
+    multiple
+    hidden
+    onchange="ajouterPhotos(event)"
+>
+
+
+<div
+    id="previews"
+    class="previews"
+></div>
+
+
+<div
+    id="photoCounter"
+    class="photo-counter"
+>
+    0 / 4 photos
+</div>
+
+
+<button
+    id="analyseButton"
+    class="analyse-button"
+    onclick="analyserPhotos()"
+>
+    🔎 Analyser mes photos avec l'IA
+</button>
+
+
+<div
+    id="analyseStatus"
+    class="status"
+></div>
+
+
+<div class="separator"></div>
+
+
+<!-- ======================================================
+     INFORMATIONS
+====================================================== -->
+
+<h2 class="section-title">
+    📝 Informations de l'article
+</h2>
+
+<p class="subtitle">
+    Vérifie les informations détectées et
+    complète celles qui manquent.
+</p>
+
+
+<label
+    class="field-label"
+    for="article"
+>
+    Type d'article *
+</label>
+
+<input
+    id="article"
+    type="text"
+    placeholder="Ex : veste Nike Tech"
+    oninput="updateScore()"
+>
+
+
+<div class="row">
+
+    <div>
+
+        <label
+            class="field-label"
+            for="marque"
+        >
+            Marque
+        </label>
+
+        <input
+            id="marque"
+            type="text"
+            placeholder="Ex : Nike"
+            oninput="updateScore()"
+        >
+
+    </div>
+
+
+    <div>
+
+        <label
+            class="field-label"
+            for="categorie"
+        >
+            Catégorie
+        </label>
+
+        <select
+            id="categorie"
+            onchange="updateScore()"
+        >
+
+            <option value="">
+                Sélectionner
+            </option>
+
+            <option value="Veste">
+                Veste
+            </option>
+
+            <option value="Sweat">
+                Sweat
+            </option>
+
+            <option value="T-shirt">
+                T-shirt
+            </option>
+
+            <option value="Pantalon">
+                Pantalon
+            </option>
+
+            <option value="Jean">
+                Jean
+            </option>
+
+            <option value="Chaussures">
+                Chaussures
+            </option>
+
+            <option value="Accessoire">
+                Accessoire
+            </option>
+
+            <option value="Robe">
+                Robe
+            </option>
+
+            <option value="Chemise">
+                Chemise
+            </option>
+
+            <option value="Pull">
+                Pull
+            </option>
+
+            <option value="Short">
+                Short
+            </option>
+
+            <option value="Autre">
+                Autre
+            </option>
+
+        </select>
+
+    </div>
+
+</div>
+
+
+<div class="row">
+
+    <div>
+
+        <label
+            class="field-label"
+            for="taille"
+        >
+            Taille
+        </label>
+
+        <input
+            id="taille"
+            type="text"
+            placeholder="Ex : M, 42, 38..."
+            oninput="updateScore()"
+        >
+
+    </div>
+
+
+    <div>
+
+        <label
+            class="field-label"
+            for="couleur"
+        >
+            Couleur
+        </label>
+
+        <input
+            id="couleur"
+            type="text"
+            placeholder="Ex : Noir"
+            oninput="updateScore()"
+        >
+
+    </div>
+
+</div>
+
+
+<div class="row">
+
+    <div>
+
+        <label
+            class="field-label"
+            for="etat"
+        >
+            État
+        </label>
+
+        <select
+            id="etat"
+            onchange="updateScore()"
+        >
+
+            <option value="">
+                Sélectionner
+            </option>
+
+            <option value="Neuf avec étiquette">
+                Neuf avec étiquette
+            </option>
+
+            <option value="Neuf sans étiquette">
+                Neuf sans étiquette
+            </option>
+
+            <option value="Très bon état">
+                Très bon état
+            </option>
+
+            <option value="Bon état">
+                Bon état
+            </option>
+
+            <option value="État satisfaisant">
+                État satisfaisant
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div>

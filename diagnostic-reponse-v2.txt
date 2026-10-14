@@ -1,0 +1,8 @@
+﻿        analyticsError.message
+    );
+}
+            return res.json({
+                ...resultat,
+                quota:
+                    sessionQuota.quota
+            });

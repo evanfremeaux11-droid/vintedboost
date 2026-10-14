@@ -1,0 +1,12370 @@
+const { appelerGemini } = require("./gemini-client");
+const { corrigerDescription } = require("./description-correction");
+const express = require("express");
+
+
+
+
+
+
+
+require("dotenv").config();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const { createClient } = require("@supabase/supabase-js");
+
+
+
+
+
+
+
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
+
+
+
+
+
+
+const supabaseAdmin = createClient(
+
+
+
+
+
+
+
+    process.env.SUPABASE_URL,
+
+
+
+
+
+
+
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+
+
+
+
+
+
+
+);
+
+
+
+
+
+
+
+const app = express();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   VINTEDBOOST V9
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.set("trust proxy", 1);
+
+
+
+
+
+
+
+app.post(
+
+
+
+
+
+
+
+    "/stripe-webhook",
+
+
+
+
+
+
+
+    express.raw({ type: "application/json" }),
+
+
+
+
+
+
+
+    async (req, res) => {
+
+
+
+
+
+
+
+        let event;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        try {
+
+
+
+
+
+
+
+            event = stripe.webhooks.constructEvent(
+
+
+
+
+
+
+
+                req.body,
+
+
+
+
+
+
+
+                req.headers["stripe-signature"],
+
+
+
+
+
+
+
+                process.env.STRIPE_WEBHOOK_SECRET
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+        } catch (error) {
+
+
+
+
+
+
+
+            console.error("âŒ WEBHOOK STRIPE :", error.message);
+
+
+
+
+
+
+
+            return res.status(400).send("Webhook invalide");
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        try {
+
+
+
+
+
+
+
+            if (event.type === "checkout.session.completed") {
+
+
+
+
+
+
+
+                const session = event.data.object;
+
+
+
+
+
+
+
+                const userId = session.metadata?.supabase_user_id;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                if (userId) {
+
+
+
+
+
+
+
+       const { error } = await supabaseAdmin
+
+
+
+
+
+
+
+    .from("profiles")
+
+
+
+
+
+
+
+    .update({
+
+
+
+
+
+
+
+        plan: "premium",
+
+
+
+
+
+
+
+        stripe_subscription_id: session.subscription,
+
+
+
+
+
+
+
+        stripe_customer_id: session.customer
+
+
+
+
+
+
+
+    })
+
+
+
+
+
+
+
+    .eq("id", userId);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    if (error) {
+
+
+
+
+
+
+
+                        throw error;
+
+
+
+
+
+
+
+                    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Analytics : mÃ©morise le passage Premium une seule fois par abonnement Stripe
+
+                    try {
+
+                        const premiumEventId = "stripe:" + String(session.subscription || "");
+
+
+
+                        const { data: premiumExisting, error: premiumReadError } =
+
+                            await supabaseAdmin
+
+                                .from("analytics_events")
+
+                                .select("visitor_id")
+
+                                .eq("event_name", "premium")
+
+                                .eq("visitor_id", premiumEventId)
+
+                                .limit(1);
+
+
+
+                        if (premiumReadError) throw premiumReadError;
+
+
+
+                        if (!premiumExisting || premiumExisting.length === 0) {
+
+                            const { error: premiumInsertError } =
+
+                                await supabaseAdmin
+
+                                    .from("analytics_events")
+
+                                    .insert({
+
+                                        event_name: "premium",
+
+                                        visitor_id: premiumEventId
+
+                                    });
+
+
+
+                            if (premiumInsertError) throw premiumInsertError;
+
+                        }
+
+                    } catch (analyticsError) {
+
+                        // Les statistiques ne doivent jamais empÃªcher l'activation Premium.
+
+                        console.error("Erreur analytics Premium :", analyticsError.message);
+
+                    }
+
+
+
+                    console.log("â­ Compte Premium activÃ© :", userId);
+
+
+
+
+
+
+
+                }
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+if (event.type === "customer.subscription.deleted") {
+
+
+
+
+
+
+
+    const subscription = event.data.object;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const { error } = await supabaseAdmin
+
+
+
+
+
+
+
+        .from("profiles")
+
+
+
+
+
+
+
+        .update({
+
+
+
+
+
+
+
+            plan: "free",
+
+
+
+
+
+
+
+            stripe_subscription_id: null
+
+
+
+
+
+
+
+        })
+
+
+
+
+
+
+
+        .eq("stripe_subscription_id", subscription.id);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (error) {
+
+
+
+
+
+
+
+        throw error;
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Analytics : mÃ©morise la rÃ©siliation une seule fois par abonnement Stripe
+    try {
+        const cancellationEventId = "stripe_cancelled:" + String(subscription.id || "");
+        const { data: cancellationExisting, error: cancellationReadError } =
+            await supabaseAdmin
+                .from("analytics_events")
+                .select("visitor_id")
+                .eq("event_name", "premium_cancelled")
+                .eq("visitor_id", cancellationEventId)
+                .limit(1);
+
+        if (cancellationReadError) throw cancellationReadError;
+
+        if (!cancellationExisting || cancellationExisting.length === 0) {
+            const { error: cancellationInsertError } =
+                await supabaseAdmin
+                    .from("analytics_events")
+                    .insert({
+                        event_name: "premium_cancelled",
+                        visitor_id: cancellationEventId
+                    });
+            if (cancellationInsertError) throw cancellationInsertError;
+        }
+    } catch (analyticsError) {
+        // Les statistiques ne doivent jamais empÃªcher la rÃ©siliation.
+        console.error("Erreur analytics rÃ©siliation Premium :", analyticsError.message);
+    }
+
+    console.log(
+
+
+
+
+
+
+
+        "ðŸ”’ Abonnement rÃ©siliÃ©, compte repassÃ© Free :",
+
+
+
+
+
+
+
+        subscription.id
+
+
+
+
+
+
+
+    );
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+            return res.json({ received: true });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        } catch (error) {
+
+
+
+
+
+
+
+            console.error("âŒ ACTIVATION PREMIUM :", error.message);
+
+
+
+
+
+
+
+            return res.status(500).json({
+
+
+
+
+
+
+
+                error: "Erreur activation Premium"
+
+
+
+
+
+
+
+            });
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+);
+
+
+
+
+
+
+
+app.use(
+
+
+
+
+
+
+
+    express.json({
+
+
+
+
+
+
+
+        limit: "15mb"
+
+
+
+
+
+
+
+    })
+
+
+
+
+
+
+
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.get("/generateur", (req, res) => {
+    res.sendFile(__dirname + "/index.html");
+});
+
+app.get("/", (req, res) => {
+    res.sendFile(__dirname + "/landing-v2.html");
+});
+
+app.use(express.static(__dirname));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   CONFIGURATION
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const PORT = process.env.PORT || 3000;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const MAX_PHOTOS = 4;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const MAX_TENTATIVES = 2;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const MODELE = "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const limites = new Map();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   RATE LIMIT
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function limiterRequetes(req, res, next) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const ip = req.ip || "inconnue";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const maintenant = Date.now();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const duree = 60 * 60 * 1000;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const maximum = 30;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    let utilisateur = limites.get(ip);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (
+
+
+
+
+
+
+
+        !utilisateur ||
+
+
+
+
+
+
+
+        maintenant > utilisateur.reset
+
+
+
+
+
+
+
+    ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        utilisateur = {
+
+
+
+
+
+
+
+            nombre: 0,
+
+
+
+
+
+
+
+            reset: maintenant + duree
+
+
+
+
+
+
+
+        };
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    utilisateur.nombre++;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    limites.set(ip, utilisateur);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (utilisateur.nombre > maximum) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return res
+
+
+
+
+
+
+
+            .status(429)
+
+
+
+
+
+
+
+            .json({
+
+
+
+
+
+
+
+                error:
+
+
+
+
+
+
+
+                    "Trop de requÃªtes. RÃ©essaie un peu plus tard."
+
+
+
+
+
+
+
+            });
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    next();
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   NETTOYAGE
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function nettoyerTexte(
+
+
+
+
+
+
+
+    valeur,
+
+
+
+
+
+
+
+    longueur = 500
+
+
+
+
+
+
+
+) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (
+
+
+
+
+
+
+
+        valeur === undefined ||
+
+
+
+
+
+
+
+        valeur === null
+
+
+
+
+
+
+
+    ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return "";
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    return String(valeur)
+
+
+
+
+
+
+
+        .trim()
+
+
+
+
+
+
+
+        .slice(0, longueur);
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   PETITE PAUSE
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function attendre(ms) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    return new Promise(
+
+
+
+
+
+
+
+        resolve =>
+
+
+
+
+
+
+
+            setTimeout(resolve, ms)
+
+
+
+
+
+
+
+    );
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   EXTRACTION JSON
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function extraireJSON(texte) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (!texte) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        throw new Error(
+
+
+
+
+
+
+
+            "RÃ©ponse IA vide."
+
+
+
+
+
+
+
+        );
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (
+
+
+
+
+
+
+
+        typeof texte === "object" &&
+
+
+
+
+
+
+
+        !Array.isArray(texte)
+
+
+
+
+
+
+
+    ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return texte;
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    let propre =
+
+
+
+
+
+
+
+        String(texte)
+
+
+
+
+
+
+
+            .replace(/```json/gi, "")
+
+
+
+
+
+
+
+            .replace(/```javascript/gi, "")
+
+
+
+
+
+
+
+            .replace(/```js/gi, "")
+
+
+
+
+
+
+
+            .replace(/```/g, "")
+
+
+
+
+
+
+
+            .trim();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (
+
+
+
+
+
+
+
+        !propre ||
+
+
+
+
+
+
+
+        propre.length < 2
+
+
+
+
+
+
+
+    ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        throw new Error(
+
+
+
+
+
+
+
+            "RÃ©ponse IA inutilisable."
+
+
+
+
+
+
+
+        );
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const lower =
+
+
+
+
+
+
+
+        propre.toLowerCase();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (
+
+
+
+
+
+
+
+        lower === "safe" ||
+
+
+
+
+
+
+
+        lower === "user safety: safe"
+
+
+
+
+
+
+
+    ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        throw new Error(
+
+
+
+
+
+
+
+            "RÃ©ponse IA inutilisable."
+
+
+
+
+
+
+
+        );
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    try {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return JSON.parse(propre);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    } catch {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // On continue.
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const debut =
+
+
+
+
+
+
+
+        propre.indexOf("{");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const fin =
+
+
+
+
+
+
+
+        propre.lastIndexOf("}");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (
+
+
+
+
+
+
+
+        debut !== -1 &&
+
+
+
+
+
+
+
+        fin !== -1 &&
+
+
+
+
+
+
+
+        fin > debut
+
+
+
+
+
+
+
+    ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        let jsonPossible =
+
+
+
+
+
+
+
+            propre.slice(
+
+
+
+
+
+
+
+                debut,
+
+
+
+
+
+
+
+                fin + 1
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        jsonPossible =
+
+
+
+
+
+
+
+            jsonPossible
+
+
+
+
+
+
+
+                .replace(
+
+
+
+
+
+
+
+                    /,\s*}/g,
+
+
+
+
+
+
+
+                    "}"
+
+
+
+
+
+
+
+                )
+
+
+
+
+
+
+
+                .replace(
+
+
+
+
+
+
+
+                    /,\s*]/g,
+
+
+
+
+
+
+
+                    "]"
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        try {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            return JSON.parse(
+
+
+
+
+
+
+
+                jsonPossible
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        } catch {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            console.error(
+
+
+
+
+
+
+
+                "JSON dÃ©tectÃ© mais invalide."
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    throw new Error(
+
+
+
+
+
+
+
+        "JSON IA invalide."
+
+
+
+
+
+
+
+    );
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   CONTENU REPONSE OPENROUTER
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function recupererTexteIA(data) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const content =
+
+
+
+
+
+
+
+        data?.choices?.[0]
+
+
+
+
+
+
+
+            ?.message?.content;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (
+
+
+
+
+
+
+
+        typeof content === "string"
+
+
+
+
+
+
+
+    ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return content.trim();
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (Array.isArray(content)) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return content
+
+
+
+
+
+
+
+            .map(partie => {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                if (
+
+
+
+
+
+
+
+                    typeof partie === "string"
+
+
+
+
+
+
+
+                ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    return partie;
+
+
+
+
+
+
+
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                if (
+
+
+
+
+
+
+
+                    partie &&
+
+
+
+
+
+
+
+                    typeof partie.text === "string"
+
+
+
+
+
+
+
+                ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    return partie.text;
+
+
+
+
+
+
+
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                return "";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            })
+
+
+
+
+
+
+
+            .join("")
+
+
+
+
+
+
+
+            .trim();
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    return "";
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   OPENROUTER
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function appelerOpenRouter(messages, options = {}) {
+    if (!process.env.OPENROUTER_API_KEY) {
+        throw new Error("La clÃ© OpenRouter n'est pas configurÃ©e.");
+    }
+
+    const maxTokens = options.maxTokens || 1800;
+    const controller = new AbortController();
+
+    const timeout = setTimeout(
+        () => controller.abort(),
+        70000
+    );
+
+    const debut = Date.now();
+
+    try {
+        const OPENROUTER_URL =
+            "https://openrouter.ai/api/v1/chat/completions";
+
+        console.log("ðŸ”— URL OPENROUTER =", OPENROUTER_URL);
+
+        const response = await fetch(
+            OPENROUTER_URL,
+            {
+                method: "POST",
+                signal: controller.signal,
+
+                headers: {
+                    "Authorization":
+                        `Bearer ${process.env.OPENROUTER_API_KEY}`,
+                    "Content-Type": "application/json",
+                    "X-Title": "VintedBoost"
+                },
+
+                body: JSON.stringify({
+                    model: MODELE,
+                    messages,
+                    temperature: 0.1,
+                    max_tokens: maxTokens
+                })
+            }
+        );
+
+        let data;
+
+        try {
+            data = await response.json();
+        } catch {
+            throw new Error(
+                "RÃ©ponse OpenRouter illisible."
+            );
+        }
+
+        if (!response.ok) {
+            console.error(
+                "OPENROUTER :",
+                response.status,
+                data?.error?.message || "Erreur inconnue"
+            );
+
+            const erreur = new Error(
+                data?.error?.message || "Erreur OpenRouter."
+            );
+
+            erreur.status = response.status;
+            throw erreur;
+        }
+
+        const texte = recupererTexteIA(data);
+
+        const temps =
+            ((Date.now() - debut) / 1000).toFixed(1);
+
+        console.log(
+            `ðŸ¤– ${data?.model || MODELE} â€¢ ${temps}s â€¢ ${data?.choices?.[0]?.finish_reason || "?"}`
+        );
+
+        if (!texte) {
+            throw new Error(
+                "L'IA a renvoyÃ© une rÃ©ponse vide."
+            );
+        }
+
+        return texte;
+
+    } catch (error) {
+        if (error.name === "AbortError") {
+            throw new Error(
+                "OpenRouter met trop de temps Ã  rÃ©pondre."
+            );
+        }
+
+        throw error;
+
+    } finally {
+        clearTimeout(timeout);
+    }
+}
+/* ======================================================
+
+
+
+
+
+
+
+   IA JSON + RETRY
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function appelerIAJSON(
+
+
+
+
+
+
+
+    messages,
+
+
+
+
+
+
+
+    options = {}
+
+
+
+
+
+
+
+) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    let derniereErreur;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    for (
+
+
+
+
+
+
+
+        let tentative = 1;
+
+
+
+
+
+
+
+        tentative <= MAX_TENTATIVES;
+
+
+
+
+
+
+
+        tentative++
+
+
+
+
+
+
+
+    ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        try {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            console.log(
+
+
+
+
+
+
+
+                `ðŸ¤– IA ${tentative}/${MAX_TENTATIVES}`
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const texte =
+
+
+
+
+
+
+
+                await appelerGemini(
+
+
+
+
+
+
+
+                    messages,
+
+
+
+
+
+
+
+                    options
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const resultat =
+
+
+
+
+
+
+
+                extraireJSON(texte);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            console.log(
+
+
+
+
+
+
+
+                "âœ… RÃ©ponse IA valide"
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            return resultat;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        } catch (error) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            derniereErreur = error;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       console.error(
+    `âŒ IA ${tentative}:`,
+    error
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            if (
+
+
+
+
+
+
+
+                error.status === 401 ||
+
+
+
+
+
+
+
+                error.status === 402 ||
+
+
+
+
+
+
+
+                error.status === 403
+
+
+
+
+
+
+
+            ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                break;
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            if (
+
+
+
+
+
+
+
+                tentative <
+
+
+
+
+
+
+
+                MAX_TENTATIVES
+
+
+
+
+
+
+
+            ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                await attendre(2000);
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    throw new Error(
+
+
+
+
+
+
+
+        derniereErreur?.message ||
+
+
+
+
+
+
+
+        "L'IA n'a pas rÃ©ussi Ã  rÃ©pondre."
+
+
+
+
+
+
+
+    );
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   VALIDATION ANALYSE PHOTO
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function normaliserAnalyse(analyse) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    return {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        article:
+
+
+
+
+
+
+
+            nettoyerTexte(
+
+
+
+
+
+
+
+                analyse?.article,
+
+
+
+
+
+
+
+                100
+
+
+
+
+
+
+
+            ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        marque:
+
+
+
+
+
+
+
+            nettoyerTexte(
+
+
+
+
+
+
+
+                analyse?.marque,
+
+
+
+
+
+
+
+                100
+
+
+
+
+
+
+
+            ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        categorie:
+
+
+
+
+
+
+
+            nettoyerTexte(
+
+
+
+
+
+
+
+                analyse?.categorie,
+
+
+
+
+
+
+
+                100
+
+
+
+
+
+
+
+            ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        couleur:
+
+
+
+
+
+
+
+            nettoyerTexte(
+
+
+
+
+
+
+
+                analyse?.couleur,
+
+
+
+
+
+
+
+                100
+
+
+
+
+
+
+
+            ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        tailleVisible:
+
+
+
+
+
+
+
+            nettoyerTexte(
+
+
+
+
+
+
+
+                analyse?.tailleVisible,
+
+
+
+
+
+
+
+                50
+
+
+
+
+
+
+
+            ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        etat:
+
+
+
+
+
+
+
+            nettoyerTexte(
+
+
+
+
+
+
+
+                analyse?.etat,
+
+
+
+
+
+
+
+                50
+
+
+
+
+
+
+
+            ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        details:
+
+
+
+
+
+
+
+            nettoyerTexte(
+
+
+
+
+
+
+
+                analyse?.details,
+
+
+
+
+
+
+
+                700
+
+
+
+
+
+
+
+            ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        defauts:
+
+
+
+
+
+
+
+            nettoyerTexte(
+
+
+
+
+
+
+
+                analyse?.defauts,
+
+
+
+
+
+
+
+                500
+
+
+
+
+
+
+
+            )
+
+
+
+
+
+
+
+    };
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   ANALYSE PHOTOS
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.post(
+
+
+
+
+
+
+
+    "/analyze-photos",
+
+
+
+
+
+
+
+    limiterRequetes,
+
+
+
+
+
+
+
+    async (req, res) => {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const debut =
+
+
+
+
+
+
+
+            Date.now();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        try {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            let images =
+
+
+
+
+
+
+
+                req.body?.images;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            if (
+
+
+
+
+
+
+
+                !Array.isArray(images)
+
+
+
+
+
+
+
+            ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                return res
+
+
+
+
+
+
+
+                    .status(400)
+
+
+
+
+
+
+
+                    .json({
+
+
+
+
+
+
+
+                        error:
+
+
+
+
+
+
+
+                            "Format des photos incorrect."
+
+
+
+
+
+
+
+                    });
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            images =
+
+
+
+
+
+
+
+                images
+
+
+
+
+
+
+
+                    .slice(
+
+
+
+
+
+
+
+                        0,
+
+
+
+
+
+
+
+                        MAX_PHOTOS
+
+
+
+
+
+
+
+                    )
+
+
+
+
+
+
+
+                    .filter(
+
+
+
+
+
+
+
+                        image =>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            typeof image ===
+
+
+
+
+
+
+
+                                "string" &&
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            /^data:image\/(jpeg|jpg|png|webp);base64,/i
+
+
+
+
+
+
+
+                                .test(image)
+
+
+
+
+
+
+
+                    );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            if (
+
+
+
+
+
+
+
+                images.length === 0
+
+
+
+
+
+
+
+            ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                return res
+
+
+
+
+
+
+
+                    .status(400)
+
+
+
+
+
+
+
+                    .json({
+
+
+
+
+
+
+
+                        error:
+
+
+
+
+
+
+
+                            "Ajoute au moins une photo valide."
+
+
+
+
+
+
+
+                    });
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const prompt = `
+
+
+
+
+
+
+
+Analyse ces photos du même vêtement ou article d'occasion.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Retourne UNIQUEMENT un objet JSON valide avec exactement ces clés :
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+
+
+
+
+
+
+
+"article":"",
+
+
+
+
+
+
+
+"marque":"",
+
+
+
+
+
+
+
+"categorie":"",
+
+
+
+
+
+
+
+"couleur":"",
+
+
+
+
+
+
+
+"tailleVisible":"",
+
+
+
+
+
+
+
+"etat":"",
+
+
+
+
+
+
+
+"details":"",
+
+
+
+
+
+
+
+"defauts":""
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Règles :
+
+
+
+
+
+
+
+\- utilise uniquement ce qui est visible ;
+
+
+
+
+
+
+
+\- n'invente jamais marque, taille, matière, modèle ou défaut ;
+
+
+
+
+
+
+
+\- ne confirme jamais l'authenticité ;
+
+
+
+
+
+
+
+\- information inconnue = "";
+
+
+
+
+
+
+
+\- details = caractéristiques visibles, texte court ;
+
+
+
+
+
+
+
+\- defauts = uniquement les défauts clairement visibles.
+\- examine toutes les photos ensemble avant de conclure ;
+\- distingue une étiquette intérieure de marque ou de composition d'une étiquette commerciale de vente attachée à l'article ;
+\- Neuf avec étiquette = uniquement si une étiquette commerciale attachée est clairement visible ET si l'article ne présente aucun signe visible d'utilisation ;
+\- une étiquette de marque cousue à l'intérieur ne prouve jamais que l'article est neuf ;
+\- Neuf sans étiquette = ne jamais conclure à cet état uniquement parce que le vêtement paraît propre, repassé ou sans défaut visible ; sans preuve suffisante de non-utilisation, retourner etat = "" ;
+\- Très bon état = aucun défaut visible significatif, sans garantir que l'article n'a jamais été porté ;
+\- Bon état = signes légers d'utilisation clairement visibles ;
+\- État satisfaisant = usure ou défauts visibles importants ;
+\- si l'état ne peut pas être déterminé de façon fiable, retourne etat = "" ;
+\- ne déduis jamais l'état neuf de la seule présence d'un logo ou d'un patch ;
+\- distingue les couleurs proches comme bleu marine, bleu clair et noir en tenant compte de l'éclairage ;
+\- ne confonds pas les ombres, reflets et plis naturels avec des défauts ;
+\- ne renseigne tailleVisible que si la taille est lisible sur une étiquette ou un marquage ;
+\- n'invente jamais une référence ou un modèle précis à partir de la marque seule ;
+\- décris uniquement les détails réellement visibles : type de col, fermeture, manches, logos et patchs ;
+\- n'affirme jamais qu'un article est authentique ou original ;
+\- en cas de doute sur une information, laisse le champ correspondant vide ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+categorie = uniquement :
+
+
+
+
+
+
+
+Veste, Sweat, T-shirt, Pantalon, Jean, Chaussures, Accessoire, Robe, Chemise, Pull, Short, Autre.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+etat = uniquement :
+
+
+
+
+
+
+
+Neuf avec étiquette, Neuf sans étiquette, Très bon état, Bon état, État satisfaisant, ou "".
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Aucun Markdown. Aucune explication.
+
+
+
+
+
+
+
+`.trim();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const contenu = [
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                {
+
+
+
+
+
+
+
+                    type: "text",
+
+
+
+
+
+
+
+                    text: prompt
+
+
+
+
+
+
+
+                }
+
+
+
+
+
+
+
+            ];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            for (
+
+
+
+
+
+
+
+                const image of images
+
+
+
+
+
+
+
+            ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                contenu.push({
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    type:
+
+
+
+
+
+
+
+                        "image_url",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    image_url: {
+
+
+
+
+
+
+
+                        url: image
+
+
+
+
+
+
+
+                    }
+
+
+
+
+
+
+
+                });
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const analyse =
+
+
+
+
+
+
+
+                await appelerIAJSON(
+
+
+
+
+
+
+
+                    [
+
+
+
+
+
+
+
+                        {
+
+
+
+
+
+
+
+                            role:
+
+
+
+
+
+
+
+                                "user",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            content:
+
+
+
+
+
+
+
+                                contenu
+
+
+
+
+
+
+
+                        }
+
+
+
+
+
+
+
+                    ],
+
+
+
+
+
+
+
+                    {
+
+
+
+
+
+
+
+                        maxTokens:
+
+
+
+
+
+
+
+                            800
+
+
+
+
+
+
+
+                    }
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const resultat =
+
+
+
+
+
+
+
+                normaliserAnalyse(
+
+
+
+
+
+
+
+                    analyse
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            if (
+
+
+
+
+
+
+
+                !resultat.article &&
+
+
+
+
+
+
+
+                !resultat.categorie &&
+
+
+
+
+
+
+
+                !resultat.details
+
+
+
+
+
+
+
+            ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                throw new Error(
+
+
+
+
+
+
+
+                    "L'IA n'a pas rÃ©ussi Ã  identifier l'article."
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            console.log(
+
+
+
+
+
+
+
+                `ðŸ“¸ Analyse terminÃ©e en ${((Date.now() - debut) / 1000).toFixed(1)}s`
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            return res.json(
+
+
+
+
+
+
+
+                resultat
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        } catch (error) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            console.error(
+
+
+
+
+
+
+
+                "âŒ ANALYSE :",
+
+
+
+
+
+
+
+                error.message
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            return res
+
+
+
+
+
+
+
+                .status(500)
+
+
+
+
+
+
+
+                .json({
+
+
+
+
+
+
+
+                    error:
+
+
+
+
+
+
+
+                        "L'analyse IA a Ã©chouÃ©. RÃ©essaie dans quelques secondes."
+
+
+
+
+
+
+
+                });
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   STYLE
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function obtenirStyle(style) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    switch (style) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        case "court":
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            return (
+
+
+
+
+
+
+
+                "MODE COURT : commencer directement par les informations essentielles avec emojis. Aucune introduction, aucun bonjour, aucune phrase commerciale. Description tres courte, claire et sans repetition. Ne jamais afficher une information inconnue."
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        case "vendeur":
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            return (
+
+
+
+
+
+
+
+                "MODE VENDEUR : commencer par une phrase engageante qui valorise un detail distinctif reel du vetement. Ton dynamique, humain et convaincant, comme un vendeur Vinted experimente. Ajouter ensuite les informations essentielles avec emojis. Ne pas repeter les informations deja donnees. Ne jamais inventer d'argument commercial."
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        case "premium":
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            return (
+
+
+
+
+
+
+
+                "MODE PREMIUM : rediger une introduction courte, sobre et professionnelle en utilisant uniquement la marque, le type de vetement et les caracteristiques explicitement confirmees. Ne jamais inventer ou supposer la coupe, la qualite des finitions, le confort, la rarete, l'authenticite ou la valeur du vetement. Ne jamais employer des expressions comme coupe structuree, finitions soignees, design epure ou qualite premium sans preuve explicite. Ne pas repeter dans la ligne des details une caracteristique deja mentionnee dans l'introduction. Ajouter ensuite les informations essentielles avec emojis sur des lignes distinctes. Si aucune caracteristique distinctive n'est confirmee, utiliser une introduction factuelle et simple."
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        default:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            return (
+
+
+
+
+
+
+
+                "MODE NATUREL : rediger une phrase simple et spontanee comme un particulier qui vend son vetement. Ton amical, naturel et direct, sans bonjour ni formule commerciale. Ajouter ensuite les informations essentielles avec emojis. Eviter les repetitions et ne jamais afficher une information inconnue."
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   PLATEFORME
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function obtenirPlateforme(
+
+
+
+
+
+
+
+    plateforme
+
+
+
+
+
+
+
+) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (
+
+
+
+
+
+
+
+        plateforme === "ebay"
+
+
+
+
+
+
+
+    ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return (
+
+
+
+
+
+
+
+            "eBay : titre prÃ©cis et description claire et structurÃ©e."
+
+
+
+
+
+
+
+        );
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    return (
+
+
+
+
+
+
+
+        "Vinted : titre recherchÃ© mais naturel, description simple entre particuliers."
+
+
+
+
+
+
+
+    );
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   SUPABASE UTILISATEUR
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function creerClientSupabaseUtilisateur(
+
+
+
+
+
+
+
+    accessToken
+
+
+
+
+
+
+
+) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const url =
+
+
+
+
+
+
+
+        process.env.SUPABASE_URL;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const publishableKey =
+
+
+
+
+
+
+
+        process.env.SUPABASE_PUBLISHABLE_KEY;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (
+
+
+
+
+
+
+
+        !url ||
+
+
+
+
+
+
+
+        !publishableKey
+
+
+
+
+
+
+
+    ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        throw new Error(
+
+
+
+
+
+
+
+            "Supabase n'est pas configurÃ©."
+
+
+
+
+
+
+
+        );
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    return createClient(
+
+
+
+
+
+
+
+        url,
+
+
+
+
+
+
+
+        publishableKey,
+
+
+
+
+
+
+
+        {
+
+
+
+
+
+
+
+            global: {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                headers: {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    Authorization:
+
+
+
+
+
+
+
+                        `Bearer ${accessToken}`
+
+
+
+
+
+
+
+                }
+
+
+
+
+
+
+
+            },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            auth: {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                persistSession:
+
+
+
+
+
+
+
+                    false,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                autoRefreshToken:
+
+
+
+
+
+
+
+                    false
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+    );
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   VERIFICATION COMPTE + QUOTA
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function verifierUtilisateurEtQuota(
+
+
+
+
+
+
+
+    req
+
+
+
+
+
+
+
+) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const authorization =
+
+
+
+
+
+
+
+        req.headers.authorization || "";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (
+
+
+
+
+
+
+
+        !authorization.startsWith(
+
+
+
+
+
+
+
+            "Bearer "
+
+
+
+
+
+
+
+        )
+
+
+
+
+
+
+
+    ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const erreur =
+
+
+
+
+
+
+
+            new Error(
+
+
+
+
+
+
+
+                "Connecte-toi pour gÃ©nÃ©rer une annonce."
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        erreur.status = 401;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        throw erreur;
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const accessToken =
+
+
+
+
+
+
+
+        authorization
+
+
+
+
+
+
+
+            .slice(7)
+
+
+
+
+
+
+
+            .trim();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (!accessToken) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const erreur =
+
+
+
+
+
+
+
+            new Error(
+
+
+
+
+
+
+
+                "Session invalide."
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        erreur.status = 401;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        throw erreur;
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const supabase =
+
+
+
+
+
+
+
+        creerClientSupabaseUtilisateur(
+
+
+
+
+
+
+
+            accessToken
+
+
+
+
+
+
+
+        );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const {
+
+
+
+
+
+
+
+        data: userData,
+
+
+
+
+
+
+
+        error: userError
+
+
+
+
+
+
+
+    } =
+
+
+
+
+
+
+
+        await supabase.auth.getUser(
+
+
+
+
+
+
+
+            accessToken
+
+
+
+
+
+
+
+        );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (
+
+
+
+
+
+
+
+        userError ||
+
+
+
+
+
+
+
+        !userData?.user
+
+
+
+
+
+
+
+    ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const erreur =
+
+
+
+
+
+
+
+            new Error(
+
+
+
+
+
+
+
+                "Session expirÃ©e. Reconnecte-toi."
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        erreur.status = 401;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        throw erreur;
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const {
+
+
+
+
+
+
+
+        data: quota,
+
+
+
+
+
+
+
+        error: quotaError
+
+
+
+
+
+
+
+    } =
+
+
+
+
+
+
+
+        await supabase.rpc(
+
+
+
+
+
+
+
+            "use_generation"
+
+
+
+
+
+
+
+        );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (quotaError) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        console.error(
+
+
+
+
+
+
+
+            "âŒ QUOTA :",
+
+
+
+
+
+
+
+            quotaError.message
+
+
+
+
+
+
+
+        );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const erreur =
+
+
+
+
+
+
+
+            new Error(
+
+
+
+
+
+
+
+                "Impossible de vÃ©rifier ton quota."
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        erreur.status = 500;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        throw erreur;
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (!quota?.allowed) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const erreur =
+
+
+
+
+
+
+
+            new Error(
+
+
+
+
+
+
+
+                "Tu as utilisÃ© tes 5 gÃ©nÃ©rations gratuites ce mois-ci. Passe Ã  Premium pour continuer."
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        erreur.status = 403;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        erreur.code =
+
+
+
+
+
+
+
+            "QUOTA_REACHED";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        erreur.quota =
+
+
+
+
+
+
+
+            quota;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        throw erreur;
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    return {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        user:
+
+
+
+
+
+
+
+            userData.user,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         quota,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    supabase
+
+
+
+
+
+
+
+};
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   GENERATION ANNONCE
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.post(
+
+
+
+
+
+
+
+    "/generate",
+
+
+
+
+
+
+
+    limiterRequetes,
+
+
+
+
+
+
+
+    async (req, res) => {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const debut =
+
+
+
+
+
+
+
+            Date.now();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        try {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            /*
+
+
+
+
+
+
+
+            V9 :
+
+
+
+
+
+
+
+            vÃ©rifie le compte Supabase
+
+
+
+
+
+
+
+            et consomme 1 gÃ©nÃ©ration.
+
+
+
+
+
+
+
+            */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const sessionQuota =
+
+
+
+
+
+
+
+                await verifierUtilisateurEtQuota(
+
+
+
+
+
+
+
+                    req
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const article =
+
+
+
+
+
+
+
+                nettoyerTexte(
+
+
+
+
+
+
+
+                    req.body?.article,
+
+
+
+
+
+
+
+                    100
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const marque =
+
+
+
+
+
+
+
+                nettoyerTexte(
+
+
+
+
+
+
+
+                    req.body?.marque,
+
+
+
+
+
+
+
+                    100
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const categorie =
+
+
+
+
+
+
+
+                nettoyerTexte(
+
+
+
+
+
+
+
+                    req.body?.categorie,
+
+
+
+
+
+
+
+                    100
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const taille =
+
+
+
+
+
+
+
+                nettoyerTexte(
+
+
+
+
+
+
+
+                    req.body?.taille,
+
+
+
+
+
+
+
+                    50
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const couleur =
+
+
+
+
+
+
+
+                nettoyerTexte(
+
+
+
+
+
+
+
+                    req.body?.couleur,
+
+
+
+
+
+
+
+                    100
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const etat =
+
+
+
+
+
+
+
+                nettoyerTexte(
+
+
+
+
+
+
+
+                    req.body?.etat,
+
+
+
+
+
+
+
+                    50
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const prix =
+
+
+
+
+
+
+
+                nettoyerTexte(
+
+
+
+
+
+
+
+                    req.body?.prix,
+
+
+
+
+
+
+
+                    20
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const details =
+
+
+
+
+
+
+
+                nettoyerTexte(
+
+
+
+
+
+
+
+                    req.body?.details,
+
+
+
+
+
+
+
+                    1000
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const defauts =
+
+
+
+
+
+
+
+                nettoyerTexte(
+
+
+
+
+
+
+
+                    req.body?.defauts,
+
+
+
+
+
+
+
+                    500
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const style =
+
+
+
+
+
+
+
+                nettoyerTexte(
+
+
+
+
+
+
+
+                    req.body?.style,
+
+
+
+
+
+
+
+                    30
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const plateforme =
+
+
+
+
+
+
+
+                nettoyerTexte(
+
+
+
+
+
+
+
+                    req.body?.plateforme,
+
+
+
+
+
+
+
+                    30
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            if (!article) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                return res
+
+
+
+
+
+
+
+                    .status(400)
+
+
+
+
+
+
+
+                    .json({
+
+
+
+
+
+
+
+                        error:
+
+
+
+
+
+
+
+                            "Indique au minimum le type d'article."
+
+
+
+
+
+
+
+                    });
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const consigneStyle =
+
+
+
+
+
+
+
+                obtenirStyle(style);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const consignePlateforme =
+
+
+
+
+
+
+
+                obtenirPlateforme(
+
+
+
+
+
+
+
+                    plateforme
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const prompt = `
+
+
+
+
+
+
+
+Crée une annonce de seconde main.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Plateforme :
+
+
+
+
+
+
+
+${consignePlateforme}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Style :
+
+
+
+
+
+
+
+${consigneStyle}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Article : ${article}
+
+
+
+
+
+
+
+Marque : ${marque || "inconnue"}
+
+
+
+
+
+
+
+Catégorie : ${categorie || "inconnue"}
+
+
+
+
+
+
+
+Taille : ${taille || "inconnue"}
+
+
+
+
+
+
+
+Couleur : ${couleur || "inconnue"}
+
+
+
+
+
+
+
+État : ${etat || "inconnu"}
+
+
+
+
+
+
+
+Prix envisagé : ${prix ? prix + " €" : "non renseigné"}
+
+
+
+
+
+
+
+DÃ©tails : ${details || "aucun"}
+
+
+
+
+
+
+
+DÃ©fauts : ${defauts || "aucun renseignÃ©"}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Retourne UNIQUEMENT :
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+
+
+
+
+
+
+
+"titre":"",
+
+
+
+
+
+
+
+"description":"",
+
+
+
+
+
+
+
+"prixConseille":"",
+
+
+
+
+
+
+
+"prixMin":"",
+
+
+
+
+
+
+
+"prixMax":"",
+
+
+
+
+
+
+
+"motsCles":[]
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Règles :
+
+- aucune information inventée ;
+- ne jamais inventer matière, prix neuf, provenance ou authenticité ;
+- ne jamais garantir l'authenticité ;
+- utiliser uniquement les informations fournies ou clairement identifiées ;
+- écrire uniquement en français naturel ;
+- utiliser bleu marine et jamais navy blue lorsque la couleur correspond ;
+- ne jamais ajouter vintage, rare, collector, occasion ou édition limitée sans information explicite ;
+- ne jamais écrire aucun défaut, sans défaut ou état parfait si cela n'est pas explicitement renseigné ;
+- ne jamais inventer de délai d'envoi, mesures ou informations de livraison ;
+- éviter les phrases commerciales génériques comme parfait pour un look urbain ;
+- titre court, naturel et précis ;
+- appliquer uniquement les consignes du style selectionne dans consigneStyle ;
+- differencier clairement les styles par leur longueur, leur ton et leur structure ;
+- respecter exactement les informations fournies, notamment l'etat, la taille et la couleur ;
+- ne jamais transformer tres bon etat en excellent etat ;
+- ne jamais ajouter de formule generique comme ideal pour l'automne ou parfait pour toutes les occasions ;
+- eviter les formulations artificielles et les repetitions ;
+- en mode court, ne pas imposer de phrase d'introduction ;
+- dans les autres modes, commencer par une presentation naturelle adaptee au style ;
+- ne jamais combiner des caracteristiques contradictoires ;
+- ne jamais repeter dans la presentation les informations deja affichees avec les emojis ;
+- REGLE PRIORITAIRE ANTI-REPETITION : chaque caracteristique precise doit apparaitre une seule fois dans toute la description. Si le col montant, les manches longues ou le badge sont deja mentionnes dans la presentation, ne pas les recopier dans la ligne des details. Si aucune caracteristique supplementaire ne reste, supprimer entierement la ligne des details ;
+- utiliser une seule ligne avec l'emoji 🧵 pour regrouper les details supplementaires connus ;
+- ne jamais afficher plusieurs lignes commencant par 🧵 ;
+- ne jamais ajouter de details simplement pour allonger la description ;
+- utiliser de vrais retours à la ligne dans la description ;
+- afficher les informations connues sur des lignes séparées avec ces emojis, sans écrire les mots Taille, Couleur ou État :
+- 📏 suivi uniquement de la taille ;
+- 🎨 suivi uniquement de la couleur ;
+- ✨ suivi uniquement de l'état ;
+- 🧵 suivi des détails réellement connus, uniquement s'ils apportent une information supplémentaire ;
+- séparer la phrase de présentation et les informations par une ligne vide ;
+- ne jamais répéter les mêmes caractéristiques dans plusieurs parties de la description ;
+- ne jamais inventer de caractéristique ou d'information manquante ;
+- ne jamais afficher une ligne correspondant à une information inconnue ;
+- éviter les formulations col à col, mi-fermeture et patch compass ;
+- écrire patch Stone Island lorsqu'un patch Stone Island est réellement identifié ;
+- maximum 8 mots-clés pertinents et uniquement fondés sur les informations connues ;
+- pas de fausse urgence ni de texte promotionnel ;
+- prix = estimation indicative uniquement ;
+- estimer selon la marque, la catégorie, le modèle, l'état et les défauts ;
+- tenir compte de la hierarchie des etats : neuf avec etiquette, neuf sans etiquette, tres bon etat, bon etat, satisfaisant ;
+- a article identique, un etat moins bon ne doit pas justifier un prix plus eleve ;
+- diminuer raisonnablement l'estimation lorsque l'etat se degrade, selon la marque et la categorie ;
+- ne pas appliquer automatiquement une decote fixe identique a tous les vetements ;
+- ne jamais surevaluer un article pour compenser son mauvais etat ;
+- distinguer les marques classiques, premium et de luxe ;
+- tenir compte de l'état neuf avec étiquette ou de l'usure réelle ;
+- ne pas appliquer un prix générique identique à des articles différents ;
+- utiliser le prix envisagé comme un indice, jamais comme une valeur à recopier automatiquement ;
+- si le modèle exact ou la cote sont inconnus, rester prudent et éviter une estimation artificiellement précise ;
+- ne pas inventer de prix neuf ou de ventes comparables ;
+- eviter les estimations generiques pour les marques comme Stone Island ;
+- prixMin = vente rapide, prixConseille = prix raisonnable, prixMax = prix haut envisageable ;
+- prixConseille, prixMin et prixMax = nombres entiers sous forme de texte ;
+- prixMin <= prixConseille <= prixMax ;
+- ne jamais inventer une raison de vente, une frequence d'utilisation, une provenance, une authenticite garantie ou une qualite non confirmee ;
+- aucun Markdown ;
+- aucun texte hors JSON.
+
+
+
+
+
+
+
+`.trim();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const annonce =
+
+
+
+
+
+
+
+                await appelerIAJSON(
+
+
+
+
+
+
+
+                    [
+
+
+
+
+
+
+
+                        {
+
+
+
+
+
+
+
+                            role:
+
+
+
+
+
+
+
+                                "user",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            content:
+
+
+
+
+
+
+
+                                prompt
+
+
+
+
+
+
+
+                        }
+
+
+
+
+
+
+
+                    ],
+
+
+
+
+
+
+
+                    {
+
+
+
+
+
+
+
+                        maxTokens:
+
+
+
+
+
+
+
+                            1600
+
+
+
+
+
+
+
+                    }
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const { obtenirPrixCache, enregistrerPrixCache } = require("./price-cache");
+
+const articlePourPrix = {
+    article, marque, categorie, taille, couleur,
+    etat, prix, details, defauts, plateforme
+};
+
+let prixMarcheApplique = false;
+
+// PRICE_CACHE_V1
+            // MARKET_PRICE_INTEGRATION_V1
+            // Recherche eBay facultative : ne doit jamais bloquer la génération.
+            if (
+                process.env.EBAY_CLIENT_ID &&
+                process.env.EBAY_CLIENT_SECRET
+            ) {
+                try {
+                    const { rechercherPrixArticle } =
+                        require("./price-research");
+
+                    const estimationMarche = await rechercherPrixArticle({
+                        marque,
+                        categorie,
+                        taille,
+                        modele: ""
+                    });
+
+                    if (
+                        estimationMarche?.disponible === true &&
+                        Number.isFinite(estimationMarche.prixBas) &&
+                        Number.isFinite(estimationMarche.prixConseille) &&
+                        Number.isFinite(estimationMarche.prixHaut) &&
+                        estimationMarche.prixBas <= estimationMarche.prixConseille &&
+                        estimationMarche.prixConseille <= estimationMarche.prixHaut
+                    ) {
+                        prixMarcheApplique = true;
+                        annonce.prixMin = String(estimationMarche.prixBas);
+                        annonce.prixConseille = String(estimationMarche.prixConseille);
+                        annonce.prixMax = String(estimationMarche.prixHaut);
+
+                        console.log(
+                            "Estimation eBay appliquée :",
+                            estimationMarche.nombreComparables,
+                            "annonces comparables"
+                        );
+                    } else {
+                        console.log(
+                            "Estimation eBay indisponible ou insuffisante : estimation IA conservée."
+                        );
+                    }
+                } catch (erreurPrix) {
+                    console.warn(
+                        "Recherche eBay indisponible : estimation IA conservée.",
+                        erreurPrix.message
+                    );
+                }
+            }
+            // PRICE_CACHE_APPLICATION_V1
+            if (!prixMarcheApplique) {
+                const prixEnCache = obtenirPrixCache(articlePourPrix);
+
+                if (prixEnCache) {
+                    Object.assign(annonce, prixEnCache);
+                    console.log("Prix recuperes du cache.");
+                } else {
+                    enregistrerPrixCache(articlePourPrix, annonce);
+                    console.log("Nouvelle estimation enregistree.");
+                }
+            } else {
+                enregistrerPrixCache(articlePourPrix, annonce);
+            }
+            // PRICE_COHERENCE_CHECK_V1
+            if (!prixMarcheApplique) {
+                const { verifierCoherencePrix } = require("./price-coherence");
+
+                const controlePrix = verifierCoherencePrix(
+                    articlePourPrix,
+                    annonce
+                );
+
+                if (!controlePrix.coherent) {
+                    console.warn(
+                        "ATTENTION : incoherence de prix detectee.",
+                        JSON.stringify(controlePrix.anomalies)
+                    );
+                }
+            }
+
+            let motsCles =
+
+
+
+
+
+
+
+                Array.isArray(
+
+
+
+
+
+
+
+                    annonce?.motsCles
+
+
+
+
+
+
+
+                )
+
+
+
+
+
+
+
+                    ? annonce.motsCles
+
+
+
+
+
+
+
+                    : [];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            motsCles =
+
+
+
+
+
+
+
+                motsCles
+
+
+
+
+
+
+
+                    .slice(0, 8)
+
+
+
+
+
+
+
+                    .map(
+
+
+
+
+
+
+
+                        mot =>
+
+
+
+
+
+
+
+                            nettoyerTexte(
+
+
+
+
+
+
+
+                                mot,
+
+
+
+
+
+
+
+                                50
+
+
+
+
+
+
+
+                            )
+
+
+
+
+
+
+
+                    )
+
+
+
+
+
+
+
+                    .filter(Boolean);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            const resultat = {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                titre:
+
+
+
+
+
+
+
+                    nettoyerTexte(
+
+
+
+
+
+
+
+                        annonce?.titre,
+
+
+
+
+
+
+
+                        160
+
+
+
+
+
+
+
+                    ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                description: corrigerDescription(nettoyerTexte(annonce?.description, 2000)),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                prixConseille:
+
+
+
+
+
+
+
+                    nettoyerTexte(
+
+
+
+
+
+
+
+                        annonce?.prixConseille,
+
+
+
+
+
+
+
+                        20
+
+
+
+
+
+
+
+                    ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                prixMin:
+
+
+
+
+
+
+
+                    nettoyerTexte(
+
+
+
+
+
+
+
+                        annonce?.prixMin,
+
+
+
+
+
+
+
+                        20
+
+
+
+
+
+
+
+                    ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                prixMax:
+
+
+
+
+
+
+
+                    nettoyerTexte(
+
+
+
+
+
+
+
+                        annonce?.prixMax,
+
+
+
+
+
+
+
+                        20
+
+
+
+
+
+
+
+                    ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                motsCles
+
+
+
+
+
+
+
+            };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            if (
+
+
+
+
+
+
+
+                !resultat.titre ||
+
+
+
+
+
+
+
+                !resultat.description
+
+
+
+
+
+
+
+            ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                throw new Error(
+
+
+
+
+
+
+
+                    "Annonce IA incomplÃ¨te."
+
+
+
+
+
+
+
+                );
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            console.log(
+
+
+
+
+
+
+
+                `âœ¨ Annonce gÃ©nÃ©rÃ©e en ${((Date.now() - debut) / 1000).toFixed(1)}s`
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+try {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const { error: analyticsError } =
+
+
+
+
+
+
+
+        await sessionQuota.supabase.rpc(
+
+
+
+
+
+
+
+            "track_event",
+
+
+
+
+
+
+
+            {
+
+
+
+
+
+
+
+                event_name_input: "generation"
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+        );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (analyticsError) {
+
+
+
+
+
+
+
+        console.error(
+
+
+
+
+
+
+
+            "Erreur analytics generation :",
+
+
+
+
+
+
+
+            analyticsError.message
+
+
+
+
+
+
+
+        );
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+} catch (analyticsError) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    console.error(
+
+
+
+
+
+
+
+        "Erreur analytics generation :",
+
+
+
+
+
+
+
+        analyticsError.message
+
+
+
+
+
+
+
+    );
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            return res.json({
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                ...resultat,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                quota:
+
+
+
+
+
+
+
+                    sessionQuota.quota
+
+
+
+
+
+
+
+            });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        } catch (error) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            console.error(
+
+
+
+
+
+
+
+                "âŒ GENERATION :",
+
+
+
+
+
+
+
+                error.message
+
+
+
+
+
+
+
+            );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            return res
+
+
+
+
+
+
+
+                .status(
+
+
+
+
+
+
+
+                    error.status || 500
+
+
+
+
+
+
+
+                )
+
+
+
+
+
+
+
+                .json({
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    error:
+
+
+
+
+
+
+
+                        error.status
+
+
+
+
+
+
+
+                            ? error.message
+
+
+
+
+
+
+
+                            : "La gÃ©nÃ©ration a Ã©chouÃ©. RÃ©essaie dans quelques secondes.",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    code:
+
+
+
+
+
+
+
+                        error.code ||
+
+
+
+
+
+
+
+                        undefined,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    quota:
+
+
+
+
+
+
+
+                        error.quota ||
+
+
+
+
+
+
+
+                        undefined
+
+
+
+
+
+
+
+                });
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   STRIPE CHECKOUT PREMIUM
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.post("/create-checkout-session", async (req, res) => {
+
+
+
+
+
+
+
+    try {
+
+
+
+
+
+
+
+        const authorization = req.headers.authorization || "";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        if (!authorization.startsWith("Bearer ")) {
+
+
+
+
+
+
+
+            return res.status(401).json({
+
+
+
+
+
+
+
+                error: "Connecte-toi pour passer Premium."
+
+
+
+
+
+
+
+            });
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const accessToken = authorization.slice(7).trim();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const supabase =
+
+
+
+
+
+
+
+            creerClientSupabaseUtilisateur(accessToken);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const { data: userData, error: userError } =
+
+
+
+
+
+
+
+            await supabase.auth.getUser(accessToken);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        if (userError || !userData?.user) {
+
+
+
+
+
+
+
+            return res.status(401).json({
+
+
+
+
+
+
+
+                error: "Session invalide."
+
+
+
+
+
+
+
+            });
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const session = await stripe.checkout.sessions.create({
+
+
+
+
+
+
+
+            mode: "subscription",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            line_items: [
+
+
+
+
+
+
+
+                {
+
+
+
+
+
+
+
+                    price: process.env.STRIPE_PRICE_ID,
+
+
+
+
+
+
+
+                    quantity: 1
+
+
+
+
+
+
+
+                }
+
+
+
+
+
+
+
+            ],
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            customer_email: userData.user.email,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            client_reference_id: userData.user.id,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            metadata: {
+
+
+
+
+
+
+
+                supabase_user_id: userData.user.id
+
+
+
+
+
+
+
+            },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            success_url:
+
+
+
+
+
+
+
+                `${req.protocol}://${req.get("host")}/?premium=success`,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            cancel_url:
+
+
+
+
+
+
+
+                `${req.protocol}://${req.get("host")}/?premium=cancel`
+
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        res.json({
+
+
+
+
+
+
+
+            url: session.url
+
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    } catch (error) {
+
+
+
+
+
+
+
+        console.error("âŒ STRIPE :", error.message);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        res.status(500).json({
+
+
+
+
+
+
+
+            error: "Impossible de dÃ©marrer le paiement."
+
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+});
+
+
+
+
+
+
+
+app.post("/create-customer-portal", async (req, res) => {
+
+
+
+
+
+
+
+    try {
+
+
+
+
+
+
+
+        const authorization = req.headers.authorization || "";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        if (!authorization.startsWith("Bearer ")) {
+
+
+
+
+
+
+
+            return res.status(401).json({
+
+
+
+
+
+
+
+                error: "Connecte-toi pour gÃ©rer ton abonnement."
+
+
+
+
+
+
+
+            });
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const accessToken = authorization.slice(7).trim();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const supabase =
+
+
+
+
+
+
+
+            creerClientSupabaseUtilisateur(accessToken);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const { data: userData, error: userError } =
+
+
+
+
+
+
+
+            await supabase.auth.getUser(accessToken);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        if (userError || !userData?.user) {
+
+
+
+
+
+
+
+            return res.status(401).json({
+
+
+
+
+
+
+
+                error: "Session invalide."
+
+
+
+
+
+
+
+            });
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const { data: profil, error: profilError } =
+
+
+
+
+
+
+
+            await supabaseAdmin
+
+
+
+
+
+
+
+                .from("profiles")
+
+
+
+
+
+
+
+                .select("stripe_customer_id")
+
+
+
+
+
+
+
+                .eq("id", userData.user.id)
+
+
+
+
+
+
+
+                .single();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        if (profilError || !profil?.stripe_customer_id) {
+
+
+
+
+
+
+
+            return res.status(400).json({
+
+
+
+
+
+
+
+                error: "Aucun abonnement Stripe trouvÃ©."
+
+
+
+
+
+
+
+            });
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const portalSession =
+
+
+
+
+
+
+
+            await stripe.billingPortal.sessions.create({
+
+
+
+
+
+
+
+                customer: profil.stripe_customer_id,
+
+
+
+
+
+
+
+                return_url:
+
+
+
+
+
+
+
+                    `${req.protocol}://${req.get("host")}/`
+
+
+
+
+
+
+
+            });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return res.json({
+
+
+
+
+
+
+
+            url: portalSession.url
+
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    } catch (error) {
+
+
+
+
+
+
+
+        console.error("âŒ PORTAIL STRIPE :", error.message);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return res.status(500).json({
+
+
+
+
+
+
+
+            error: "Impossible d'ouvrir la gestion de l'abonnement."
+
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+});
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   CONFIGURATION PUBLIQUE SUPABASE
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+   ANALYTICS â€” VISITES
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+app.post("/track-visit", async (req, res) => {
+
+
+
+    try {
+
+
+
+        const visitorId = String(req.body?.visitorId || "").trim().slice(0, 100);
+
+
+
+
+
+
+
+        if (!visitorId) {
+
+
+
+            return res.status(400).json({ error: "Identifiant visiteur manquant." });
+
+
+
+        }
+
+
+
+
+
+
+
+        const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+
+
+
+
+
+
+        const { data: existing, error: readError } =
+
+
+
+            await supabaseAdmin
+
+
+
+                .from("analytics_events")
+
+
+
+                .select("id")
+
+
+
+                .eq("event_name", "site_visit")
+
+
+
+                .eq("visitor_id", visitorId)
+
+
+
+                .gte("created_at", since)
+
+
+
+                .limit(1);
+
+
+
+
+
+
+
+        if (readError) throw readError;
+
+
+
+
+
+
+
+        if (existing && existing.length > 0) {
+
+
+
+            return res.json({ ok: true, counted: false });
+
+
+
+        }
+
+
+
+
+
+
+
+        const { error: insertError } =
+
+
+
+            await supabaseAdmin
+
+
+
+                .from("analytics_events")
+
+
+
+                .insert({
+
+
+
+                    event_name: "site_visit",
+
+
+
+                    visitor_id: visitorId
+
+
+
+                });
+
+
+
+
+
+
+
+        if (insertError) throw insertError;
+
+
+
+
+
+
+
+        return res.json({ ok: true, counted: true });
+
+
+
+
+
+
+
+    } catch (error) {
+
+
+
+        console.error("âŒ ANALYTICS VISITE :", error.message);
+
+
+
+        return res.status(500).json({
+
+
+
+            error: "Impossible d'enregistrer la visite."
+
+
+
+        });
+
+
+
+    }
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+app.get("/analytics.html", (req, res) => {
+
+
+
+
+
+
+
+    res.sendFile(
+
+
+
+
+
+
+
+        __dirname + "/analytics.html"
+
+
+
+
+
+
+
+    );
+
+
+
+
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.get(
+
+
+
+
+
+
+
+    "/supabase-config",
+
+
+
+
+
+
+
+    (req, res) => {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const url =
+
+
+
+
+
+
+
+            process.env.SUPABASE_URL;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const publishableKey =
+
+
+
+
+
+
+
+            process.env
+
+
+
+
+
+
+
+                .SUPABASE_PUBLISHABLE_KEY;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        if (
+
+
+
+
+
+
+
+            !url ||
+
+
+
+
+
+
+
+            !publishableKey
+
+
+
+
+
+
+
+        ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            return res
+
+
+
+
+
+
+
+                .status(500)
+
+
+
+
+
+
+
+                .json({
+
+
+
+
+
+
+
+                    error:
+
+
+
+
+
+
+
+                        "Supabase n'est pas configurÃ©."
+
+
+
+
+
+
+
+                });
+
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        res.json({
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            url,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            publishableKey
+
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   HEALTH
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.get(
+
+
+
+
+
+
+
+    "/health",
+
+
+
+
+
+
+
+    (req, res) => {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        res.json({
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            status:
+
+
+
+
+
+
+
+                "ok",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            app:
+
+
+
+
+
+
+
+                "VintedBoost",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            version:
+
+
+
+
+
+
+
+                "9"
+
+
+
+
+
+
+
+        });
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   404 API
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.use(
+
+
+
+
+
+
+
+    "/api",
+
+
+
+
+
+
+
+    (req, res) => {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        res
+
+
+
+
+
+
+
+            .status(404)
+
+
+
+
+
+
+
+            .json({
+
+
+
+
+
+
+
+                error:
+
+
+
+
+
+
+
+                    "Route inconnue."
+
+
+
+
+
+
+
+            });
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+
+
+
+
+
+
+
+   DEMARRAGE
+
+
+
+
+
+
+
+\====================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.listen(
+
+
+
+
+
+
+
+    PORT,
+
+
+
+
+
+
+
+    () => {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        console.log(
+
+
+
+
+
+
+
+            `ðŸš€ VintedBoost V9 fonctionne sur le port ${PORT}`
+
+
+
+
+
+
+
+        );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        console.log(
+
+
+
+
+
+
+
+            `ðŸ¤– ModÃ¨le : ${MODELE}`
+
+
+
+
+
+
+
+        );
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+);

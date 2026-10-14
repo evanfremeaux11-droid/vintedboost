@@ -1,0 +1,55 @@
+﻿
+  gemini-client.js:38:                    
+    }
+  gemini-client.js:39:                    
+});
+  gemini-client.js:40:                } 
+else if (url.startsWith("https://")) {
+> gemini-client.js:41:                    
+const responseImage = await fetch(url);
+  gemini-client.js:42:
+  gemini-client.js:43:                    
+if (!responseImage.ok) {
+  gemini-client.js:44:                    
+    throw new Error("Impossible de 
+recuperer la photo.");
+  gemini-client.js:45:                    
+}
+  gemini-client.js:46:
+  gemini-client.js:66:        }
+  gemini-client.js:67:    }
+  gemini-client.js:68:
+> gemini-client.js:69:    const 
+controller = new AbortController();
+> gemini-client.js:70:    const timeout = 
+setTimeout(() => controller.abort(), 
+30000);
+  gemini-client.js:71:    const debut = 
+Date.now();
+  gemini-client.js:72:
+  gemini-client.js:73:    try {
+> gemini-client.js:74:        const 
+response = await fetch(
+  gemini-client.js:75:            `https:/
+/generativelanguage.googleapis.com/v1beta/
+models/${MODELE_GEMINI}:generateContent`,
+  gemini-client.js:76:            {
+  gemini-client.js:77:                
+method: "POST",
+  gemini-client.js:78:                
+signal: controller.signal,
+  gemini-client.js:79:                
+headers: {
+  gemini-client.js:121:
+  gemini-client.js:122:        return 
+texte;
+  gemini-client.js:123:    } finally {
+> gemini-client.js:124:        
+clearTimeout(timeout);
+  gemini-client.js:125:    }
+  gemini-client.js:126:}
+  gemini-client.js:127:
+  gemini-client.js:128:module.exports = { 
+appelerGemini };
+
+

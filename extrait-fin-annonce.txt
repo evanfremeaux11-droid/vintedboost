@@ -1,0 +1,106 @@
+﻿
+            </div>
+
+
+            <div class="result-section">
+
+                <div class="result-label">
+                    📝 Description
+                </div>
+
+
+                <div
+                    id="resultDescription"
+                    class="result-text"
+                ></div>
+
+
+                <button
+                    class="copy"
+                    onclick="copierElement('resultDescription')"
+                >
+                    📋 Copier la description
+                </button>
+
+            </div>
+
+
+            <div class="result-section">
+
+                <div class="result-label">
+                    🔎 Mots-clés
+                </div>
+
+
+                <div
+                    id="keywords"
+                    class="keywords"
+                ></div>
+
+            </div>
+
+
+            <div class="result-actions">
+
+                <button
+                    class="action secondary"
+                    onclick="copierTout()"
+                >
+                    📋 Tout copier
+                </button>
+
+
+                <button
+                    class="action secondary"
+                    onclick="genererAnnonce()"
+                >
+                    🔄 Regénérer
+                </button>
+
+
+                <button
+                    class="action primary"
+                    onclick="nouvelleAnnonce()"
+                >
+                    + Nouvelle annonce
+                </button>
+
+            </div>
+
+        </div>
+    `;
+
+
+    document.getElementById(
+        "resultTitle"
+    ).textContent =
+        data.titre || "";
+
+
+    document.getElementById(
+        "resultDescription"
+    ).textContent =
+        (data.description || "").replace(/\r\n/g, "\n").replace(/[ \t]*\n[ \t]*/g, "\n").replace(/(?:^|\s+)Taille\s*:/gi, "\n\n📏 ").replace(/(?:^|\s+)Couleur\s*:/gi, "\n\n🎨 ").replace(/(?:^|\s+)[ÉE]tat\s*:/gi, "\n\n✨ ").replace(/\s*(📏|🎨|✨|🧵)\s*/gu, "\n\n$1 ").replace(/\n{3,}/g, "\n\n").trim();
+
+
+    const keywordZone =
+        document.getElementById(
+            "keywords"
+        );
+
+
+    mots.forEach(
+        mot=>{
+
+            const span =
+                document.createElement(
+                    "span"
+                );
+
+
+            span.className =
+                "keyword";
+
+
+            span.textContent =
+                mot;
