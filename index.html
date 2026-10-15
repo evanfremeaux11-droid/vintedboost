@@ -1096,6 +1096,24 @@ footer{
     <link rel="stylesheet" href="animations-v4.css">
   <link rel="stylesheet" href="/generateur-design-v4.css?v=4.2">
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "VintedBoost",
+  "url": "https://vintedboost-5jib.onrender.com/",
+  "description": "Générateur d'annonces Vinted avec intelligence artificielle à partir de photos.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "fr",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "EUR",
+    "description": "Accès gratuit limité à 5 générations par mois."
+  }
+}
+</script>
 </head>
 <body>
 
@@ -1358,6 +1376,124 @@ footer{
      CONTENU
 ====================================================== -->
 
+<style id="vb-benefits-style">
+#avantages-vintedboost {
+  max-width: 1150px;
+  margin: 36px auto 45px;
+  padding: 0 20px;
+}
+
+.vb-benefits-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.vb-benefits-label {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #8b5cf6;
+  margin-bottom: 12px;
+}
+
+.vb-benefits-header h2 {
+  font-size: clamp(24px, 4vw, 34px);
+  line-height: 1.2;
+  margin: 0 0 12px;
+}
+
+.vb-benefits-header p {
+  color: #94a3b8;
+  line-height: 1.7;
+}
+
+.vb-benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.vb-benefit-card {
+  padding: 25px 20px;
+  border: 1px solid rgba(148,163,184,.18);
+  border-radius: 18px;
+  background: rgba(148,163,184,.06);
+  transition: transform .2s ease, border-color .2s ease;
+}
+
+.vb-benefit-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(139,92,246,.45);
+}
+
+.vb-benefit-icon {
+  font-size: 28px;
+  display: block;
+  margin-bottom: 14px;
+}
+
+.vb-benefit-card h3 {
+  font-size: 17px;
+  margin: 0 0 10px;
+}
+
+.vb-benefit-card p {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #94a3b8;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .vb-benefits-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 550px) {
+  .vb-benefits-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vb-benefit-card {
+    padding: 20px;
+  }
+}
+</style>
+<section id="avantages-vintedboost" aria-labelledby="avantages-title">
+  <div class="vb-benefits-header">
+    <span class="vb-benefits-label">POURQUOI VINTEDBOOST ?</span>
+    <h2 id="avantages-title">Des annonces plus simples à créer, grâce à l'IA</h2>
+    <p>Ajoute tes photos, complète quelques informations et prépare ton annonce Vinted en quelques instants.</p>
+  </div>
+
+  <div class="vb-benefits-grid">
+    <article class="vb-benefit-card">
+      <span class="vb-benefit-icon">⚡</span>
+      <h3>Gagne du temps</h3>
+      <p>Obtiens un titre et une description sans devoir tout rédiger toi-même.</p>
+    </article>
+
+    <article class="vb-benefit-card">
+      <span class="vb-benefit-icon">✨</span>
+      <h3>Des annonces soignées</h3>
+      <p>Profite de suggestions de titres, descriptions et mots-clés adaptés à ton article.</p>
+    </article>
+
+    <article class="vb-benefit-card">
+      <span class="vb-benefit-icon">💶</span>
+      <h3>Une aide pour le prix</h3>
+      <p>Reçois une estimation indicative pour t'aider à choisir ton prix de vente.</p>
+    </article>
+
+    <article class="vb-benefit-card">
+      <span class="vb-benefit-icon">🎁</span>
+      <h3>Essaie gratuitement</h3>
+      <p>Crée jusqu'à 5 annonces par mois avec ton compte gratuit.</p>
+    </article>
+  </div>
+</section>
 <main class="container">
 
 <div class="card vb4-generator-card">

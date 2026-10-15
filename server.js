@@ -4859,6 +4859,33 @@ app.post(
 
 Analyse ces photos du même vêtement ou article d'occasion.
 
+REGLES DE PRECISION PHOTO V2 :
+- analyser toutes les photos comme un seul article ;
+- identifier le type d'article le plus precis possible sans extrapoler ;
+- utiliser uniquement les informations directement visibles ;
+- distinguer une marque lisible d'un logo ressemblant a une marque ;
+- ne jamais deviner une marque a partir du style du vetement ;
+- si la marque est incertaine, retourner une chaine vide ;
+- ne jamais affirmer qu'un article est authentique ;
+- identifier la couleur dominante avec un nom naturel en francais ;
+- ne pas inventer une couleur secondaire invisible ;
+- relever la taille uniquement lorsqu'une etiquette lisible la confirme ;
+- ne pas deduire la taille a partir des proportions du vetement ;
+- distinguer les details visibles des caracteristiques supposees ;
+- relever les fermetures, poches, motifs, logos et coupes uniquement s'ils sont visibles ;
+- ne jamais inventer la composition textile ;
+- signaler les taches, trous, accrocs et traces d'usure clairement visibles ;
+- ne pas conclure qu'un article est sans defaut simplement parce qu'aucun defaut n'est visible ;
+- si l'etat global ne peut pas etre determine, laisser etat vide ;
+- ne pas transformer une incertitude en certitude ;
+- ne pas deduire le genre du proprietaire a partir des photos ;
+- utiliser des phrases courtes et factuelles pour details et defauts ;
+- ne pas repeter la meme information dans plusieurs champs ;
+- laisser une chaine vide pour toute information non identifiable ;
+- ne jamais ajouter de champ au JSON demande ;
+- conserver strictement les huit cles JSON attendues ;
+- ne retourner aucun commentaire hors du JSON.
+
 
 
 
@@ -9132,6 +9159,28 @@ Règles :
 - ne jamais inventer une raison de vente, une frequence d'utilisation, une provenance, une authenticite garantie ou une qualite non confirmee ;
 - aucun Markdown ;
 - aucun texte hors JSON.
+
+REGLES QUALITE V2 :
+- construire un titre avec le type d'article, la marque, le modele et la couleur uniquement lorsque ces informations sont connues ;
+- privilegier un titre lisible et utile pour la recherche, sans accumulation de mots-cles ;
+- ne jamais ajouter de marque ou de modele non confirme ;
+- rediger une description directement utilisable sur Vinted, sans commentaire sur le travail de l'IA ;
+- adapter la longueur de la description au style selectionne et aux informations disponibles ;
+- privilegier les caracteristiques concretes plutot que les adjectifs commerciaux ;
+- eviter les phrases de remplissage et les formulations trop robotiques ;
+- conserver exactement les tailles, couleurs, etats et defauts communiques ;
+- mentionner clairement les defauts connus, sans les minimiser ;
+- ne jamais transformer une hypothese issue des photos en certitude ;
+- utiliser des mots-cles varies, pertinents et directement lies a l'article ;
+- ne pas repeter plusieurs fois le meme mot-cle sous des formes presque identiques ;
+- ne pas utiliser de noms de marques concurrentes pour attirer artificiellement des recherches ;
+- proposer une fourchette de prix coherente avec les informations disponibles ;
+- ne pas presenter une estimation comme un prix de vente garanti ;
+- eviter une estimation trop elevee lorsqu'un modele ou son authenticite ne sont pas confirmes ;
+- si les informations sont insuffisantes, rester prudent plutot que d'inventer une justification ;
+- verifier la coherence entre le titre, la description, les mots-cles et les prix ;
+- conserver strictement les six champs JSON attendus : titre, description, prixConseille, prixMin, prixMax et motsCles ;
+- ne jamais ajouter de champ supplementaire au JSON.
 
 
 
