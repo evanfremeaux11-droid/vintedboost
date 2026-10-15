@@ -10,6 +10,30 @@ const express = require("express");
 
 require("dotenv").config();
 
+/* PROTECTION DEPLOIEMENT VINTEDBOOST V2 */
+if (process.env.V2_DEPLOYMENT === "true") {
+  const expected = process.env.V2_SUPABASE_PROJECT_REF;
+  const url = process.env.SUPABASE_URL;
+
+  if (!expected || !/^[a-z0-9]{20}$/.test(expected)) {
+    throw new Error("V2 : reference Supabase attendue absente ou invalide.");
+  }
+
+  if (!url || url !== `https://${expected}.supabase.co`) {
+    throw new Error("V2 : projet Supabase incorrect. Demarrage bloque.");
+  }
+
+  if (
+    !process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    !process.env.SUPABASE_PUBLISHABLE_KEY ||
+    process.env.V2_QUOTA_RESERVATIONS_ENABLED !== "true"
+  ) {
+    throw new Error("V2 : configuration Supabase ou quotas incomplete.");
+  }
+
+  console.log("Protection Supabase V2 : OK");
+}
+
 
 
 
