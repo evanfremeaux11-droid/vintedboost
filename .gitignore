@@ -1,3 +1,12 @@
 node_modules/
 .env
 .env.*
+/sauvegarde-plan-v2-local.json
+/corriger-plan-v2.cjs
+/demarrer-v2-ia.cjs
+/demarrer-v2-stripe-test.cjs
+/diagnostic-*-v2.cjs
+/test-*-v2.cjs
+/verifier-*-v2.cjs
+/*.backup-*
+/server-avant-*-v2-*.js
