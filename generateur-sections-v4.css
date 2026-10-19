@@ -1234,3 +1234,69 @@
     box-sizing: border-box;
   }
 }
+
+/* ==========================================
+   VINTEDBOOST V2.1 - AERATION
+   ========================================== */
+
+/* Ordinateur : deux colonnes confortables */
+@media (min-width: 900px) {
+  .vb4-generator-card {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr) !important;
+    gap: 28px !important;
+  }
+
+  .vb4-generator-card > .vb4-panel {
+    padding: 32px !important;
+    border-radius: 22px !important;
+  }
+}
+
+/* Tablette et mobile : une seule colonne */
+@media (max-width: 899px) {
+  .vb4-generator-card {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 20px !important;
+  }
+
+  .vb4-generator-card > .vb4-panel,
+  .vb4-generator-card > #vintedDashboard {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+  }
+
+  .vb4-generator-card > .vb4-panel {
+    padding: 24px 20px !important;
+    border-radius: 18px !important;
+  }
+
+  .vb4-generator-card > .vb4-panel .section-title {
+    font-size: 22px !important;
+    line-height: 1.3;
+  }
+}
+
+/* Mobile : marges et champs plus confortables */
+@media (max-width: 599px) {
+  .vb4-generator-card {
+    gap: 18px !important;
+  }
+
+  .vb4-generator-card > .vb4-panel {
+    padding: 22px 18px !important;
+    border-radius: 18px !important;
+  }
+
+  .vb4-generator-card > .vb4-panel .section-title {
+    font-size: 21px !important;
+  }
+}
+
+/* Cartes plus legeres */
+.vb4-generator-card > .vb4-panel {
+  box-shadow: 0 6px 24px rgba(60,30,100,.045) !important;
+}
+
+.vb4-generator-card > .vb4-panel:hover {
+  box-shadow: 0 8px 28px rgba(60,30,100,.065) !important;
+}
