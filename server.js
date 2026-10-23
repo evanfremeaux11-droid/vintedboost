@@ -841,6 +841,9 @@ app.use(
 
 
 
+app.get("/studio-v3", (req, res) => {
+    res.sendFile(__dirname + "/studio-v3.html");
+});
 app.get("/generateur", (req, res) => {
     res.sendFile(__dirname + "/index.html");
 });
@@ -12311,6 +12314,9 @@ app.get(
 
 
 
+// VINTEDBOOST_V3_CHATBOT_ROUTE_V1
+app.use('/api/v3', require('./chatbot-v3'));
+
 app.use(
 
 
@@ -12459,6 +12465,10 @@ app.use(
 app.get("/generateur-v4-test", (req, res) => {
   res.sendFile(__dirname + "/index-v4-travail.html");
 });
+
+app.use("/pro-v3", express.static(
+  require("path").join(__dirname, "vintedboost-pro-v3-starter")
+));
 app.listen(
 
 

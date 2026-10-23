@@ -1,0 +1,11 @@
+VintedBoost V3 — intégration rapide et non destructive
+
+1. Copie studio-v3.html dans C:\Users\maison\Desktop\vinted boost (remplace uniquement ce fichier).
+2. Vérifie que server.js a déjà la route /studio-v3 (elle est présente dans ton fichier fourni).
+3. Lance le serveur local avec PORT=3001, V2_DEPLOYMENT=false et ta configuration Supabase V2 Test.
+4. Ouvre http://localhost:3001/studio-v3 et clique Studio IA.
+
+Fonctionnement : le vrai /generateur est chargé dans un iframe même origine, une seule fois et seulement à la demande. Ses appels API /generate, /analyze-photos, /supabase-config et Stripe sont conservés. Aucune modification serveur, SQL ou Stripe.
+
+Limites : c'est une intégration rapide, pas une refonte native de chaque composant. Les stats de dashboard sont volontairement non connectées. Si une politique CSP X-Frame-Options empêche l'intégration, utilise Ouvrir en plein écran.
+Ne jamais activer V2_QUOTA_RESERVATIONS_ENABLED sur une base qui n'a pas les RPC V2 installées et testées. Ne pas déployer en production avant les tests.
