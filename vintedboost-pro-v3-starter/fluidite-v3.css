@@ -1,0 +1,28 @@
+/* VintedBoost V3 — correctif visuel ciblé, sans changement du menu */
+.vb3-assistant-polished{min-width:0}
+.vb3-assistant-polished > h1{margin-bottom:8px}
+.vb3-assistant-polished .vb-intro{max-width:720px;line-height:1.55;opacity:.88}
+.vb3-assistant-polished #vb3-chatbot{width:100%;max-width:960px;min-width:0;margin:18px 0 22px}
+.vb3-assistant-polished #vb3-chatbot .vb-chat{box-sizing:border-box;width:100%;margin:0;padding:clamp(18px,3vw,32px);border-radius:22px;border:1px solid rgba(179,131,255,.24);background:linear-gradient(145deg,#261336 0%,#1b1029 65%,#170e24 100%);box-shadow:0 16px 40px rgba(5,2,12,.24);color:#f8f5ff}
+.vb3-assistant-polished #vb3-chatbot .vb-chat h2{color:#fff;font-size:clamp(1.3rem,2.4vw,1.75rem);margin:0 0 10px}
+.vb3-assistant-polished #vb3-chatbot .vb-chat-note{color:#cfc2df;max-width:700px;line-height:1.55;font-size:.94rem;margin:0 0 20px}
+.vb3-assistant-polished #vb3-chatbot label{color:#f2e9ff;font-weight:650;margin:16px 0 8px}
+.vb3-assistant-polished #vb3-chatbot textarea{display:block;width:100%;max-width:100%;min-height:88px;padding:14px 16px;background:#120b1d!important;color:#fff!important;border:1px solid #634875!important;border-radius:13px;line-height:1.5;box-shadow:none!important;resize:vertical}
+.vb3-assistant-polished #vb3-chatbot textarea::placeholder{color:#b1a0c3;opacity:1}
+.vb3-assistant-polished #vb3-chatbot textarea:focus{outline:2px solid #bb7cff;outline-offset:2px;border-color:#bb7cff!important}
+.vb3-assistant-polished #vb3-chatbot .vb-chat-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+.vb3-assistant-polished #vb3-chatbot .vb-chat-actions button{min-height:46px;padding:12px 20px;border-radius:12px;background:linear-gradient(110deg,#9d52ed,#7435cf);color:#fff;border:1px solid rgba(255,255,255,.14);font:inherit;font-weight:700;cursor:pointer;transition:filter .16s,transform .16s}
+.vb3-assistant-polished #vb3-chatbot .vb-chat-actions button:hover:not(:disabled){filter:brightness(1.12);transform:translateY(-1px)}
+.vb3-assistant-polished #vb3-chatbot .vb-chat-actions button+button{background:#39244c;color:#fff}
+.vb3-assistant-polished #vb3-chatbot .vb-chat-actions button:disabled{opacity:.55;cursor:not-allowed}
+.vb3-assistant-polished #vb3-chatbot #vb-chat-status{min-height:1.5em;color:#ddc9f5;line-height:1.5;margin:14px 0}
+.vb3-assistant-polished #vb3-chatbot .vb-chat-result{box-sizing:border-box;color:#f6f1ff;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65}
+.vb3-assistant-polished #vb3-chatbot .vb-chat-result:not(:empty){padding:18px;border-radius:14px;border:1px solid #61447a;background:#130c20}
+.vb3-assistant-polished .vb3-guided-panel{max-width:960px;width:100%;margin:0 0 30px}
+.vb3-assistant-polished .vb3-guided-details{border:1px solid rgba(177,135,217,.32);border-radius:16px;background:#21152e;color:#f7f2ff;overflow:hidden}
+.vb3-assistant-polished .vb3-guided-details > summary{padding:17px 22px;cursor:pointer;font-weight:700;list-style:revert;color:#f7f2ff}
+.vb3-assistant-polished .vb3-guided-details > summary:focus-visible{outline:2px solid #bb7cff;outline-offset:-3px}
+.vb3-assistant-polished .vb3-guided-help{margin:0;padding:0 20px 10px;color:#c8b8d8}
+.vb3-assistant-polished .vb3-guided-details #vb3-app{padding:0 14px 20px;max-width:100%;min-width:0}
+@media(max-width:680px){.vb3-assistant-polished #vb3-chatbot .vb-chat{padding:18px 14px;border-radius:16px}.vb3-assistant-polished #vb3-chatbot .vb-chat-actions button{flex:1 1 170px}.vb3-assistant-polished .vb3-guided-details > summary{padding:16px}}
+@media(prefers-reduced-motion:reduce){.vb3-assistant-polished #vb3-chatbot .vb-chat-actions button{transition:none}}

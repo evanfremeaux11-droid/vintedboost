@@ -1,0 +1,25 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tableau de bord — VintedBoost Pro</title><link rel="stylesheet" href="app.css"><link rel="stylesheet" href="dashboard-design-v3.css?v=1"><link rel="stylesheet" href="/pro-v3/pro-polish-v3.css?v=1"></head><body><div class="layout"><aside class="side"><div class="top"><div class="logo">Vinted<b>Boost</b> <small style="font-size:11px">PRO</small></div><button class="hamburger" id="menu" aria-label="Ouvrir le menu" aria-expanded="false">☰</button></div><nav id="nav"><a href="index.html" class="active"><span>⌂</span> Tableau de bord</a><a href="/studio-v3" class=""><span>✦</span> Studio IA</a><a href="dressing.html" class=""><span>▦</span> Mon dressing</a><a href="prix.html" class=""><span>€</span> Assistant de prix</a><a href="analytics.html" class=""><span>◫</span> Analytics</a><a href="assistant.html" class=""><span>◉</span> Assistant vendeur</a><a href="parametres.html" class=""><span>⚙</span> Paramètres</a></nav><p style="padding:12px;font-size:12px">VintedBoost · En développement</p></aside><main class="main"><div class="top"><span class="eyebrow">VintedBoost Pro / V3</span></div><h1>Tableau de bord</h1><p>Retrouve ton compte, tes crédits IA et crée tes annonces en quelques clics.</p><div class="grid">
+  <div class="card">
+    <h2>✨ Crédits IA</h2>
+    <div class="metric" id="vb3-credits">—</div>
+    <p>Générations disponibles sur ton compte</p>
+  </div>
+
+  <div class="card">
+    <h2>👤 Mon compte</h2>
+    <div class="metric" style="font-size:22px">Espace personnel</div>
+    <p id="vb3-account">Chargement du compte...</p>
+  </div>
+</div>
+
+<div class="section card">
+  <h2>✨ Créer une annonce</h2>
+  <p>
+    Ajoute tes photos et laisse l'intelligence artificielle
+    préparer une annonce optimisée.
+  </p>
+  <a class="btn" href="/studio-v3">
+    Accéder au Studio IA →
+  </a>
+</div></main></div><script>document.getElementById('menu').addEventListener('click',function(){let n=document.getElementById('nav');n.classList.toggle('open');this.setAttribute('aria-expanded',n.classList.contains('open'))})</script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script><script src="supabase-v3.js"></script><link rel="stylesheet" href="/pro-v3/hamburger-v3.css?v=final1">
+<script src="tracker-v3.js?v=20261023-pack1"></script><script src="/pro-v3/pro-polish-v3.js?v=1" defer></script><script src="/pro-v3/auth-dashboard-v3.js"></script></body></html>

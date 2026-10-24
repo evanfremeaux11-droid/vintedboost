@@ -1,0 +1,75 @@
+/* VINTEDBOOST V3 - BOUTON UNIQUE */
+/* Ce fichier controle le bouton sur les 7 pages */
+
+@media (min-width: 801px) {
+  body .side > .top #menu,
+  body .vb3-main > .vb3-top #vb3Menu {
+    display: none !important;
+  }
+}
+
+@media (max-width: 800px) {
+
+  body .side > .top #menu,
+  body .vb3-main > .vb3-top #vb3Menu {
+    display: flex !important;
+    position: fixed !important;
+
+    top: 12px !important;
+    left: 16px !important;
+    right: auto !important;
+    bottom: auto !important;
+
+    width: 46px !important;
+    height: 44px !important;
+    min-width: 46px !important;
+    min-height: 44px !important;
+    max-width: 46px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    background: #382353 !important;
+    color: #ffffff !important;
+
+    border: 1px solid #604482 !important;
+    border-radius: 10px !important;
+
+    font-family: Arial, sans-serif !important;
+    font-size: 24px !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+
+    text-align: center !important;
+    box-shadow: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+
+    cursor: pointer !important;
+    z-index: 99999 !important;
+  }
+
+  body .side > .top #menu:hover,
+  body .vb3-main > .vb3-top #vb3Menu:hover {
+    background: #503079 !important;
+  }
+
+  body .side > .top #menu:focus-visible,
+  body .vb3-main > .vb3-top #vb3Menu:focus-visible {
+    outline: 2px solid #ad75ff !important;
+    outline-offset: 3px !important;
+  }
+
+  /* Eviter que le bouton masque le logo */
+
+  body .side > .top .logo {
+    margin-left: 60px !important;
+  }
+
+  body .vb3-main > .vb3-top {
+    padding-left: 62px !important;
+  }
+}
