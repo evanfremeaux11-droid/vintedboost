@@ -1,0 +1,53 @@
+/* FLIZO V3 - finition privee */
+#vb3-auth {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    width: auto !important;
+    max-width: 100% !important;
+    padding: 10px 14px !important;
+    margin: 0 0 22px !important;
+    border: 1px solid #59417e !important;
+    border-radius: 14px !important;
+    background: #20152f !important;
+    color: #f5edff !important;
+    box-shadow: none !important;
+}
+#vb3-auth > div {
+    flex: 1 1 180px;
+    min-width: 0;
+    margin: 0 !important;
+    overflow-wrap: anywhere;
+    color: #ddd0ef;
+}
+#vb3-auth > button {
+    width: auto !important;
+    min-width: 145px !important;
+    padding: 10px 16px !important;
+    background: #7c3aed !important;
+    color: white !important;
+    border-radius: 10px !important;
+}
+#vb3-auth > button:hover {
+    background: #6d28d9 !important;
+}
+.vb3-manage-link {
+    display: inline-block;
+    margin: 12px 0 18px;
+    padding: 12px 18px;
+    background: #7c3aed;
+    color: white !important;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 10px;
+}
+.vb3-manage-link:hover {
+    background: #6d28d9;
+}
+@media (max-width: 600px) {
+    #vb3-auth > button {
+        width: 100% !important;
+    }
+}

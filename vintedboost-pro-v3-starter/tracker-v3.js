@@ -154,11 +154,7 @@
   async function start(){
     empty('Chargement de tes vêtements...');
     try{
-      if(!window.supabase?.createClient)throw new Error('Bibliothèque Supabase indisponible.');
-      const response=await fetch('/supabase-config',{cache:'no-store'});if(!response.ok)throw new Error('Configuration Supabase indisponible.');
-      const config=await response.json(),url=config.url||config.supabaseUrl,key=config.publishableKey||config.anonKey||config.key;
-      if(!url||!key)throw new Error('Configuration Supabase incomplète.');
-      client=window.supabase.createClient(url,key);
+      client = await window.getVintedBoostSupabase();
       const {data:{session},error:authError}=await client.auth.getSession();if(authError)throw authError;
       if(!session?.user){panel.replaceChildren();empty('Connecte-toi depuis le Studio IA pour voir tes vêtements.');return;}
       userId=session.user.id;

@@ -1,0 +1,54 @@
+/* VintedBoost V3 - Cartes informations article */
+.vb4-article-details {
+    background: #171027 !important;
+    border: 1px solid #49305f !important;
+    border-radius: 18px !important;
+    padding: 20px !important;
+}
+
+.vb4-article-details h3 {
+    color: #c084fc !important;
+}
+
+.vb4-article-details-grid > * {
+    background: #321b50 !important;
+    color: #ffffff !important;
+    border: 1px solid #624080 !important;
+    border-radius: 12px !important;
+    padding: 14px !important;
+}
+
+.vb4-article-details-grid > * * {
+    color: #ffffff !important;
+}
+
+.vb4-article-details-grid strong,
+.vb4-article-details-grid b,
+.vb4-article-details-grid label {
+    color: #d8b4fe !important;
+}/* VintedBoost V3 - Informations article, style mots-cles */
+
+.vb4-article-details .vb4-article-detail {
+    background: #321b50 !important;
+    background-color: #321b50 !important;
+    color: #ffffff !important;
+    border: 1px solid #624080 !important;
+    border-radius: 12px !important;
+    padding: 14px !important;
+    box-shadow: none !important;
+}
+
+.vb4-article-details .vb4-article-detail-label {
+    color: #d8b4fe !important;
+    -webkit-text-fill-color: #d8b4fe !important;
+}
+
+.vb4-article-details .vb4-article-detail strong {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+.vb4-article-details h3 {
+    color: #c084fc !important;
+}

@@ -1,95 +1,189 @@
-(async () => {
-  "use strict";
+﻿(async () => {
+    "use strict";
 
-  const nav = document.querySelector("aside.side nav");
-  if (!nav) return;
+    const nav = document.querySelector("aside.side nav");
+    if (!nav) return;
 
-  const zone = document.createElement("div");
-  zone.id = "vb3-auth";
-  zone.style.cssText = "padding:16px 12px;margin-top:18px;border-top:1px solid rgba(128,128,128,.25)";
+    if (document.getElementById("vb3-auth")) return;
 
-  const compte = document.createElement("div");
-  compte.style.cssText = "font-size:12px;overflow-wrap:anywhere;margin-bottom:10px;opacity:.8";
+    const zone = document.createElement("div");
+    zone.id = "vb3-auth"; zone.setAttribute("aria-label", "Compte VintedBoost");
+    zone.style.cssText =
+        "padding:16px 12px;margin-top:18px;border-top:1px solid #8884";
 
-  const bouton = document.createElement("button");
-  bouton.type = "button";
-  bouton.style.cssText = "width:100%;padding:11px;border:0;border-radius:9px;cursor:pointer;font-weight:700";
+    const label = document.createElement("div");
+    label.style.cssText =
+        "font-size:12px;overflow-wrap:anywhere;margin-bottom:10px";
 
-  zone.append(compte, bouton);
-  nav.after(zone);
+    const button = document.createElement("button");
+    button.type = "button";
+    button.style.cssText =
+        "width:100%;padding:11px;border:0;border-radius:9px;cursor:pointer;font-weight:700";
 
-  function afficher(message, titre, action, disabled = false) {
-    compte.textContent = message;
-    bouton.textContent = titre;
-    bouton.disabled = disabled;
-    bouton.onclick = action;
-  }
+    zone.append(label, button);
+    const main = document.querySelector("main.main");
+if (main) {
+    zone.style.cssText = "display:block!important;visibility:visible!important;position:relative!important;padding:16px;margin:12px 0 24px;border:1px solid #7c3aed;border-radius:12px;background:#f5f3ff;color:#22143d;max-width:400px";
+    button.style.cssText = "display:block!important;visibility:visible!important;width:100%;padding:12px;background:#7c3aed;color:white;border:0;border-radius:9px;cursor:pointer;font-weight:700";
+    main.prepend(zone);
+} else {
+    nav.append(zone);
+}
 
-  afficher("Verification de la session...", "Chargement...", null, true);
+    const dialog = document.createElement("dialog");
+    dialog.style.cssText =
+        "border:1px solid #ddd6fe;border-radius:16px;padding:24px;max-width:400px;width:calc(100% - 32px)";
 
-  try {
-    if (!window.supabase?.createClient) {
-      throw new Error("Bibliotheque Supabase indisponible");
+    const form = document.createElement("form");
+
+    form.innerHTML = `
+        <h2>Connexion VintedBoost</h2>
+        <label>Adresse e-mail
+            <input type="email" required autocomplete="email"
+                style="display:block;width:100%;padding:10px;margin:10px 0">
+        </label>
+        <label>Mot de passe
+            <input type="password" required autocomplete="current-password"
+                style="display:block;width:100%;padding:10px;margin:10px 0">
+        </label>
+        <p role="alert" style="color:#b91c1c"></p>
+        <button type="button" id="vb3-cancel">Annuler</button>
+        <button type="submit">Se connecter</button>
+<button type="button" id="vb3-signup"
+    style="margin-top:12px;padding:10px;background:#7c3aed;color:white;border:0;border-radius:8px;cursor:pointer">
+    Créer un compte
+</button>
+    `;
+
+    dialog.append(form);
+    document.body.append(dialog);
+
+    const email = form.querySelector('[type="email"]');
+    const password = form.querySelector('[type="password"]');
+    const errorText = form.querySelector('[role="alert"]');
+
+    form.querySelector("#vb3-cancel").onclick = () => dialog.close();
+form.querySelector("#vb3-signup").onclick = async () => {
+    errorText.textContent = "";
+
+    if (!email.value.trim() || !password.value) {
+        errorText.textContent = "Renseigne ton e-mail et ton mot de passe.";
+        return;
     }
 
-    const response = await fetch("/supabase-config", { cache: "no-store" });
-    if (!response.ok) throw new Error("Configuration Supabase indisponible");
+    const signupButton = form.querySelector("#vb3-signup");
+    signupButton.disabled = true;
 
-    const config = await response.json();
-    if (!config.url || !config.publishableKey) {
-      throw new Error("Configuration Supabase incomplete");
-    }
+    try {
+        const client = await window.getVintedBoostSupabase();
 
-    const client = window.supabase.createClient(
-      config.url,
-      config.publishableKey,
-      {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true
+        const { data, error } = await client.auth.signUp({
+            email: email.value.trim(),
+            password: password.value
+        });
+
+        if (error) throw error;
+
+        password.value = "";
+
+        if (data.session) {
+            dialog.close();
+            window.dispatchEvent(new Event("vb3-auth-changed"));
+        } else {
+            errorText.style.color = "#16a34a";
+            errorText.textContent =
+                "Inscription demandée. Vérifie ton e-mail pour confirmer ton compte si nécessaire.";
         }
-      }
-    );
+    } catch (error) {
+        errorText.style.color = "#b91c1c";
+        errorText.textContent = error.message || "Inscription impossible.";
+    } finally {
+        signupButton.disabled = false;
+    }
+};
 
-    async function actualiser() {
-      const { data, error } = await client.auth.getSession();
-      if (error) throw error;
-
-      const user = data.session?.user;
-
-      if (user) {
-        afficher(user.email || "Compte connecte", "Se deconnecter", async () => {
-          bouton.disabled = true;
-          const { error } = await client.auth.signOut();
-
-          if (error) {
-            alert("Deconnexion impossible : " + error.message);
-            bouton.disabled = false;
-            return;
-          }
-
-          await actualiser();
-        });
-      } else {
-        afficher("Aucun compte connecte", "Se connecter", () => {
-          window.location.href = "/studio-v3";
-        });
-      }
+    function display(message, action, callback) {
+        label.textContent = message;
+        button.textContent = action;
+        button.disabled = !callback;
+        button.onclick = callback;
     }
 
-    await actualiser();
+    display("Chargement...", "Patientez", null);
 
-    client.auth.onAuthStateChange(() => {
-      setTimeout(() => {
-        actualiser().catch(console.error);
-      }, 0);
-    });
+    try {
+        const client = await window.getVintedBoostSupabase();
 
-  } catch (error) {
-    console.error("Authentification Dashboard V3 :", error);
-    afficher("Connexion indisponible", "Ouvrir le Studio IA", () => {
-      window.location.href = "/studio-v3";
-    });
-  }
+        async function refresh() {
+            const { data, error } = await client.auth.getSession();
+            if (error) throw error;
+
+            if (data.session?.user) {
+                display(
+                    data.session.user.email || "Compte connecte",
+                    "Se deconnecter",
+                    async () => {
+                        button.disabled = true;
+                        const { error } = await client.auth.signOut();
+
+                        if (error) {
+                            errorText.textContent = error.message;
+                            await refresh();
+                            return;
+                        }
+
+                        await refresh();
+                        window.dispatchEvent(new Event("vb3-auth-changed"));
+                    }
+                );
+            } else {
+                display("Aucun compte connecte", "Se connecter", () => {
+                    errorText.textContent = "";
+                    password.value = "";
+                    dialog.showModal();
+                });
+            }
+        }
+
+        form.addEventListener("submit", async event => {
+            event.preventDefault();
+
+            const submit = form.querySelector('[type="submit"]');
+            submit.disabled = true;
+            errorText.textContent = "";
+
+            try {
+                const { error } = await client.auth.signInWithPassword({
+                    email: email.value.trim(),
+                    password: password.value
+                });
+
+                if (error) throw error;
+
+                password.value = "";
+                dialog.close();
+
+                await refresh();
+                window.dispatchEvent(new Event("vb3-auth-changed"));
+            } catch (error) {
+                errorText.textContent =
+                    error.message || "Connexion impossible";
+            } finally {
+                submit.disabled = false;
+            }
+        });
+
+        await refresh();
+
+        client.auth.onAuthStateChange(() => {
+            setTimeout(() => refresh().catch(console.error), 0);
+        });
+
+    } catch (error) {
+        console.error("Authentification V3 :", error);
+
+        display("Connexion indisponible", "Reessayer", () => {
+            location.reload();
+        });
+    }
 })();

@@ -7434,9 +7434,9 @@ async function verifierUtilisateurEtQuota(
 
     }
     // V2 uniquement : activer apres installation et tests du SQL V2.
-    if (process.env.V2_QUOTA_RESERVATIONS_ENABLED === "true") {
+    if ((process.env.V2_QUOTA_RESERVATIONS_ENABLED === "true" || process.env.V3_QUOTAS_ENABLED === "true")) {
         const { data: reservation, error: reservationError } =
-            await supabaseAdmin.rpc("reserve_generation_v2", {
+            await supabaseAdmin.rpc(process.env.V3_QUOTAS_ENABLED === "true" ? "reserve_generation_v3" : "reserve_generation_v2", {
                 p_user_id: userData.user.id
             });
         if (reservationError) {
@@ -7461,7 +7461,7 @@ async function verifierUtilisateurEtQuota(
             user: userData.user,
             quota: reservation,
             supabase,
-            reservationId: reservation.reservation_id
+            reservationId: reservation.reservation_id, quotaMode: process.env.V3_QUOTAS_ENABLED === "true" ? "v3" : "v2"
         };
     }
 
@@ -8156,6 +8156,29 @@ if (!articleObligatoire) {
 
 sessionQuota =
     await verifierUtilisateurEtQuota(req);
+
+if (sessionQuota?.quotaMode === "v3" && sessionQuota.reservationId) {
+    sessionQuota.heartbeatTimer = setInterval(async () => {
+        if (sessionQuota.heartbeatBusy || !sessionQuota.reservationId) return;
+        sessionQuota.heartbeatBusy = true;
+        try {
+            const { data, error } = await supabaseAdmin.rpc(
+                "heartbeat_generation_v3",
+                { p_reservation_id: sessionQuota.reservationId }
+            );
+            if (error || data !== true) {
+                sessionQuota.heartbeatFailed = true;
+                console.error("Heartbeat V3 impossible :", error?.message || data);
+            }
+        } catch (error) {
+            sessionQuota.heartbeatFailed = true;
+            console.error("Erreur heartbeat V3 :", error.message);
+        } finally {
+            sessionQuota.heartbeatBusy = false;
+        }
+    }, 60000);
+    sessionQuota.heartbeatTimer.unref?.();
+}
 
 
 
@@ -10009,8 +10032,10 @@ let prixMarcheApplique = false;
 
 // V2 : confirmer avant de retourner une annonce reussie.
             if (sessionQuota?.reservationId) {
+                if (sessionQuota.heartbeatTimer) clearInterval(sessionQuota.heartbeatTimer);
+                if (sessionQuota.heartbeatFailed) throw new Error("Bail V3 non confirme.");
                 const { data: completed, error: completeError } =
-                    await supabaseAdmin.rpc("complete_generation_v2", {
+                    await supabaseAdmin.rpc(sessionQuota.quotaMode === "v3" ? "complete_generation_v3" : "complete_generation_v2", {
                         p_reservation_id: sessionQuota.reservationId
                     });
                 if (completeError || completed !== true) {
@@ -10296,6 +10321,7 @@ try {
 
 
         } catch (error) {
+                if (sessionQuota?.heartbeatTimer) clearInterval(sessionQuota.heartbeatTimer);
                 // V2 : remboursement idempotent si reservation encore en attente.
                 if (sessionQuota?.reservationId) {
                     try {
@@ -12469,6 +12495,15 @@ app.get("/generateur-v4-test", (req, res) => {
 app.use("/pro-v3", express.static(
   require("path").join(__dirname, "vintedboost-pro-v3-starter")
 ));
+
+// Route locale pour Analytics Admin V2
+app.get("/analytics-admin-v2", (req, res) => {
+  res.sendFile(require("path").join(__dirname, "analytics-admin-v2", "index.html"));
+});
+
+app.get("/analytics-admin-v2/", (req, res) => {
+  res.sendFile(require("path").join(__dirname, "analytics-admin-v2", "index.html"));
+});
 app.listen(
 
 

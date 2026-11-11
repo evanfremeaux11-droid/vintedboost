@@ -1,5 +1,5 @@
 
-/* VintedBoost V3 — couche de finition non destructive */
+/* FLIZO V3 — couche de finition non destructive */
 :root{color-scheme:dark;--vb3-accent:#b58aff;--vb3-border:rgba(181,138,255,.2)}
 html{scroll-behavior:smooth}body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
 :focus-visible{outline:3px solid #d9b7ff!important;outline-offset:3px}

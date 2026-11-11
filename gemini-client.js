@@ -38,7 +38,9 @@ async function appelerGemini(messages, options = {}) {
                         }
                     });
                 } else if (url.startsWith("https://")) {
-                    const responseImage = await fetch(url);
+                    const responseImage = await fetch(url, {
+                        signal: AbortSignal.timeout(20000)
+                    });
 
                     if (!responseImage.ok) {
                         throw new Error("Impossible de recuperer la photo.");

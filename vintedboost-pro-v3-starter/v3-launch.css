@@ -1,0 +1,191 @@
+/* FLIZO V3 - finition visuelle */
+
+:root {
+    --vb-purple: #8b5cf6;
+    --vb-purple-dark: #6d28d9;
+    --vb-border: rgba(167,139,250,.25);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+}
+
+.main {
+    min-width: 0;
+}
+
+.main h1 {
+    letter-spacing: -.035em;
+    line-height: 1.12;
+}
+
+.main p {
+    line-height: 1.65;
+}
+
+.card,
+.vb-panel {
+    border-radius: 18px;
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
+
+.card:hover,
+.vb-panel:hover {
+    border-color: rgba(167,139,250,.55);
+    box-shadow: 0 12px 35px rgba(0,0,0,.14);
+}
+
+a,
+button {
+    transition:
+        background-color .2s ease,
+        border-color .2s ease,
+        color .2s ease,
+        transform .2s ease;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid #a78bfa;
+    outline-offset: 3px;
+}
+
+.btn:hover,
+.vb-btn:hover {
+    transform: translateY(-1px);
+}
+
+#vb3-auth {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    width: auto !important;
+    max-width: 100% !important;
+    padding: 12px 16px !important;
+    margin: 0 0 22px !important;
+    border: 1px solid var(--vb-border) !important;
+    border-radius: 14px !important;
+    background: #20162f !important;
+    color: #f5edff !important;
+    box-shadow: none !important;
+}
+
+#vb3-auth > div {
+    flex: 1 1 180px;
+    min-width: 0;
+    margin: 0 !important;
+    overflow-wrap: anywhere;
+    color: #e9d5ff;
+}
+
+#vb3-auth > button {
+    width: auto !important;
+    min-width: 140px !important;
+    padding: 10px 16px !important;
+    background: #7c3aed !important;
+    color: white !important;
+    border-radius: 10px !important;
+    cursor: pointer;
+}
+
+#vb3-auth > button:hover {
+    background: #6d28d9 !important;
+}
+
+.vb3-launch-card {
+    margin: 22px 0;
+    padding: 22px;
+    border: 1px solid var(--vb-border);
+    border-radius: 18px;
+    background: linear-gradient(
+        135deg,
+        #251536 0%,
+        #191125 100%
+    );
+    color: #f5edff;
+}
+
+.vb3-launch-card h2 {
+    margin: 0 0 10px;
+    font-size: 20px;
+}
+
+.vb3-launch-card p {
+    color: #d8c6eb;
+}
+
+.vb3-launch-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: #c4b5fd;
+    margin: 12px 0;
+}
+
+.vb3-launch-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.vb3-launch-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 16px;
+    border-radius: 10px;
+    background: #7c3aed;
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.vb3-launch-actions a:hover {
+    background: #6d28d9;
+}
+
+@media (max-width: 700px) {
+    .main {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .card,
+    .vb-panel {
+        border-radius: 14px;
+    }
+
+    #vb3-auth > button {
+        width: 100% !important;
+    }
+
+    .vb3-launch-card {
+        padding: 16px;
+    }
+
+    .vb3-launch-actions a {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+    }
+}

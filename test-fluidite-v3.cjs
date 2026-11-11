@@ -1,4 +1,4 @@
-﻿const { chromium } = require("@playwright/test");
+const { chromium } = require("@playwright/test");
 
 (async () => {
   const browser = await chromium.launch({ headless: true });
@@ -8,7 +8,7 @@
   page.on("pageerror", e => erreurs.push(e.message));
 
   await page.goto(
-    "http://localhost:3001/pro-v3/assistant.html",
+    "http://localhost:3002/pro-v3/assistant.html",
     { waitUntil: "networkidle" }
   );
 

@@ -1,0 +1,31 @@
+.vb3-publicite {
+    margin: 24px 0;
+    padding: 18px;
+    border: 1px solid rgba(160, 130, 255, .20);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, .025);
+    text-align: center;
+}
+
+.vb3-publicite[hidden] {
+    display: none !important;
+}
+
+.vb3-publicite-label {
+    font-size: 11px;
+    opacity: .55;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.vb3-publicite-contenu {
+    min-height: 90px;
+}
+
+@media (max-width: 768px) {
+    .vb3-publicite {
+        margin: 16px 0;
+        padding: 12px;
+    }
+}

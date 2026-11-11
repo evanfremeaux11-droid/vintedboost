@@ -1,4 +1,4 @@
-﻿const { chromium } = require("@playwright/test");
+const { chromium } = require("@playwright/test");
 
 (async () => {
   const browser = await chromium.launch({ headless: true });
@@ -18,7 +18,7 @@
     const page = await browser.newPage();
 
     const response = await page.goto(
-      "http://localhost:3001" + route,
+      "http://localhost:3002" + route,
       { waitUntil: "domcontentloaded", timeout: 15000 }
     );
 
