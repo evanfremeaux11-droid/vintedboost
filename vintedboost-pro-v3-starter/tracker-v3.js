@@ -160,7 +160,7 @@
       userId=session.user.id;
       const {data,error}=await client.from('v3_clothing_tracker').select('*').eq('user_id',userId).order('created_at',{ascending:false}).limit(500);
       if(error)throw error;rows=data||[];render();
-    }catch(err){console.error('VintedBoost Tracker V3',err);panel.replaceChildren();empty('Impossible de charger le suivi : '+(err.message||'Erreur inconnue'));}
+    }catch(err){console.error("FLIZO Tracker V3",err);panel.replaceChildren();empty('Impossible de charger le suivi : '+(err.message||'Erreur inconnue'));}
   }
   start();
 })();

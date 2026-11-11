@@ -33,7 +33,7 @@ const ready=()=>{
  }
  if(!main.querySelector('.vb3-footer')){
   const foot=document.createElement('footer');foot.className='vb3-footer';
-  const parts=[['VintedBoost V3',null],['Aide','/pro-v3/aide.html'],['Contact','/contact.html'],['Confidentialité','/politique-confidentialite.html'],['Mentions légales','/mentions-legales.html']];
+  const parts=[["FLIZO V3",null],['Aide','/pro-v3/aide.html'],['Contact','/contact.html'],['Confidentialité','/politique-confidentialite.html'],['Mentions légales','/mentions-legales.html']];
   for(const [txt,url] of parts){const e=document.createElement(url?'a':'span');e.textContent=txt;if(url)e.href=url;foot.append(e)}main.append(foot);
  }
 };if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();

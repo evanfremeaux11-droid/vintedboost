@@ -7,7 +7,7 @@
     if (document.getElementById("vb3-auth")) return;
 
     const zone = document.createElement("div");
-    zone.id = "vb3-auth"; zone.setAttribute("aria-label", "Compte VintedBoost");
+    zone.id = "vb3-auth"; zone.setAttribute("aria-label", "Compte FLIZO");
     zone.style.cssText =
         "padding:16px 12px;margin-top:18px;border-top:1px solid #8884";
 
@@ -37,7 +37,7 @@ if (main) {
     const form = document.createElement("form");
 
     form.innerHTML = `
-        <h2>Connexion VintedBoost</h2>
+        <h2>Connexion FLIZO</h2>
         <label>Adresse e-mail
             <input type="email" required autocomplete="email"
                 style="display:block;width:100%;padding:10px;margin:10px 0">

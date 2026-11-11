@@ -16,7 +16,7 @@
       const cfg = await configRes.json();
       const client = window.supabase.createClient(cfg.url,cfg.publishableKey);
       const {data:{session},error} = await client.auth.getSession();
-      if (error || !session?.access_token) throw new Error('Connecte-toi à VintedBoost avant d’utiliser le chatbot.');
+      if (error || !session?.access_token) throw new Error("Connecte-toi à FLIZO avant d’utiliser le chatbot.");
       const res = await fetch('/api/v3/chat',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${session.access_token}`},body:JSON.stringify({message,contexte:get('vb-context').value})});
       const json = await res.json().catch(()=>({}));
       if (!res.ok) throw new Error(json.error || 'Erreur IA.');

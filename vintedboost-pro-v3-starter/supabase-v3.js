@@ -58,7 +58,7 @@
     });
 
   } catch (error) {
-    console.error("VintedBoost V3 :", error);
+    console.error("FLIZO V3 :", error);
     afficher("Erreur de connexion Supabase");
   }
 })();
